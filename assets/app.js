@@ -75,6 +75,18 @@ function fillArmorFilters(){
  $("armor-type-filter").innerHTML='<option value="">Todos os tipos</option>'+types.map(x=>'<option>'+escapeHtml(x)+'</option>').join("");
  $("armor-set-filter").innerHTML='<option value="">Todos os conjuntos</option>'+sets.map(x=>'<option>'+escapeHtml(x)+'</option>').join("");
 }
+function renderDefenseProgression(item){
+ const levels=item?.equipmentStats?.defense?.gearScore;
+ if(!levels||typeof levels!=="object")return "";
+ const entries=Object.entries(levels).sort((a,b)=>Number(a[0])-Number(b[0]));
+ if(!entries.length)return "";
+ return '<details class="detail-disclosure"><summary>Progressão de defesa por Gear Score <span>'+escapeHtml(entries[0][1])+' → '+escapeHtml(entries[entries.length-1][1])+'</span></summary><div class="progression-grid">'+entries.map(([level,value])=>'<div><small>Nível '+escapeHtml(level)+'</small><strong>'+escapeHtml(value)+'</strong></div>').join("")+'</div></details>';
+}
+function detailedArmorMarkup(item){
+ const info=item?.itemInfo||{},grade=item?.equipmentGradeInfo||{};
+ const fields=[detailField("Nível necessário",info.requiredLevel),detailField("Tier",info.tier),detailField("Peso",info.weight),detailField("Durabilidade máxima",info.maxDurability),detailField("Pode reforçar",info.canReinforce===true?"Sim":info.canReinforce===false?"Não":null),detailField("Sockets de gema",grade.gemSocket===true?"Sim":grade.gemSocket===false?"Não":null),detailField("Quantidade de perks",grade.perkCount??item?.itemStats?.perkCount)].filter(Boolean).join("");
+ return '<div class="detail-fields">'+fields+'</div><section class="detail-section"><h4>Atributos e efeitos</h4>'+renderItemStats(item)+'</section>'+renderDefenseProgression(item)+'<p class="detail-note">Dados da ficha individual do Questlog. Os campos não fornecidos pela fonte não são exibidos.</p>';
+}
 function armorDetailMarkup(item){
  const type=armorType(item),set=armorSetLabel(item),color=rarityStyle(item);
  return '<div class="detail-panel" style="--rarity:'+color+'"><div class="detail-top"><div class="detail-icon"><span>'+armorIcon(item)+'</span>'+weaponImageMarkup(item)+'</div><div><h3>'+escapeHtml(item.name||"Armadura")+'</h3><p>'+escapeHtml(type)+' · Equipável por todas as classes</p><div class="detail-rarity">'+escapeHtml(rarity(item))+'</div></div></div><div class="detail-fields">'+detailField("Identificador",item.id||item.compoundId)+detailField("Tipo",type)+detailField("Raridade",rarity(item))+detailField("Conjunto",set)+'</div><div class="detail-live" id="armor-detail-live"><p class="detail-muted">Os atributos serão exibidos após a coleta das fichas individuais.</p></div><a class="detail-source" href="https://questlog.gg/chrono-odyssey/en/db/item/'+encodeURIComponent(item.id||item.compoundId||"")+'" target="_blank" rel="noreferrer">CONSULTAR FICHA NO QUESTLOG ↗</a></div>';
@@ -85,7 +97,7 @@ async function loadArmorDetails(item){
   if(!armorDetailsPromise)armorDetailsPromise=fetch("./data/armor-details.json",{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error("Arquivo de detalhes ainda não publicado.");return r.json()}).then(d=>d.items||{});
   const all=await armorDetailsPromise,record=all[id]||all[id.replace(/^item-/,"")];
   const current=$("armor-detail-live");if(!current||!record||!selectedArmor||String(selectedArmor.id||selectedArmor.compoundId)!==id)return;
-  current.innerHTML=detailedWeaponMarkup(item,record);
+  current.innerHTML=detailedArmorMarkup(record);
  }catch(e){const current=$("armor-detail-live");if(current)current.innerHTML='<p class="detail-muted">A ficha detalhada será habilitada quando a coleta do Questlog for concluída. Os dados ainda não foram importados.</p>'}
 }
 function selectArmor(id){
