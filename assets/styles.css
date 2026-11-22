@@ -348,3 +348,20 @@ footer{border-color:#393528;color:var(--faint)}
  }
  .class-weapon-entry .class-individual-weapon-icon img{min-height:94px}
 }
+
+
+/* Seletores de classe: acabamento em carvão e bronze alinhado à identidade do Companion */
+#class-grid .class-filter-btn{
+ background:linear-gradient(180deg,#292519 0%,#171610 100%);
+ border-color:#514832;
+ color:#c8bea5;
+ box-shadow:inset 0 1px 0 rgba(212,200,168,.07);
+}
+#class-grid .class-filter-btn:hover,
+#class-grid .class-filter-btn:focus-visible{
+ background:linear-gradient(180deg,#393122 0%,#242016 100%);
+ border-color:#b6a174;
+ color:#e0d2ae;
+ box-shadow:inset 0 0 0 1px rgba(182,161,116,.14),0 0 14px rgba(169,146,98,.10);
+ outline:none;
+}
