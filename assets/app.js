@@ -56,7 +56,7 @@ function defaultGearScore(item,levels){
  const entries=Object.entries(levels||{}).filter(([key,value])=>Number.isFinite(Number(key))&&value!==null&&value!==undefined).sort((a,b)=>Number(a[0])-Number(b[0]));
  if(!entries.length)return 1;
  const tier=Number.parseInt(item?.itemInfo?.tier,10);
- const tierDefaults={4:25,5:40};
+ const tierDefaults={1:1,2:5,3:15,4:25,5:40};
  const preferred=tierDefaults[tier];
  if(preferred!==undefined&&levels[String(preferred)]!==undefined)return preferred;
  return Number(entries[0][0]);
