@@ -115,7 +115,7 @@ function armorFiltered(){
 }
 function fillArmorFilters(){const types=[...new Set(armors.map(armorType).filter(x=>x&&x!=="Tipo não identificado"))].sort((a,b)=>a.localeCompare(b,"pt-BR"));const counts=new Map();armors.forEach(item=>{const name=armorSetLabel(item);if(name!=="Conjunto não identificado")counts.set(name,(counts.get(name)||0)+1)});const sets=[...counts.entries()].filter(([,count])=>count>1).map(([name])=>name).sort((a,b)=>a.localeCompare(b,"pt-BR"));$("armor-type-filter").innerHTML='<option value="">Todos os tipos</option>'+types.map(x=>'<option>'+escapeHtml(x)+'</option>').join("");$("armor-set-filter").innerHTML='<option value="">Todos os conjuntos</option>'+sets.map(x=>'<option>'+escapeHtml(x)+'</option>').join("");fillRarityOptions("armor-rarity-filter")}
 function findArmorDefenseLevels(item){
- const root=item?.equipmentStats;
+ const root=item?.itemStats?.equipmentStats||item?.equipmentStats;
  if(!root||typeof root!=="object")return null;
  const candidates=[],pending=[{node:root,path:["equipmentStats"]}],seen=new Set();
  while(pending.length){
