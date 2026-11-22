@@ -26,8 +26,9 @@ function rarity(item){const g=Number(item.grade);return Number.isInteger(g)&&g>=
 function rarityStyle(item){const g=Number(item.grade);return Number.isInteger(g)&&g>=0&&g<=4?RARITY_COLORS[g]:"var(--common)"}
 function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function iconFor(type){return ICONS[type]||"✧"}
+function weaponImageLoaded(img){img.classList.add("loaded");if(img.parentElement)img.parentElement.classList.add("has-image")}
 function weaponImageFallback(img){const base=img.dataset.base||"";const variants=[base,base+".png",base+".webp",base+".jpg",base+".jpeg"];const next=Number(img.dataset.try||0)+1;if(next<variants.length){img.dataset.try=String(next);img.src=variants[next]}else img.remove()}
-function weaponImageMarkup(w,extraClass=""){const path=String(w.icon||"").trim();if(!path)return "";const src=path.startsWith("http")?path:"https://questlog.gg"+(path.startsWith("/")?path:"/"+path);return '<img class="'+extraClass+'" src="'+escapeHtml(src)+'" data-base="'+escapeHtml(src)+'" data-try="0" alt="Imagem de '+escapeHtml(w.name||"arma")+'" loading="lazy" onerror="weaponImageFallback(this)">'}
+function weaponImageMarkup(w,extraClass=""){const path=String(w.icon||"").trim();if(!path)return "";const src=path.startsWith("http")?path:"https://questlog.gg"+(path.startsWith("/")?path:"/"+path);return '<img class="'+extraClass+'" src="'+escapeHtml(src)+'" data-base="'+escapeHtml(src)+'" data-try="0" alt="Imagem de '+escapeHtml(w.name||"item")+'" loading="lazy" decoding="async" referrerpolicy="no-referrer" onload="weaponImageLoaded(this)" onerror="weaponImageFallback(this)">'}
 
 function rarityColorForLabel(label){const i=RARITIES.indexOf(label);return i<0?"var(--text)":RARITY_COLORS[i]}
 function fillRarityOptions(id){const el=$(id);if(!el)return;const selected=el.value;el.innerHTML='<option value="">Todas as raridades</option>'+RARITIES.map(label=>'<option value="'+label+'" style="color:'+rarityColorForLabel(label)+'">'+label+'</option>').join("");el.value=selected}
