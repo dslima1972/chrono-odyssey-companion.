@@ -49,3 +49,11 @@
 
 /* Fichas: metadados compactos no cabeçalho e foco nos atributos */
 .detail-heading-copy{min-width:0;flex:1}.detail-header-meta{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}.detail-header-meta .detail-meta-chip{padding:4px 7px;background:#0d1922;border-color:#344552}.detail-header-meta .detail-meta-chip small{font-size:7px}.detail-header-meta .detail-meta-chip strong{font-size:9px}.detail-top{align-items:flex-start}.detail-section.stats-primary{margin-top:14px}@media(max-width:760px){.detail-header-meta{gap:4px}.detail-header-meta .detail-meta-chip{padding:4px 6px}}
+
+
+/* Raridade também colore suavemente a superfície dos itens */
+.weapon-row{background:linear-gradient(100deg,color-mix(in srgb,var(--rarity) 13%,#101c26),color-mix(in srgb,var(--rarity) 5%,transparent) 72%,transparent);transition:background .18s,border-color .18s}
+.weapon-row:hover,.weapon-row.selected{background:linear-gradient(100deg,color-mix(in srgb,var(--rarity) 23%,#172633),color-mix(in srgb,var(--rarity) 9%,#172633) 75%)}
+.weapon-symbol{background:color-mix(in srgb,var(--rarity) 15%,#182733)}
+.weapon-symbol img{background:transparent}
+#rarity-filter option,#armor-rarity-filter option{font-weight:600}
