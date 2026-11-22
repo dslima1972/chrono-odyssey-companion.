@@ -406,3 +406,62 @@ footer{border-color:#393528;color:var(--faint)}
  .hero p{font-size:11px}
  .hero-rule{margin-top:9px}
 }
+
+/* Build planner - character equipment screen */
+.build-controls{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:18px 0}
+.build-controls label{display:grid;gap:7px;color:var(--gold2);font-size:10px;letter-spacing:1px;text-transform:uppercase}
+.build-controls select,.build-stat-panel select{min-width:0}
+.build-stat-panels{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+.build-stat-panel{border:1px solid var(--border);background:linear-gradient(145deg,#191911,#11130f);padding:16px}
+.build-stat-panel h3,.build-equipment-panel h3{font:500 15px Cinzel,Georgia,serif;color:var(--gold2);margin:0 0 7px}
+.build-stat-panel p{font-size:11px;color:var(--muted);line-height:1.5;margin:0 0 12px}
+.build-stat-panel>div{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.build-workspace{display:grid;grid-template-columns:minmax(240px,.72fr) minmax(0,1.8fr);gap:14px;align-items:start}
+.build-character-panel{position:sticky;top:16px;border:1px solid #514631;background:linear-gradient(180deg,#201f17,#0c100e);padding:12px}
+#build-character{position:relative;min-height:420px;overflow:hidden;background:radial-gradient(ellipse at 50% 25%,#59605a,#171b18 60%,#0a0d0b)}
+#build-character img{width:100%;height:420px;object-fit:cover;object-position:top center;display:block;mask-image:linear-gradient(#000 72%,transparent 100%)}
+.build-character-caption{position:absolute;bottom:12px;left:12px;right:12px;display:grid;gap:4px;text-shadow:0 2px 8px #000}
+.build-character-caption span,.build-character-placeholder small{font-size:9px;letter-spacing:2px;color:var(--gold2)}
+.build-character-caption strong{font:500 23px Cinzel,Georgia,serif}
+.build-character-caption small{font-size:9px;color:#b6ae9c;letter-spacing:1.5px}
+.build-character-placeholder{min-height:420px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--gold2)}
+.build-character-placeholder span{font-size:56px}
+.build-character-placeholder strong{font:500 18px Cinzel,Georgia,serif}
+.build-character-panel>p{color:var(--muted);font-size:11px;line-height:1.6;margin:12px 2px 2px}
+.build-equipment-panel{display:grid;gap:16px;min-width:0}
+.build-equipment-panel>section{border:1px solid var(--border);background:#101710;padding:16px}
+.build-slot-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.build-slot{display:flex;align-items:center;gap:10px;min-width:0;border:1px solid #4b4534;background:linear-gradient(100deg,#252419,#11140f);padding:8px}
+.build-slot-icon{width:48px;height:52px;flex:0 0 48px;display:grid;place-items:center;color:var(--gold2);font-size:23px;background:#090d0b;border:1px solid #3e3b2e;overflow:hidden}
+.build-slot-icon img,.build-result-icon img,.build-picker-item span img{width:100%;height:100%;object-fit:contain}
+.build-slot-copy{display:grid;gap:4px;min-width:0;flex:1}
+.build-slot-copy small{font-size:8px;letter-spacing:1px;color:var(--gold2)}
+.build-slot-copy strong{font:500 11px Cinzel,Georgia,serif;overflow-wrap:anywhere}
+.build-slot-copy span{font-size:9px;color:var(--muted)}
+.build-slot-action{border:1px solid #67583b;background:#29271b;color:var(--gold2);padding:7px 8px;font-size:9px;cursor:pointer}
+.build-slot-action:hover,.build-picker-head button:hover{background:#49402b}
+.build-suggestions-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.build-suggestion-group{margin-top:14px;border-top:1px solid #393629;padding-top:12px;min-width:0}
+.build-suggestion-group h4{font:500 12px Cinzel,Georgia,serif;color:var(--gold2);margin:0 0 9px}
+.build-suggestion-group h4 span{font:10px Inter,sans-serif;color:var(--muted);float:right}
+.build-result-list{display:grid;gap:5px}
+.build-result{display:flex;align-items:center;gap:9px;width:100%;text-align:left;border:1px solid #353629;background:#151811;color:var(--text);padding:6px;cursor:pointer}
+.build-result:hover,.build-picker-item:hover{border-color:var(--gold)}
+.build-result-icon{width:38px;height:38px;flex:0 0 38px;display:grid;place-items:center;background:#090d0b;overflow:hidden}
+.build-result>span:last-child{display:grid;gap:4px;min-width:0}
+.build-result strong{font:500 10px Cinzel,Georgia,serif}
+.build-result small{font-size:8px;color:var(--muted);overflow-wrap:anywhere}
+.build-empty,.build-data-status{font-size:10px;color:var(--muted);line-height:1.6}
+.build-picker{position:relative;margin-top:16px;border:1px solid var(--gold);background:#11140f;padding:14px}
+.build-picker[hidden]{display:none}
+.build-picker-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.build-picker-head h3{font:500 16px Cinzel,Georgia,serif;color:var(--gold2);margin:0}
+.build-picker-head button{border:1px solid #67583b;background:#29271b;color:var(--gold2);padding:7px 10px;cursor:pointer}
+.build-picker-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:12px;max-height:360px;overflow:auto}
+.build-picker-item{display:grid;grid-template-columns:42px minmax(0,1fr);align-items:center;gap:6px;text-align:left;background:#171a13;color:var(--text);border:1px solid #393629;padding:7px;cursor:pointer}
+.build-picker-item span{width:42px;height:42px;grid-row:span 2}
+.build-picker-item strong{font:500 9px Cinzel,Georgia,serif;overflow-wrap:anywhere}
+.build-picker-item small{font-size:8px;color:var(--muted)}
+.build-data-status{margin-top:14px}
+@media(max-width:900px){.build-workspace{grid-template-columns:1fr}.build-character-panel{position:relative;top:auto;display:grid;grid-template-columns:minmax(150px,.7fr) 1fr;gap:12px;align-items:center}.build-character-panel>p{margin:0}.build-character-panel #build-character,.build-character-placeholder,.build-character-panel img{min-height:260px;height:260px}.build-suggestions-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:650px){.build-controls,.build-stat-panels{grid-template-columns:1fr}.build-stat-panel>div{grid-template-columns:1fr 1fr}.build-character-panel{grid-template-columns:1fr}.build-character-panel #build-character,.build-character-placeholder,.build-character-panel img{min-height:300px;height:300px}.build-slot-grid,.build-suggestions-grid{grid-template-columns:1fr}.build-picker-list{grid-template-columns:1fr 1fr}}
