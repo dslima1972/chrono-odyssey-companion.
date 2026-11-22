@@ -40,20 +40,29 @@ const STAT_LABELS={increasedamage:"Aumento de dano",addmaximummana:"Mana máxima
 function humanizeStat(value){const key=String(value||"").toLowerCase();return STAT_LABELS[key]||String(value||"Atributo").replace(/([a-z])([A-Z])/g,"$1 $2").replace(/[_-]/g," ").replace(/^./,x=>x.toUpperCase())}
 function detailField(label,value){if(value===undefined||value===null||value==="")return "";return '<div class="detail-field"><small>'+escapeHtml(label)+'</small><strong>'+escapeHtml(Array.isArray(value)?value.join(", "):String(value))+'</strong></div>'}
 function renderItemStats(item){const raw=item?.itemStats?.stats;let entries=[];if(Array.isArray(raw)){entries=raw.map(s=>[s?.statType??s?.type??s?.key??"Atributo",s])}else if(raw&&typeof raw==="object"){entries=Object.entries(raw)}if(!entries.length)return '<p class="detail-muted">A fonte não retornou atributos básicos para este item.</p>';return '<div class="stat-list">'+entries.map(([key,s])=>{const value=s&&typeof s==="object"?(s.statValue??s.value??s.amount??s.statValue1??"—"):s;const chance=s&&typeof s==="object"&&s.chancePercentage!=null?' · '+Number(s.chancePercentage).toLocaleString("pt-BR",{maximumFractionDigits:2})+'% de chance':'';return '<div class="stat-line"><span>'+escapeHtml(humanizeStat(s&&typeof s==="object"?(s.statType??s.type??key):key))+'</span><strong>'+escapeHtml(value)+'</strong><small>'+escapeHtml(chance)+'</small></div>'}).join("")+'</div>'}
+function findWeaponAttackLevels(item){
+ const visited=new Set(),pending=[item];
+ while(pending.length){
+  const current=pending.shift();
+  if(!current||typeof current!=="object"||visited.has(current))continue;
+  visited.add(current);
+  const levels=current.equipmentStats?.attack?.gearScore;
+  if(levels&&typeof levels==="object"&&Object.keys(levels).length)return levels;
+  for(const value of Object.values(current))if(value&&typeof value==="object")pending.push(value);
+ }
+ return null;
+}
 function renderWeaponStats(item){
  const base=renderItemStats(item);
- const levels=item?.equipmentStats?.attack?.gearScore;
- let attackValue=levels&&typeof levels==="object"?levels["1"]:null;
- if(attackValue===undefined||attackValue===null){
-  const first=levels&&typeof levels==="object"?Object.entries(levels).sort((a,b)=>Number(a[0])-Number(b[0]))[0]:null;
-  attackValue=first?.[1]??null;
- }
+ const levels=findWeaponAttackLevels(item);
+ const first=levels?Object.entries(levels).sort((a,b)=>Number(a[0])-Number(b[0]))[0]:null;
+ const attackValue=first?.[1]??null;
  if(attackValue===null)return base;
  const row='<div class="stat-line"><span>Ataque básico</span><strong>'+escapeHtml(attackValue)+'</strong><small></small></div>';
  if(base.startsWith('<div class="stat-list">'))return base.replace('<div class="stat-list">','<div class="stat-list">'+row);
  return '<div class="stat-list">'+row+'</div>'+base;
 }
-function renderAttackProgression(item){const levels=item?.equipmentStats?.attack?.gearScore;if(!levels||typeof levels!=="object")return "";const entries=Object.entries(levels).sort((a,b)=>Number(a[0])-Number(b[0]));if(!entries.length)return "";const first=entries[0],last=entries[entries.length-1];return '<details class="detail-disclosure"><summary>Progressão de ataque por Gear Score <span>'+escapeHtml(first[1])+' → '+escapeHtml(last[1])+'</span></summary><div class="progression-grid">'+entries.map(([level,value])=>'<div><small>Nível '+escapeHtml(level)+'</small><strong>'+escapeHtml(value)+'</strong></div>').join("")+'</div></details>'}
+function renderAttackProgression(item){const levels=findWeaponAttackLevels(item);if(!levels||typeof levels!=="object")return "";const entries=Object.entries(levels).sort((a,b)=>Number(a[0])-Number(b[0]));if(!entries.length)return "";const first=entries[0],last=entries[entries.length-1];return '<details class="detail-disclosure"><summary>Progressão de ataque por Gear Score <span>'+escapeHtml(first[1])+' → '+escapeHtml(last[1])+'</span></summary><div class="progression-grid">'+entries.map(([level,value])=>'<div><small>Nível '+escapeHtml(level)+'</small><strong>'+escapeHtml(value)+'</strong></div>').join("")+'</div></details>'}
 function renderSuffixes(item){const suffixes=item?.itemStats?.suffixes;if(!suffixes||typeof suffixes!=="object"||!Object.keys(suffixes).length)return "";return '<section class="detail-section"><h4>Sufixos disponíveis</h4>'+Object.values(suffixes).map(s=>{const levels=s.gearScore&&typeof s.gearScore==="object"?Object.entries(s.gearScore).sort((a,b)=>Number(a[0])-Number(b[0])):[];const first=levels[0]?.[1],last=levels[levels.length-1]?.[1];const values=[first?.statValue1??first?.value,last?.statValue1??last?.value].filter(v=>v!=null);return '<div class="suffix-row"><strong>'+escapeHtml(s.name||"Sufixo")+'</strong><span>'+escapeHtml(values.length?values.join(" → "):"Valores por nível disponíveis na fonte")+'</span></div>'}).join("")+'</section>'}
 function compactMeta(label,value){if(value===undefined||value===null||value==="")return "";return '<span class="detail-meta-chip"><small>'+escapeHtml(label)+'</small><strong>'+escapeHtml(Array.isArray(value)?value.join(", "):String(value))+'</strong></span>'}
 function detailedWeaponMarkup(w,item){const info=item?.itemInfo||{},grade=item?.equipmentGradeInfo||{},attack=item?.equipmentStats?.attack;const quick=compactMeta("ID",w.id||w.compoundId)+compactMeta("Nível",info.requiredLevel)+compactMeta("Tier",info.tier);const fields=[detailField("Peso",info.weight),detailField("Durabilidade máxima",info.maxDurability),detailField("Classes compatíveis",info.classes),detailField("Pode reforçar",info.canReinforce===true?"Sim":info.canReinforce===false?"Não":null),detailField("Sockets de gema",grade.gemSocket===true?"Sim":grade.gemSocket===false?"Não":null),detailField("Quantidade de perks",grade.perkCount??item?.itemStats?.perkCount)].filter(Boolean).join("");return '<section class="detail-section stats-primary"><h4>Atributos e efeitos</h4>'+renderWeaponStats(item)+'</section>'+renderAttackProgression(item)+renderSuffixes(item)+(fields?'<details class="detail-disclosure"><summary>Outras informações do equipamento</summary><div class="detail-fields">'+fields+'</div></details>':"")+'<p class="detail-note">Dados sincronizados da ficha individual do Questlog. Última sincronização: '+escapeHtml(itemDetailsGeneratedAt||"não informada")+'.</p>'}
