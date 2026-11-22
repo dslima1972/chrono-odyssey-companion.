@@ -99,7 +99,7 @@ async function loadArmorDetails(item){
   if(!armorDetailsPromise)armorDetailsPromise=(async()=>{const manifestResponse=await fetch("./data/armor-details-manifest.json?v=20261122a",{cache:"no-store"});if(!manifestResponse.ok)throw new Error("Manifesto local de detalhes das armaduras não encontrado (HTTP "+manifestResponse.status+").");const manifest=await manifestResponse.json();if(!Array.isArray(manifest.parts)||!manifest.parts.length)throw new Error("O manifesto não contém a lista de partes dos detalhes das armaduras.");const responses=await Promise.all(manifest.parts.map(async name=>{const response=await fetch("./data/"+encodeURIComponent(name)+"?v=20261122a",{cache:"no-store"});if(!response.ok)throw new Error("Não foi possível carregar "+name+" (HTTP "+response.status+").");return response.json()}));const allItems={};for(const part of responses)Object.assign(allItems,part.items||{});return allItems})();
   const all=await armorDetailsPromise,record=all[id]||all[id.replace(/^item-/,"")];
   const current=$("armor-detail-live");if(!current||!record||!selectedArmor||String(selectedArmor.id||selectedArmor.compoundId)!==id)return;
-  current.innerHTML=detailedArmorMarkup(record);
+  current.innerHTML=detailedArmorMarkup(record,item);
  }catch(e){const current=$("armor-detail-live");if(current)current.innerHTML='<p class="detail-muted">A ficha detalhada será habilitada quando a coleta do Questlog for concluída. Os dados ainda não foram importados.</p>'}
 }
 function selectArmor(id){
