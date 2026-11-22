@@ -279,3 +279,23 @@ footer{border-color:#393528;color:var(--faint)}
 }
 .class-weapon-icon-wrap.class-cover-weapon-icon img,
 .class-weapon-icon-wrap.class-cover-weapon-icon span{display:none!important}
+
+
+/* Armas da classe: símbolo à esquerda e descrição ao lado */
+.class-weapon-details article.class-weapon-entry{
+ display:grid;grid-template-columns:58px minmax(0,1fr);
+ align-items:center;gap:14px;padding:14px 16px;
+}
+.class-weapon-entry .class-weapon-copy{min-width:0}
+.class-weapon-entry .class-weapon-copy h5{margin:0 0 6px}
+.class-weapon-entry .class-weapon-copy p{margin:0;overflow-wrap:anywhere}
+.class-weapon-icon-wrap.class-cover-weapon-icon{
+ width:58px;height:68px;flex:0 0 58px;border:0;border-radius:0;
+ background-color:transparent;background-repeat:no-repeat;
+ background-size:1200% auto;box-shadow:none;
+}
+@media(max-width:760px){
+ .class-weapon-details{grid-template-columns:1fr}
+ .class-weapon-details article.class-weapon-entry{grid-template-columns:54px minmax(0,1fr);gap:12px}
+ .class-weapon-icon-wrap.class-cover-weapon-icon{width:54px;height:64px;flex-basis:54px}
+}
