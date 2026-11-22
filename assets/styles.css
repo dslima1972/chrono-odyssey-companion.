@@ -266,3 +266,16 @@ footer{border-color:#393528;color:var(--faint)}
 .class-weapon-details h5{margin:0 0 1px}
 @media(max-width:760px){.class-weapon-details{grid-template-columns:1fr 1fr}}
 @media(max-width:390px){.class-weapon-details{grid-template-columns:1fr}}
+
+
+/* Recortes dos símbolos diretamente das capas oficiais de cada classe */
+.class-weapon-icon-wrap.class-cover-weapon-icon{
+ width:58px;height:58px;flex:0 0 58px;
+ background-repeat:no-repeat;
+ background-size:1200% auto;
+ border:1px solid rgba(182,161,116,.5);
+ background-color:#171610;
+ box-shadow:inset 0 0 0 1px rgba(0,0,0,.35);
+}
+.class-weapon-icon-wrap.class-cover-weapon-icon img,
+.class-weapon-icon-wrap.class-cover-weapon-icon span{display:none!important}
