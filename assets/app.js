@@ -57,11 +57,11 @@ const ARMOR_TYPE_ICONS={head:"♜",helmet:"♜",shoulder:"♢",shoulders:"♢",c
 function armorType(item){const key=String(item.subCategory||item.category||"").trim().toLowerCase();return ARMOR_TYPES[key]||String(item.subCategory||item.category||"Tipo não identificado")}
 function armorIcon(item){const key=String(item.subCategory||item.category||"").trim().toLowerCase();return ARMOR_TYPE_ICONS[key]||"✧"}
 function armorSetName(item){
- const name=String(item.name||"").replace(/\\s*\\([^)]*\\)\\s*$/,"").trim();
+ const name=String(item.name||"").replace(/\s*\\([^)]*\\)\\s*$/,"").trim();
  const slotWords="helmet|head|hood|hat|crown|shoulder|pauldron|chest|armor|cuirass|robe|gloves|gauntlets|hands|belt|waist|pants|legs|greaves|boots|shoes|feet|cloak|cape|back";
  const patterns=[new RegExp("\\s+(?:"+slotWords+")(?:\\s+(?:of|piece))?$","i"),new RegExp("^(?:"+slotWords+")\\s+of\\s+","i")];
  let base=name;for(const p of patterns)base=base.replace(p,"").trim();
- base=base.replace(/[\\s:–—-]+$/,"").trim();
+ base=base.replace(/[\s:–—-]+$/,"").trim();
  return base&&base.toLowerCase()!==name.toLowerCase()?base:"";
 }
 function armorSetLabel(item){return armorSetName(item)||"Conjunto não identificado"}
@@ -122,7 +122,7 @@ async function loadArmorData(){
  try{
   const response=await fetch("./data/armor-export.json",{cache:"no-store"});if(!response.ok)throw new Error("Catálogo ainda não enviado.");
   const data=await response.json(),items=Array.isArray(data)?data:(Array.isArray(data.items)?data.items:[]);
-  armors=items.filter(x=>!x.isDisabled&&!/\\(Test\\)/i.test(String(x.name||"")));
+  armors=items.filter(x=>!x.isDisabled&&!/\(Test\\)/i.test(String(x.name||"")));
   fillArmorFilters();renderArmorList();
   $("armor-data-status").textContent=armors.length+" peças carregadas. Conjuntos identificados automaticamente pelo nome; itens sem padrão reconhecível permanecem como conjunto não identificado.";
   $("armor-catalog-count").textContent=armors.length+" PEÇAS";
