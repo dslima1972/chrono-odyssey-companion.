@@ -114,9 +114,9 @@ function armorFiltered(){
 }
 function fillArmorFilters(){const types=[...new Set(armors.map(armorType).filter(x=>x&&x!=="Tipo não identificado"))].sort((a,b)=>a.localeCompare(b,"pt-BR"));const counts=new Map();armors.forEach(item=>{const name=armorSetLabel(item);if(name!=="Conjunto não identificado")counts.set(name,(counts.get(name)||0)+1)});const sets=[...counts.entries()].filter(([,count])=>count>1).map(([name])=>name).sort((a,b)=>a.localeCompare(b,"pt-BR"));$("armor-type-filter").innerHTML='<option value="">Todos os tipos</option>'+types.map(x=>'<option>'+escapeHtml(x)+'</option>').join("");$("armor-set-filter").innerHTML='<option value="">Todos os conjuntos</option>'+sets.map(x=>'<option>'+escapeHtml(x)+'</option>').join("");fillRarityOptions("armor-rarity-filter")}
 function findArmorDefenseLevels(item){
- const direct=item?.equipmentStats?.defense?.gearScore;
- if(direct&&typeof direct==="object"&&Object.keys(direct).length)return direct;
- const pending=[{node:item?.equipmentStats,path:["equipmentStats"]}],seen=new Set();
+ const root=item?.equipmentStats;
+ if(!root||typeof root!=="object")return null;
+ const candidates=[],pending=[{node:root,path:["equipmentStats"]}],seen=new Set();
  while(pending.length){
   const current=pending.shift(),node=current.node;
   if(!node||typeof node!=="object"||seen.has(node))continue;
@@ -124,11 +124,15 @@ function findArmorDefenseLevels(item){
   if(Array.isArray(node)){node.forEach((value,index)=>pending.push({node:value,path:current.path.concat(String(index))}));continue;}
   for(const [key,value] of Object.entries(node)){
    const path=current.path.concat(key),normalized=path.join("").toLowerCase().replace(/[^a-z]/g,"");
-   if(key.toLowerCase()==="gearscore"&&value&&typeof value==="object"&&/(defense|defence)/.test(normalized)&&Object.keys(value).some(k=>Number.isFinite(Number(k))))return value;
+   if(key.toLowerCase()==="gearscore"&&value&&typeof value==="object"){
+    const levels=Object.entries(value).filter(([level,amount])=>Number.isFinite(Number(level))&&amount!==null&&amount!==undefined);
+    if(levels.length)candidates.push({levels:Object.fromEntries(levels),priority:/(defense|defence)/.test(normalized)?0:1});
+   }
    if(value&&typeof value==="object")pending.push({node:value,path});
   }
  }
- return null;
+ candidates.sort((a,b)=>a.priority-b.priority);
+ return candidates[0]?.levels||null;
 }
 function renderDefenseProgression(item){
  const levels=findArmorDefenseLevels(item);
