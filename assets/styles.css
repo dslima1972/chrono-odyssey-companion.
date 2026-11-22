@@ -103,3 +103,64 @@
 /* Oculta o ícone genérico quando a imagem real do item carregou. */
 .weapon-symbol.has-image > span,
 .detail-icon.has-image > span{display:none}
+
+
+/* Chrono Odyssey visual identity — charcoal, aged bronze and ivory metal */
+:root{
+ --bg:#090a09;
+ --panel:#171712;
+ --panel2:#211f18;
+ --border:#494333;
+ --gold:#a99262;
+ --gold2:#d4c8a8;
+ --text:#e2ddcf;
+ --muted:#aaa391;
+ --faint:#777363;
+ --common:#aab2b9;
+ --uncommon:#6eae83;
+ --rare:#72a9db;
+ --epic:#b18bd8;
+ --legendary:#d8ad58;
+}
+html{background:var(--bg)}
+body{background:radial-gradient(ellipse at 50% -22%,#292519 0,transparent 58%),var(--bg);color:var(--text)}
+.ambient-one{background:#a58a55;opacity:.055}
+.ambient-two{background:#56606a;opacity:.035}
+.topbar{background:#0b0b09e8;border-bottom-color:#393426}
+.brand-mark{color:var(--gold);text-shadow:0 0 18px #a9926238}
+.source-link,.detail-source,.class-open,.class-back{color:var(--gold2)}
+.hero h1 em,.tab:hover,.tab.active,.detail-section h4,.gear-score-heading{color:var(--gold2)}
+.search-wrap,input,select{background:#12120e;border-color:var(--border);color:var(--text)}
+.search-wrap span,.eyebrow,.hero-rule,.detail-ornament,.info-symbol{color:var(--gold)}
+.search-wrap:focus-within,select:focus,input:focus{border-color:var(--gold)}
+.weapon-list{background:#11110ed9;border-color:var(--border)}
+.weapon-row{border-bottom-color:#343126}
+.weapon-row:hover,.weapon-row.selected{background:#28251c}
+.weapon-symbol{background:#201e17;border-color:var(--rarity)}
+.weapon-symbol img{background:transparent}
+.detail-panel{background:linear-gradient(145deg,#211f18,#11110e);border-color:var(--border)}
+.detail-icon{background:#12120e}
+.detail-fields .detail-field,.detail-meta-chip,.gear-score-control{background:#15140f;border-color:#393528}
+.detail-section,.class-section{border-color:#393528}
+.detail-section.stats-primary .stat-line{background:linear-gradient(110deg,#242117,#15140f);border-color:#4a4230}
+.detail-section.stats-primary .stat-line strong,.stat-line strong,.detail-meta-chip strong{color:var(--gold2)}
+.class-card,.class-detail,.info-card{background:linear-gradient(145deg,#201e17,#12120f);border-color:var(--border)}
+.class-card:hover{border-color:var(--gold)}
+.class-detail-hero{background:linear-gradient(110deg,#242117,#11110e)}
+.class-cover-fallback{background:radial-gradient(circle,#393326,#11110e);color:var(--gold)}
+.class-weapon-tags span{border-color:#554a34;color:var(--gold2)}
+.class-back,.armor-mode,.detail-expand-button{background:#211f18;border-color:#494333;color:var(--gold2)}
+.class-back:hover,.armor-mode.active,.armor-mode:hover,.detail-expand-button:hover{background:#302b20;border-color:var(--gold)}
+.class-section h4,.armor-set-group>header strong,.stat-line strong{color:var(--gold2)}
+.class-weapon-details article,.class-source-note,.detail-disclosure,.detail-option-list,.detail-option-row{background:#15140f;border-color:#393528}
+.armor-set-group>header{background:#201e17;border-color:#393528}
+.detail-error{background:#241a16;border-left-color:#9b6248}
+footer{border-color:#393528;color:var(--faint)}
+.mobile-detail{background:#090a09}
+.mobile-back{border-color:var(--border);color:var(--gold2)}
+.gear-score-slider{accent-color:#a99262}
+@media(min-width:761px){
+ .catalog-layout>.detail-panel{scrollbar-color:#746344 #11110e}
+ .catalog-layout>.detail-panel::-webkit-scrollbar-track{background:#11110e}
+ .catalog-layout>.detail-panel::-webkit-scrollbar-thumb{background:#746344;border-color:#11110e}
+}
