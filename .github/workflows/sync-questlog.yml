@@ -2,6 +2,11 @@ name: Atualizar catálogo Questlog
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/fetch-questlog.mjs"
+      - ".github/workflows/sync-questlog.yml"
   schedule:
     - cron: "20 6 * * *"
 
