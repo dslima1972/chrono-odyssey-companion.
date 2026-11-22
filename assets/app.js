@@ -99,9 +99,8 @@ function armorType(item){const key=String(item.subCategory||item.category||"").t
 function armorIcon(item){const key=String(item.subCategory||item.category||"").trim().toLowerCase();return ARMOR_TYPE_ICONS[key]||"✧"}
 function armorSetName(item){
  const name=String(item.name||"").replace(/\s*\([^)]*\)\s*$/,"").trim();
- // Alguns nomes incluem o material/variante antes do tipo da peça.
- // Ex.: "Ancient Guardian Plate Gauntlets" e "Coast Guard Leather Armor".
- const slotWords="masked\s+helm|helm|helmet|head|hood|hat|crown|shoulders?|pauldrons?|chest|armor|cuirass|robe|gloves|gauntlets|hands|belt|waist|pants|legs|greaves|boots|shoes|feet|cloak|cape|back";
+ // Remove a identificação da peça, preservando o nome-base do conjunto.
+ const slotWords="masked helm|helm|helmet|head|hood|hat|crown|shoulders?|pauldrons?|chest|armor|cuirass|robe|gloves|gauntlets|hands|belt|waist|pants|legs|greaves|boots|shoes|feet|cloak|cape|back";
  const materialWords="plate|leather";
  const suffix=new RegExp("\\s+(?:(?:"+materialWords+")\\s+)?(?:"+slotWords+")(?:\\s+(?:of|piece))?$","i");
  let base=name.replace(suffix,"").trim();
