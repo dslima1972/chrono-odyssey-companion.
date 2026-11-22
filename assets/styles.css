@@ -45,3 +45,7 @@
 .detail-disclosure{margin-top:13px}
 .detail-disclosure .detail-fields{margin:0;padding:0 10px 10px}
 @media(max-width:760px){.detail-quick-meta{gap:6px}.detail-meta-chip{padding:6px 8px}.detail-section.stats-primary h4{font-size:14px}}
+
+
+/* Fichas: metadados compactos no cabeçalho e foco nos atributos */
+.detail-heading-copy{min-width:0;flex:1}.detail-header-meta{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}.detail-header-meta .detail-meta-chip{padding:4px 7px;background:#0d1922;border-color:#344552}.detail-header-meta .detail-meta-chip small{font-size:7px}.detail-header-meta .detail-meta-chip strong{font-size:9px}.detail-top{align-items:flex-start}.detail-section.stats-primary{margin-top:14px}@media(max-width:760px){.detail-header-meta{gap:4px}.detail-header-meta .detail-meta-chip{padding:4px 6px}}
