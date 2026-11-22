@@ -256,3 +256,13 @@ footer{border-color:#393528;color:var(--faint)}
   padding:11px 12px;
  }
 }
+
+
+/* Ícones oficiais das armas na ficha de classe */
+.class-weapon-details article{display:flex;flex-direction:column;align-items:flex-start;gap:9px}
+.class-weapon-icon-wrap{width:52px;height:52px;flex:0 0 52px;position:relative;display:grid;place-items:center;overflow:hidden;background:linear-gradient(145deg,#27251c,#11110e);border:1px solid #62563b;color:var(--gold2);font-size:25px}
+.class-weapon-icon-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:5px;box-sizing:border-box}
+.class-weapon-icon-wrap.has-image>span{display:none}
+.class-weapon-details h5{margin:0 0 1px}
+@media(max-width:760px){.class-weapon-details{grid-template-columns:1fr 1fr}}
+@media(max-width:390px){.class-weapon-details{grid-template-columns:1fr}}
