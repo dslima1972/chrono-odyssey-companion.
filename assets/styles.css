@@ -292,7 +292,7 @@ footer{border-color:#393528;color:var(--faint)}
 .class-weapon-icon-wrap.class-cover-weapon-icon{
  width:58px;height:68px;flex:0 0 58px;border:0;border-radius:0;
  background-color:transparent;background-repeat:no-repeat;
- background-size:1200% auto;box-shadow:none;
+ background-size:1800% auto;box-shadow:none;
 }
 @media(max-width:760px){
  .class-weapon-details{grid-template-columns:1fr}
