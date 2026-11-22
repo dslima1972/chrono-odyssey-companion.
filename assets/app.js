@@ -181,9 +181,7 @@ function renderArmorStats(item){
  const base=renderItemStats(item),levels=findArmorDefenseLevels(item);
  const score=levels?defaultGearScore(item,levels):1;
  const defenses=renderArmorDefenseAttributes(item,score);
- const defenseValue=levels?(levels[String(score)]??Object.values(levels)[0]):null;
- const defenseRow=defenseValue!==null&&defenseValue!==undefined?'<div class="stat-list armor-defense-stats"><div class="stat-line"><span>Defesa básica</span><strong data-gear-score-map="'+escapeHtml(JSON.stringify(levels))+'">'+escapeHtml(defenseValue)+'</strong><small></small></div></div>':"";
- const extras=defenseRow+defenses;
+ const extras=defenses;
  const combined=base.startsWith('<div class="stat-list">')&&extras?base.slice(0,-6)+extras+'</div>':extras?'<div class="stat-list">'+extras+'</div>':base;
  return (levels?renderGearScoreControl(item,levels,"Defesa"):"")+combined;
 }
