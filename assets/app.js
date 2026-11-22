@@ -57,7 +57,7 @@ const ARMOR_TYPE_ICONS={head:"♜",helmet:"♜",shoulder:"♢",shoulders:"♢",c
 function armorType(item){const key=String(item.subCategory||item.category||"").trim().toLowerCase();return ARMOR_TYPES[key]||String(item.subCategory||item.category||"Tipo não identificado")}
 function armorIcon(item){const key=String(item.subCategory||item.category||"").trim().toLowerCase();return ARMOR_TYPE_ICONS[key]||"✧"}
 function armorSetName(item){
- const name=String(item.name||"").replace(/\s*\([^)]*\)\\s*$/,"").trim();
+ const name=String(item.name||"").replace(/\s*\([^)]*\)\s*$/,"").trim();
  const slotWords="helmet|head|hood|hat|crown|shoulder|pauldron|chest|armor|cuirass|robe|gloves|gauntlets|hands|belt|waist|pants|legs|greaves|boots|shoes|feet|cloak|cape|back";
  const patterns=[new RegExp("\\s+(?:"+slotWords+")(?:\\s+(?:of|piece))?$","i"),new RegExp("^(?:"+slotWords+")\\s+of\\s+","i")];
  let base=name;for(const p of patterns)base=base.replace(p,"").trim();
