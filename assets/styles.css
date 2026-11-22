@@ -57,3 +57,17 @@
 .weapon-symbol{background:color-mix(in srgb,var(--rarity) 15%,#182733)}
 .weapon-symbol img{background:transparent}
 #rarity-filter option,#armor-rarity-filter option{font-weight:600}
+
+
+/* A ficha completa acompanha a cor de raridade do item, assim como a lista */
+.detail-panel{
+ background:linear-gradient(135deg,color-mix(in srgb,var(--rarity) 17%,#172633),color-mix(in srgb,var(--rarity) 7%,#0f1b25) 58%,#0f1b25);
+ border-color:color-mix(in srgb,var(--rarity) 48%,var(--border));
+}
+.detail-icon{background:color-mix(in srgb,var(--rarity) 18%,#0c1720)}
+.detail-icon img{background:transparent}
+.detail-meta-chip{background:color-mix(in srgb,var(--rarity) 8%,#0d1922);border-color:color-mix(in srgb,var(--rarity) 28%,#344552)}
+.detail-section.stats-primary .stat-line{
+ background:linear-gradient(110deg,color-mix(in srgb,var(--rarity) 15%,#14232e),color-mix(in srgb,var(--rarity) 7%,#0d1922));
+ border-color:color-mix(in srgb,var(--rarity) 38%,#3a4c58);
+}
