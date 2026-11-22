@@ -9,8 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./assets/styles.css?v=20261122z">
-  <script src="./assets/app.js?v=20261122ab" defer></script>
+  <link rel="stylesheet" href="./assets/styles.css?v=20261122za">
+  <script src="./assets/app.js?v=20261122ac" defer></script>
 </head>
 <body>
   <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
@@ -32,6 +32,7 @@
       <button class="tab" data-tab="weapons">Arsenal <span>02</span></button>
       <button class="tab" data-tab="armor">Armaduras <span>03</span></button>
       <button class="tab" data-tab="about">Sobre os dados <span>04</span></button>
+      <button class="tab" data-tab="build">Criar build <span>05</span></button>
     </nav>
     <section id="weapons-view" class="view">
       <div class="section-heading">
@@ -87,6 +88,29 @@
         <article class="info-card"><span class="info-symbol">⟳</span><h3>Atualização</h3><p>O catálogo é atualizado por meio de um arquivo JSON exportado do Questlog e enviado ao repositório. O site lê esse arquivo publicado, sem consultar a API diretamente.</p><a href="https://github.com/dslima1972/chrono-odyssey-companion./actions" target="_blank" rel="noreferrer">Ver execuções ↗</a></article>
         <article class="info-card"><span class="info-symbol">⚑</span><h3>Estado do projeto</h3><p id="data-status">Aguardando o envio do arquivo exportado do Questlog.</p><p class="fine-print">Projeto comunitário, sem vínculo oficial com Chrono Studio ou Kakao Games.</p></article>
       </div>
+    </section>
+
+    <section id="build-view" class="view">
+      <div class="section-heading"><div><div class="eyebrow left">PERSONAGEM E EQUIPAMENTOS</div><h2>Criação de Build</h2></div><div class="catalog-count">BUILD PLANNER</div></div>
+      <p class="intro-copy">Monte seu personagem, escolha as armas e encontre equipamentos com os atributos desejados.</p>
+      <div class="build-controls">
+        <label>Classe<select id="build-class"><option value="">Selecione uma classe</option></select></label>
+        <label>Arma principal<select id="build-weapon-type" disabled><option value="">Selecione a classe primeiro</option></select></label>
+        <label>Arma secundária (opcional)<select id="build-weapon-type2" disabled><option value="">Selecione a classe primeiro</option></select></label>
+      </div>
+      <div class="build-stat-panels">
+        <section class="build-stat-panel"><h3>Prioridades das armas</h3><p>Escolha até duas estatísticas. É necessário selecionar o tipo de arma primeiro.</p><div><select id="build-weapon-stat1" disabled><option value="">Estatística principal</option></select><select id="build-weapon-stat2" disabled><option value="">Segunda estatística (opcional)</option></select></div></section>
+        <section class="build-stat-panel"><h3>Prioridades das armaduras</h3><p>Escolha até duas estatísticas para filtrar as peças sugeridas.</p><div><select id="build-armor-stat1" disabled><option value="">Estatística principal</option></select><select id="build-armor-stat2" disabled><option value="">Segunda estatística (opcional)</option></select></div></section>
+      </div>
+      <div class="build-workspace">
+        <aside class="build-character-panel"><div id="build-character"><div class="build-character-placeholder"><span>✧</span><strong>Seu personagem</strong><small>Selecione uma classe para começar</small></div></div><p id="build-class-summary">Escolha uma classe para liberar as opções de equipamento.</p></aside>
+        <div class="build-equipment-panel">
+          <section><h3>Armas equipadas</h3><div id="build-weapon-slots" class="build-slot-grid"></div><div id="build-weapon-results"></div></section>
+          <section><h3>Armaduras equipadas</h3><div id="build-armor-slots" class="build-slot-grid armor-slot-grid"></div><div id="build-armor-results" class="build-suggestions-grid"></div></section>
+        </div>
+      </div>
+      <p class="build-data-status" id="build-data-status">Carregando fichas detalhadas para montar as sugestões por atributos…</p>
+      <div class="build-picker" id="build-picker" hidden><div class="build-picker-head"><h3 id="build-picker-title">Selecionar peça</h3><button type="button" id="build-picker-close">Fechar ×</button></div><div id="build-picker-list" class="build-picker-list"></div></div>
     </section>
     <footer><span>CHRONO ODYSSEY COMPANION</span><span>UNOFFICIAL COMMUNITY PROJECT · 2026</span></footer>
   </main>
