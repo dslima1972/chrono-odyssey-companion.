@@ -10,7 +10,7 @@ const catalog = JSON.parse(await fs.readFile(CATALOG_PATH, "utf8"));
 const rawItems = Array.isArray(catalog) ? catalog : catalog.items ?? [];
 const items = rawItems.filter(item =>
   !item.isDisabled &&
-  !/\\(Test\\)/i.test(String(item.name ?? "")) &&
+  !/\(Test\)/i.test(String(item.name ?? "")) &&
   (item.id || item.compoundId)
 );
 
@@ -18,6 +18,7 @@ if (!items.length) throw new Error("Nenhum item válido foi encontrado no catál
 
 const details = {};
 const failures = [];
+let consecutiveFailures = 0;
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 function unwrap(payload) {
@@ -44,22 +45,37 @@ for (let index = 0; index < items.length; index++) {
         },
         signal: AbortSignal.timeout(20000)
       });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const payload = await response.json();
+      if (!response.ok) {
+        const body = (await response.text()).slice(0, 500);
+        throw new Error(`HTTP ${response.status}: ${body}`);
+      }
+      const responseText = await response.text();
+      let payload;
+      try { payload = JSON.parse(responseText); }
+      catch { throw new Error(`Resposta não é JSON: ${responseText.slice(0, 500)}`); }
       const item = unwrap(payload);
       if (!item || typeof item !== "object" || (!item.id && !item.itemInfo && !item.itemStats)) {
         throw new Error("Resposta sem os detalhes esperados");
       }
       details[id] = item;
+      consecutiveFailures = 0;
       success = true;
       break;
     } catch (error) {
       if (attempt === MAX_ATTEMPTS) {
-        failures.push({ id, name: entry.name ?? "", error: String(error.message ?? error) });
+        const message = String(error.message ?? error);
+        failures.push({ id, name: entry.name ?? "", error: message });
+        if (failures.length <= 3) console.error(`Falha no item ${id} (${entry.name ?? "sem nome"}): ${message}`);
       } else {
         await sleep(1000 * attempt);
       }
     }
+  }
+
+  if (!success) consecutiveFailures++;
+  if (consecutiveFailures >= 5) {
+    console.error("Cinco itens consecutivos falharam. Interrompendo para evitar uma coleta inútil.");
+    process.exit(1);
   }
 
   if ((index + 1) % 25 === 0 || index + 1 === items.length) {
