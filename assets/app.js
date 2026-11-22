@@ -94,7 +94,7 @@ function armorDetailMarkup(item){
 async function loadArmorDetails(item){
  const id=String(item.id||item.compoundId||"");const target=$("armor-detail-live");if(!target)return;
  try{
-  if(!armorDetailsPromise)armorDetailsPromise=fetch("./data/armor-details.json",{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error("Arquivo de detalhes ainda não publicado.");return r.json()}).then(d=>d.items||{});
+  if(!armorDetailsPromise)armorDetailsPromise=(async()=>{const manifestResponse=await fetch("./data/armor-details-manifest.json?v=20261122a",{cache:"no-store"});if(!manifestResponse.ok)throw new Error("Manifesto local de detalhes das armaduras não encontrado (HTTP "+manifestResponse.status+").");const manifest=await manifestResponse.json();if(!Array.isArray(manifest.parts)||!manifest.parts.length)throw new Error("O manifesto não contém a lista de partes dos detalhes das armaduras.");const responses=await Promise.all(manifest.parts.map(async name=>{const response=await fetch("./data/"+encodeURIComponent(name)+"?v=20261122a",{cache:"no-store"});if(!response.ok)throw new Error("Não foi possível carregar "+name+" (HTTP "+response.status+").");return response.json()}));const allItems={};for(const part of responses)Object.assign(allItems,part.items||{});return allItems})();
   const all=await armorDetailsPromise,record=all[id]||all[id.replace(/^item-/,"")];
   const current=$("armor-detail-live");if(!current||!record||!selectedArmor||String(selectedArmor.id||selectedArmor.compoundId)!==id)return;
   current.innerHTML=detailedArmorMarkup(record);
