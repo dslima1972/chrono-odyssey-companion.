@@ -81,11 +81,48 @@ function renderDefenseProgression(item){
  if(!entries.length)return "";
  return '<details class="detail-disclosure"><summary>Progressão de defesa por Gear Score <span>'+escapeHtml(entries[0][1])+' → '+escapeHtml(entries[entries.length-1][1])+'</span></summary><div class="progression-grid">'+entries.map(([level,value])=>'<div><small>Nível '+escapeHtml(level)+'</small><strong>'+escapeHtml(value)+'</strong></div>').join("")+'</div></details>';
 }
+function renderArmorDefenseAttributes(item){
+ const found={physical:null,magical:null};
+ const normalize=value=>String(value||"").toLowerCase().replace(/[^a-z]/g,"");
+ function walk(node,path=[],depth=0){
+  if(!node||typeof node!=="object"||depth>7)return;
+  for(const [key,value] of Object.entries(node)){
+   const next=[...path,key],joined=normalize(next.join(""));
+   const physical=/(physical|physic|physicaldef|physdef)/.test(joined)&&/(defense|defence|def)/.test(joined);
+   const magical=/(magical|magic|mag)/.test(joined)&&/(defense|defence|def)/.test(joined);
+   if((physical||magical)&&value!==null&&value!==undefined){
+    let amount=value;
+    if(typeof value==="object"){
+     const levels=value.gearScore&&typeof value.gearScore==="object"?value.gearScore:null;
+     if(levels){const sorted=Object.entries(levels).sort((a,b)=>Number(a[0])-Number(b[0]));amount=levels["1"]??sorted[0]?.[1]}
+     else amount=value.statValue??value.value??value.amount??value.statValue1??value.baseValue;
+    }
+    if(amount!==undefined&&amount!==null&&(typeof amount!=="object"||Array.isArray(amount))){
+     const target=physical?"physical":"magical";
+     if(found[target]===null)found[target]=amount;
+    }
+   }
+   if(value&&typeof value==="object"&&!Array.isArray(value))walk(value,next,depth+1);
+  }
+ }
+ walk(item?.equipmentStats||{},["equipmentStats"]);
+ walk(item?.itemStats||{},["itemStats"]);
+ const rows=[];
+ if(found.physical!==null)rows.push(["Defesa física",found.physical]);
+ if(found.magical!==null)rows.push(["Defesa mágica",found.magical]);
+ if(!rows.length)return "";
+ return '<div class="stat-list armor-defense-stats">'+rows.map(([label,value])=>'<div class="stat-line"><span>'+label+'</span><strong>'+escapeHtml(value)+'</strong><small></small></div>').join("")+'</div>';
+}
+function renderArmorStats(item){
+ const base=renderItemStats(item);
+ const defenses=renderArmorDefenseAttributes(item);
+ return defenses?base.replace('</div>', '')+defenses+'</div>':base;
+}
 function detailedArmorMarkup(item,catalogItem){
  const info=item?.itemInfo||{},grade=item?.equipmentGradeInfo||{};
  const quick=compactMeta("ID",catalogItem.id||catalogItem.compoundId)+compactMeta("Nível",info.requiredLevel)+compactMeta("Tier",info.tier)+compactMeta("Conjunto",armorSetLabel(catalogItem));
  const fields=[detailField("Peso",info.weight),detailField("Durabilidade máxima",info.maxDurability),detailField("Pode reforçar",info.canReinforce===true?"Sim":info.canReinforce===false?"Não":null),detailField("Sockets de gema",grade.gemSocket===true?"Sim":grade.gemSocket===false?"Não":null),detailField("Quantidade de perks",grade.perkCount??item?.itemStats?.perkCount)].filter(Boolean).join("");
- return '<section class="detail-section stats-primary"><h4>Atributos e efeitos</h4>'+renderItemStats(item)+'</section>'+renderDefenseProgression(item)+(fields?'<details class="detail-disclosure"><summary>Outras informações do equipamento</summary><div class="detail-fields">'+fields+'</div></details>':"")+'<p class="detail-note">Dados da ficha individual do Questlog. Os campos não fornecidos pela fonte não são exibidos.</p>';
+ return '<section class="detail-section stats-primary"><h4>Atributos e efeitos</h4>'+renderArmorStats(item)+'</section>'+renderDefenseProgression(item)+(fields?'<details class="detail-disclosure"><summary>Outras informações do equipamento</summary><div class="detail-fields">'+fields+'</div></details>':"")+'<p class="detail-note">Dados da ficha individual do Questlog. Os campos não fornecidos pela fonte não são exibidos.</p>';
 }
 function armorDetailMarkup(item){const type=armorType(item),color=rarityStyle(item),meta=compactMeta("ID",item.id||item.compoundId)+compactMeta("Conjunto",armorSetLabel(item));return '<div class="detail-panel" style="--rarity:'+color+'"><div class="detail-top"><div class="detail-icon"><span>'+armorIcon(item)+'</span>'+weaponImageMarkup(item)+'</div><div class="detail-heading-copy"><h3>'+escapeHtml(item.name||"Armadura")+'</h3><p>'+escapeHtml(type)+' · Equipável por todas as classes</p><div class="detail-rarity">'+escapeHtml(rarity(item))+'</div><div class="detail-header-meta">'+meta+'</div></div></div><div class="detail-live" id="armor-detail-live"><p class="detail-muted">Os atributos serão exibidos após a coleta das fichas individuais.</p></div><a class="detail-source" href="https://questlog.gg/chrono-odyssey/en/db/item/'+encodeURIComponent(item.id||item.compoundId||"")+'" target="_blank" rel="noreferrer">CONSULTAR FICHA NO QUESTLOG ↗</a></div>'}
 async function loadArmorDetails(item){
