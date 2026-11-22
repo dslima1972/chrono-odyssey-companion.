@@ -1,6 +1,12 @@
 name: Sincronizar dados detalhados do Questlog
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/**'
+      - 'data/questlog-export.json'
+      - '.github/workflows/sync-questlog-details.yml'
   workflow_dispatch:
   schedule:
     - cron: "17 6 * * 1"
