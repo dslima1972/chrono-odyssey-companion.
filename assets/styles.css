@@ -99,3 +99,7 @@
 .perk-row>span{color:var(--muted);text-align:right;line-height:1.5}
 .perk-row small{display:inline-block;margin-left:5px;color:var(--gold);font:500 8px Inter,sans-serif;text-transform:uppercase;letter-spacing:.5px}
 @media(max-width:520px){.detail-option-row,.perk-row{flex-direction:column;gap:4px}.detail-option-row>span,.perk-row>span{text-align:left}}
+
+/* Oculta o ícone genérico quando a imagem real do item carregou. */
+.weapon-symbol.has-image > span,
+.detail-icon.has-image > span{display:none}
