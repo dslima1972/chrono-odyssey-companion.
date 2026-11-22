@@ -116,7 +116,8 @@ function renderArmorDefenseAttributes(item){
 function renderArmorStats(item){
  const base=renderItemStats(item);
  const defenses=renderArmorDefenseAttributes(item);
- return defenses?base.replace('</div>', '')+defenses+'</div>':base;
+ if(!defenses)return base;
+ return base.startsWith('<div class="stat-list">')?base.slice(0,-6)+defenses+'</div>':'<div class="stat-list">'+defenses+'</div>';
 }
 function detailedArmorMarkup(item,catalogItem){
  const info=item?.itemInfo||{},grade=item?.equipmentGradeInfo||{};
