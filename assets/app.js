@@ -50,4 +50,72 @@ function renderClasses(){$("class-grid").innerHTML=CLASS_DATA.map(c=>'<button cl
 async function loadData(){try{let data=null,sourceFile="";for(const file of ["./data/questlog-export.json","./data/weapons.json"]){const res=await fetch(file,{cache:"no-store"});if(res.ok){data=await res.json();sourceFile=file;break}}if(!data)throw new Error("Arquivo do catálogo não encontrado");const candidates=[data.items,data.pageData,data.records,data.registros,data?.result?.data?.json?.pageData,data?.result?.data?.pageData,data?.data?.items,data?.data?.pageData];const rawItems=Array.isArray(data)?data:(candidates.find(Array.isArray)||[]);const testItems=rawItems.filter(w=>/\(Test\)/i.test(String(w.name||"")));weapons=rawItems.filter(w=>!w.isDisabled&&!/\(Test\)/i.test(String(w.name||"")));fillFilters();renderList();const stamp=data.updatedAt?new Date(data.updatedAt).toLocaleString("pt-BR"):"data da exportação: 02/10/2026";$("data-status").textContent=rawItems.length+" registros recebidos; "+weapons.length+" armas exibidas; "+testItems.length+" registros de teste ocultados. Fonte: "+sourceFile+". "+stamp+".";if(!weapons.length)$("data-status").textContent="O arquivo foi encontrado, mas não contém uma lista de itens reconhecida. Verifique o formato do export."}catch(e){$("weapon-list").innerHTML='<div class="empty-state">O catálogo exportado ainda não foi enviado. Quando o arquivo Questlog for adicionado à pasta data, as armas aparecerão aqui.</div>';$("data-status").textContent="Aguardando o arquivo data/questlog-export.json enviado ao repositório."}}
 document.querySelectorAll(".tab").forEach(tab=>tab.addEventListener("click",()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===tab));document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));$(tab.dataset.tab+"-view").classList.add("active")}));
 ["search","class-filter","type-filter","rarity-filter"].forEach(id=>$(id).addEventListener(id==="search"?"input":"change",renderList));
-renderClasses();loadData();
+
+let armors=[],selectedArmor=null,armorMode="pieces",armorDetailsPromise=null;
+const ARMOR_TYPES={head:"Cabeça",helmet:"Cabeça",shoulder:"Ombros",shoulders:"Ombros",chest:"Peito",body:"Peito",hands:"Mãos",gloves:"Mãos",waist:"Cintura",legs:"Pernas",pants:"Pernas",feet:"Pés",boots:"Pés",back:"Costas",cloak:"Costas"};
+const ARMOR_TYPE_ICONS={head:"♜",helmet:"♜",shoulder:"♢",shoulders:"♢",chest:"⬡",body:"⬡",hands:"✥",gloves:"✥",waist:"⌁",legs:"♧",pants:"♧",feet:"⌑",boots:"⌑",back:"✧",cloak:"✧"};
+function armorType(item){const key=String(item.subCategory||item.category||"").trim().toLowerCase();return ARMOR_TYPES[key]||String(item.subCategory||item.category||"Tipo não identificado")}
+function armorIcon(item){const key=String(item.subCategory||item.category||"").trim().toLowerCase();return ARMOR_TYPE_ICONS[key]||"✧"}
+function armorSetName(item){
+ const name=String(item.name||"").replace(/\\s*\\([^)]*\\)\\s*$/,"").trim();
+ const slotWords="helmet|head|hood|hat|crown|shoulder|pauldron|chest|armor|cuirass|robe|gloves|gauntlets|hands|belt|waist|pants|legs|greaves|boots|shoes|feet|cloak|cape|back";
+ const patterns=[new RegExp("\\s+(?:"+slotWords+")(?:\\s+(?:of|piece))?$","i"),new RegExp("^(?:"+slotWords+")\\s+of\\s+","i")];
+ let base=name;for(const p of patterns)base=base.replace(p,"").trim();
+ base=base.replace(/[\\s:–—-]+$/,"").trim();
+ return base&&base.toLowerCase()!==name.toLowerCase()?base:"";
+}
+function armorSetLabel(item){return armorSetName(item)||"Conjunto não identificado"}
+function armorFiltered(){
+ const q=$("armor-search").value.trim().toLowerCase(),t=$("armor-type-filter").value,r=$("armor-rarity-filter").value,s=$("armor-set-filter").value;
+ return armors.filter(x=>(!q||String(x.name||"").toLowerCase().includes(q)||String(x.id||"").includes(q))&&(!t||armorType(x)===t)&&(!r||rarity(x)===r)&&(!s||armorSetLabel(x)===s)).sort((a,b)=>String(a.name||"").localeCompare(String(b.name||""),"pt-BR"));
+}
+function fillArmorFilters(){
+ const types=[...new Set(armors.map(armorType).filter(x=>x&&x!=="Tipo não identificado"))].sort((a,b)=>a.localeCompare(b,"pt-BR"));
+ const sets=[...new Set(armors.map(armorSetLabel).filter(x=>x!=="Conjunto não identificado"))].sort((a,b)=>a.localeCompare(b,"pt-BR"));
+ $("armor-type-filter").innerHTML='<option value="">Todos os tipos</option>'+types.map(x=>'<option>'+escapeHtml(x)+'</option>').join("");
+ $("armor-set-filter").innerHTML='<option value="">Todos os conjuntos</option>'+sets.map(x=>'<option>'+escapeHtml(x)+'</option>').join("");
+}
+function armorDetailMarkup(item){
+ const type=armorType(item),set=armorSetLabel(item),color=rarityStyle(item);
+ return '<div class="detail-panel" style="--rarity:'+color+'"><div class="detail-top"><div class="detail-icon"><span>'+armorIcon(item)+'</span>'+weaponImageMarkup(item)+'</div><div><h3>'+escapeHtml(item.name||"Armadura")+'</h3><p>'+escapeHtml(type)+' · Equipável por todas as classes</p><div class="detail-rarity">'+escapeHtml(rarity(item))+'</div></div></div><div class="detail-fields">'+detailField("Identificador",item.id||item.compoundId)+detailField("Tipo",type)+detailField("Raridade",rarity(item))+detailField("Conjunto",set)+'</div><div class="detail-live" id="armor-detail-live"><p class="detail-muted">Os atributos serão exibidos após a coleta das fichas individuais.</p></div><a class="detail-source" href="https://questlog.gg/chrono-odyssey/en/db/item/'+encodeURIComponent(item.id||item.compoundId||"")+'" target="_blank" rel="noreferrer">CONSULTAR FICHA NO QUESTLOG ↗</a></div>';
+}
+async function loadArmorDetails(item){
+ const id=String(item.id||item.compoundId||"");const target=$("armor-detail-live");if(!target)return;
+ try{
+  if(!armorDetailsPromise)armorDetailsPromise=fetch("./data/armor-details.json",{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error("Arquivo de detalhes ainda não publicado.");return r.json()}).then(d=>d.items||{});
+  const all=await armorDetailsPromise,record=all[id]||all[id.replace(/^item-/,"")];
+  const current=$("armor-detail-live");if(!current||!record||!selectedArmor||String(selectedArmor.id||selectedArmor.compoundId)!==id)return;
+  current.innerHTML=detailedWeaponMarkup(item,record);
+ }catch(e){const current=$("armor-detail-live");if(current)current.innerHTML='<p class="detail-muted">A ficha detalhada será habilitada quando a coleta do Questlog for concluída. Os dados ainda não foram importados.</p>'}
+}
+function selectArmor(id){
+ selectedArmor=armors.find(x=>String(x.id)===String(id)||String(x.compoundId)===String(id));if(!selectedArmor)return;
+ renderArmorList();$("armor-detail").innerHTML=armorDetailMarkup(selectedArmor);$("armor-detail").classList.remove("empty-detail");loadArmorDetails(selectedArmor);
+ if(window.matchMedia("(max-width:760px)").matches){$("armor-mobile-detail").innerHTML='<button class="mobile-back" id="armor-mobile-back">← VOLTAR ÀS ARMADURAS</button>'+armorDetailMarkup(selectedArmor);$("armor-mobile-detail").hidden=false;loadArmorDetails(selectedArmor);$("armor-mobile-back").addEventListener("click",()=>$("armor-mobile-detail").hidden=true)}
+}
+function renderArmorList(){
+ const rows=armorFiltered();$("armor-catalog-count").textContent=armors.length?rows.length+" / "+armors.length+" PEÇAS":"AGUARDANDO CATÁLOGO";
+ if(!armors.length){$("armor-list").innerHTML='<div class="empty-state">A estrutura do catálogo está pronta. Aguardando a exportação de armaduras do Questlog.</div>';return}
+ if(armorMode==="sets"){
+  const groups=new Map();rows.forEach(x=>{const key=armorSetLabel(x);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(x)});
+  if(!groups.size){$("armor-list").innerHTML='<div class="empty-state">Nenhum conjunto corresponde aos filtros selecionados.</div>';return}
+  $("armor-list").innerHTML=[...groups.entries()].sort((a,b)=>a[0].localeCompare(b[0],"pt-BR")).map(([name,items])=>'<section class="armor-set-group"><header><strong>'+escapeHtml(name)+'</strong><span>'+items.length+' '+(items.length===1?"peça":"peças")+'</span></header><div>'+items.map(x=>'<button class="weapon-row armor-row" data-id="'+escapeHtml(x.id)+'" style="--rarity:'+rarityStyle(x)+'"><span class="weapon-symbol"><span>'+armorIcon(x)+'</span>'+weaponImageMarkup(x)+'</span><span><span class="weapon-name">'+escapeHtml(x.name||"Armadura")+'</span><span class="weapon-meta">'+escapeHtml(armorType(x))+'</span></span><span class="rarity-label">'+escapeHtml(rarity(x))+'</span></button>').join("")+'</div></section>').join("");
+ }else{
+  if(!rows.length){$("armor-list").innerHTML='<div class="empty-state">Nenhuma armadura corresponde aos filtros selecionados.</div>';return}
+  $("armor-list").innerHTML=rows.map(x=>'<button class="weapon-row armor-row '+(selectedArmor&&selectedArmor.id===x.id?"selected":"")+'" data-id="'+escapeHtml(x.id)+'" style="--rarity:'+rarityStyle(x)+'"><span class="weapon-symbol"><span>'+armorIcon(x)+'</span>'+weaponImageMarkup(x)+'</span><span><span class="weapon-name">'+escapeHtml(x.name||"Armadura")+'</span><span class="weapon-meta">'+escapeHtml(armorType(x))+' · '+escapeHtml(armorSetLabel(x))+'</span></span><span class="rarity-label">'+escapeHtml(rarity(x))+'</span></button>').join("");
+ }
+ document.querySelectorAll(".armor-row").forEach(b=>b.addEventListener("click",()=>selectArmor(b.dataset.id)));
+}
+async function loadArmorData(){
+ try{
+  const response=await fetch("./data/armor-export.json",{cache:"no-store"});if(!response.ok)throw new Error("Catálogo ainda não enviado.");
+  const data=await response.json(),items=Array.isArray(data)?data:(Array.isArray(data.items)?data.items:[]);
+  armors=items.filter(x=>!x.isDisabled&&!/\\(Test\\)/i.test(String(x.name||"")));
+  fillArmorFilters();renderArmorList();
+  $("armor-data-status").textContent=armors.length+" peças carregadas. Conjuntos identificados automaticamente pelo nome; itens sem padrão reconhecível permanecem como conjunto não identificado.";
+  $("armor-catalog-count").textContent=armors.length+" PEÇAS";
+ }catch(e){$("armor-data-status").textContent="Aguardando data/armor-export.json. Nenhum registro de armadura foi presumido ou criado.";renderArmorList()}
+}
+["armor-search","armor-type-filter","armor-rarity-filter","armor-set-filter"].forEach(id=>$(id).addEventListener(id==="armor-search"?"input":"change",renderArmorList));
+document.querySelectorAll(".armor-mode").forEach(b=>b.addEventListener("click",()=>{armorMode=b.dataset.armorMode;document.querySelectorAll(".armor-mode").forEach(x=>x.classList.toggle("active",x===b));renderArmorList()}));
+renderClasses();loadData();loadArmorData();
