@@ -39,7 +39,7 @@
     const url=API+"?input="+encodeURIComponent(JSON.stringify(input));
     const response=await fetch(url,{credentials:"same-origin",headers:{accept:"application/json"}});
     if(!response.ok){
-      const body=(await response.text()).slice(0,220).replace(/\\s+/g," ");
+      const body=(await response.text()).slice(0,220).replace(/\s+/g," ");
       throw new Error("Página "+page+": HTTP "+response.status+" — "+body);
     }
     const payload=await response.json();
@@ -57,7 +57,7 @@
     if(!Number.isFinite(pageCount)||pageCount<1||pageCount>500)throw new Error("Quantidade de páginas inválida: "+pageCount);
     const byId=new Map();
     const addRows=rows=>rows.forEach(item=>{
-      if(!item||item.isDisabled||/\\(Test\\)/i.test(String(item.name||"")))return;
+      if(!item||item.isDisabled||/\(Test\)/i.test(String(item.name||"")))return;
       const id=String(item.id??item.compoundId??"").replace(/^item-/,"");
       if(!id)return;
       byId.set(id,{...item,id,compoundId:item.compoundId||"item-"+id});
