@@ -86,9 +86,12 @@ function renderArmorDefenseAttributes(item){
  const normalize=value=>String(value||"").toLowerCase().replace(/[^a-z]/g,"");
  function walk(node,path=[],depth=0){
   if(!node||typeof node!=="object"||depth>7)return;
+  if(Array.isArray(node)){node.forEach((value,index)=>walk(value,path.concat(String(index)),depth+1));return}
+  const descriptor=node.statType??node.type??node.key??node.name;
+  const basePath=descriptor!==undefined&&descriptor!==null?path.concat(String(descriptor)):path;
   for(const [key,value] of Object.entries(node)){
-   const next=[...path,key],joined=normalize(next.join(""));
-   const physical=/(physical|physic|physicaldef|physdef)/.test(joined)&&/(defense|defence|def)/.test(joined);
+   const next=[...basePath,key],joined=normalize(next.join(""));
+   const physical=/(physical|physic|physdef)/.test(joined)&&/(defense|defence|def)/.test(joined);
    const magical=/(magical|magic|mag)/.test(joined)&&/(defense|defence|def)/.test(joined);
    if((physical||magical)&&value!==null&&value!==undefined){
     let amount=value;
