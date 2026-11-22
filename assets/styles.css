@@ -84,3 +84,18 @@
 
 /* Rolagem independente para fichas longas no painel de detalhes */
 @media(min-width:761px){.catalog-layout{align-items:stretch}.catalog-layout>.detail-panel{position:sticky;top:18px;max-height:calc(100vh - 36px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#8e754f #0b141c}.catalog-layout>.detail-panel::-webkit-scrollbar{width:8px}.catalog-layout>.detail-panel::-webkit-scrollbar-track{background:#0b141c}.catalog-layout>.detail-panel::-webkit-scrollbar-thumb{background:#6f6048;border:2px solid #0b141c;border-radius:8px}}
+
+
+/* Sufixos e perks: listas compactas com expansão progressiva */
+.detail-option-count{display:inline-flex;align-items:center;justify-content:center;min-width:19px;height:19px;margin-left:5px;padding:0 5px;border:1px solid var(--border);border-radius:10px;color:var(--muted);font:500 9px Inter,sans-serif;vertical-align:1px}
+.detail-option-list:not(.expanded) .detail-option-row:nth-child(n+6){display:none}
+.detail-option-row{align-items:flex-start}
+.detail-option-row>strong{flex:0 0 auto}
+.detail-option-row>span{flex:1;min-width:0}
+.detail-expand-button{margin-top:9px;padding:7px 11px;border:1px solid var(--border);background:#14232e;color:var(--gold2);font:500 9px Inter,sans-serif;letter-spacing:.35px;cursor:pointer}
+.detail-expand-button:hover{border-color:var(--gold);background:#1b2b37}
+.perk-row{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid #2b3b47;font-size:10px}
+.perk-row>strong{color:var(--text)}
+.perk-row>span{color:var(--muted);text-align:right;line-height:1.5}
+.perk-row small{display:inline-block;margin-left:5px;color:var(--gold);font:500 8px Inter,sans-serif;text-transform:uppercase;letter-spacing:.5px}
+@media(max-width:520px){.detail-option-row,.perk-row{flex-direction:column;gap:4px}.detail-option-row>span,.perk-row>span{text-align:left}}
