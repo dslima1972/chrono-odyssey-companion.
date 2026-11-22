@@ -299,3 +299,20 @@ footer{border-color:#393528;color:var(--faint)}
  .class-weapon-details article.class-weapon-entry{grid-template-columns:54px minmax(0,1fr);gap:12px}
  .class-weapon-icon-wrap.class-cover-weapon-icon{width:54px;height:64px;flex-basis:54px}
 }
+
+
+/* Ícones individuais das armas exibidas na ficha de cada classe */
+.class-weapon-icon-wrap.class-individual-weapon-icon{
+ width:58px;height:68px;flex:0 0 58px;
+ display:flex;align-items:center;justify-content:center;
+ background:transparent;border:0;border-radius:0;box-shadow:none;
+ overflow:hidden;
+}
+.class-weapon-icon-wrap.class-individual-weapon-icon img{
+ position:static;display:block!important;
+ width:100%;height:100%;padding:0;
+ object-fit:contain;
+}
+@media(max-width:760px){
+ .class-weapon-icon-wrap.class-individual-weapon-icon{width:54px;height:64px;flex-basis:54px}
+}
