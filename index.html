@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a1118">
+  <meta name="description" content="Compêndio comunitário de armas e classes de Chrono Odyssey.">
+  <title>Chrono Odyssey Companion</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/styles.css">
+  <script src="./assets/app.js" defer></script>
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="Chrono Odyssey Companion - início">
+      <span class="brand-mark">✦</span><span><strong>CHRONO ODYSSEY</strong><small>COMPANION · FIELD COMPENDIUM</small></span>
+    </a>
+    <a class="source-link" href="https://questlog.gg/chrono-odyssey/en/db/items/weapon" target="_blank" rel="noreferrer">FONTE DE DADOS <span>↗</span></a>
+  </header>
+  <main class="shell">
+    <section class="hero">
+      <div class="eyebrow"><span></span> THE WORLD OF SETERA <span></span></div>
+      <h1>Compêndio do <em>Viajante</em></h1>
+      <p>Arsenal, classes e conhecimento reunidos em um só lugar.</p>
+      <div class="hero-rule"><i></i><span>✧</span><i></i></div>
+    </section>
+    <nav class="tabs" aria-label="Seções do Companion">
+      <button class="tab active" data-tab="weapons">Arsenal <span>01</span></button>
+      <button class="tab" data-tab="classes">Classes <span>02</span></button>
+      <button class="tab" data-tab="about">Sobre os dados <span>03</span></button>
+    </nav>
+    <section id="weapons-view" class="view active">
+      <div class="section-heading">
+        <div><div class="eyebrow left">CATÁLOGO DE EQUIPAMENTOS</div><h2>Arsenal</h2></div>
+        <div class="catalog-count" id="catalog-count">CARREGANDO…</div>
+      </div>
+      <div class="filters">
+        <label class="search-wrap"><span>⌕</span><input id="search" type="search" placeholder="Buscar arma pelo nome…" autocomplete="off"></label>
+        <select id="class-filter" aria-label="Filtrar por classe"><option value="">Todas as classes</option></select>
+        <select id="type-filter" aria-label="Filtrar por tipo"><option value="">Todos os tipos</option></select>
+        <select id="rarity-filter" aria-label="Filtrar por raridade"><option value="">Todas as raridades</option><option>Comum</option><option>Incomum</option><option>Raro</option><option>Épico</option><option>Lendário</option></select>
+      </div>
+      <div class="catalog-layout" id="catalog-layout">
+        <div class="weapon-list" id="weapon-list"><div class="loading"><span class="spinner"></span>Consultando catálogo…</div></div>
+        <aside class="detail-panel empty-detail" id="weapon-detail"><div class="detail-ornament">✧</div><h3>Selecione um item</h3><p>Escolha uma arma no catálogo para consultar sua ficha.</p></aside>
+      </div>
+      <div class="mobile-detail" id="mobile-detail" hidden></div>
+    </section>
+    <section id="classes-view" class="view">
+      <div class="section-heading"><div><div class="eyebrow left">CAMINHOS DE COMBATE</div><h2>Classes</h2></div></div>
+      <p class="intro-copy">As classes abaixo organizam as famílias de armas associadas a cada estilo. Descrições aprofundadas e habilidades serão adicionadas somente após validação nas fontes.</p>
+      <div class="class-grid" id="class-grid"></div>
+    </section>
+    <section id="about-view" class="view">
+      <div class="section-heading"><div><div class="eyebrow left">TRANSPARÊNCIA E REFERÊNCIAS</div><h2>Sobre os dados</h2></div></div>
+      <div class="about-grid">
+        <article class="info-card"><span class="info-symbol">⌘</span><h3>Fonte principal</h3><p>Questlog é a referência prioritária para o catálogo de itens. Os registros são obtidos da listagem pública de armas e mantidos em um arquivo JSON próprio do Companion.</p><a href="https://questlog.gg/chrono-odyssey/en/db/items/weapon" target="_blank" rel="noreferrer">Abrir Questlog ↗</a></article>
+        <article class="info-card"><span class="info-symbol">◈</span><h3>Dados verificados</h3><p>Nome, categoria, raridade e identificadores são exibidos quando fornecidos pela fonte. Atributos, efeitos e requisitos não serão estimados nem preenchidos por suposição.</p></article>
+        <article class="info-card"><span class="info-symbol">⟳</span><h3>Atualização</h3><p>O catálogo será atualizado automaticamente pelo GitHub Actions. A rotina salva os dados no repositório; o site apenas lê o JSON publicado.</p><a href="https://github.com/dslima1972/chrono-odyssey-companion./actions" target="_blank" rel="noreferrer">Ver execuções ↗</a></article>
+        <article class="info-card"><span class="info-symbol">⚑</span><h3>Estado do projeto</h3><p id="data-status">Aguardando a primeira sincronização do catálogo.</p><p class="fine-print">Projeto comunitário, sem vínculo oficial com Chrono Studio ou Kakao Games.</p></article>
+      </div>
+    </section>
+    <footer><span>CHRONO ODYSSEY COMPANION</span><span>UNOFFICIAL COMMUNITY PROJECT · 2026</span></footer>
+  </main>
+</body>
+</html>
