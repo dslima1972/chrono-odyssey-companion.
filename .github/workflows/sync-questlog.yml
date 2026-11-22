@@ -1,0 +1,33 @@
+name: Atualizar catálogo Questlog
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "20 6 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Consultar catálogo do Questlog
+        run: node scripts/fetch-questlog.mjs
+      - name: Salvar atualização
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/weapons.json
+          if git diff --cached --quiet; then
+            echo "Nenhuma alteração no catálogo."
+          else
+            git commit -m "Atualiza catálogo de armas do Questlog"
+            git push
+          fi
