@@ -52,15 +52,29 @@ function findWeaponAttackLevels(item){
  }
  return null;
 }
+function defaultGearScore(item,levels){
+ const entries=Object.entries(levels||{}).filter(([key,value])=>Number.isFinite(Number(key))&&value!==null&&value!==undefined).sort((a,b)=>Number(a[0])-Number(b[0]));
+ if(!entries.length)return 1;
+ const tier=Number.parseInt(item?.itemInfo?.tier,10);
+ const tierDefaults={4:25,5:40};
+ const preferred=tierDefaults[tier];
+ if(preferred!==undefined&&levels[String(preferred)]!==undefined)return preferred;
+ return Number(entries[0][0]);
+}
+function renderGearScoreControl(item,levels,label){
+ if(!levels||typeof levels!=="object")return "";
+ const entries=Object.entries(levels).filter(([key,value])=>Number.isFinite(Number(key))&&value!==null&&value!==undefined).sort((a,b)=>Number(a[0])-Number(b[0]));
+ if(!entries.length)return "";
+ const min=Number(entries[0][0]),max=Number(entries[entries.length-1][0]),initial=Math.min(max,Math.max(min,defaultGearScore(item,levels)));
+ return '<div class="gear-score-control"><div class="gear-score-heading"><label>Gear Score</label><strong><span class="gear-score-current">'+initial+'</span><small> · '+escapeHtml(label)+'</small></strong></div><input class="gear-score-slider" type="range" min="'+min+'" max="'+max+'" step="1" value="'+initial+'" aria-label="Selecionar Gear Score"><div class="gear-score-scale"><span>'+min+'</span><span>'+max+'</span></div></div>';
+}
 function renderWeaponStats(item){
- const base=renderItemStats(item);
- const levels=findWeaponAttackLevels(item);
- const first=levels?Object.entries(levels).sort((a,b)=>Number(a[0])-Number(b[0]))[0]:null;
- const attackValue=first?.[1]??null;
- if(attackValue===null)return base;
- const row='<div class="stat-line"><span>Ataque básico</span><strong>'+escapeHtml(attackValue)+'</strong><small></small></div>';
- if(base.startsWith('<div class="stat-list">'))return base.replace('<div class="stat-list">','<div class="stat-list">'+row);
- return '<div class="stat-list">'+row+'</div>'+base;
+ const base=renderItemStats(item),levels=findWeaponAttackLevels(item);
+ if(!levels)return base;
+ const score=defaultGearScore(item,levels),attackValue=levels[String(score)]??Object.values(levels)[0];
+ const row='<div class="stat-line"><span>Ataque básico</span><strong data-gear-score-map="'+escapeHtml(JSON.stringify(levels))+'">'+escapeHtml(attackValue)+'</strong><small></small></div>';
+ const stats=base.startsWith('<div class="stat-list">')?base.replace('<div class="stat-list">','<div class="stat-list">'+row):'<div class="stat-list">'+row+'</div>'+base;
+ return renderGearScoreControl(item,levels,"Ataque") + stats;
 }
 function renderAttackProgression(item){const levels=findWeaponAttackLevels(item);if(!levels||typeof levels!=="object")return "";const entries=Object.entries(levels).sort((a,b)=>Number(a[0])-Number(b[0]));if(!entries.length)return "";const first=entries[0],last=entries[entries.length-1];return '<details class="detail-disclosure"><summary>Progressão de ataque por Gear Score <span>'+escapeHtml(first[1])+' → '+escapeHtml(last[1])+'</span></summary><div class="progression-grid">'+entries.map(([level,value])=>'<div><small>Nível '+escapeHtml(level)+'</small><strong>'+escapeHtml(value)+'</strong></div>').join("")+'</div></details>'}
 function renderSuffixes(item){const suffixes=item?.itemStats?.suffixes;if(!suffixes||typeof suffixes!=="object"||!Object.keys(suffixes).length)return "";return '<section class="detail-section"><h4>Sufixos disponíveis</h4>'+Object.values(suffixes).map(s=>{const levels=s.gearScore&&typeof s.gearScore==="object"?Object.entries(s.gearScore).sort((a,b)=>Number(a[0])-Number(b[0])):[];const first=levels[0]?.[1],last=levels[levels.length-1]?.[1];const values=[first?.statValue1??first?.value,last?.statValue1??last?.value].filter(v=>v!=null);return '<div class="suffix-row"><strong>'+escapeHtml(s.name||"Sufixo")+'</strong><span>'+escapeHtml(values.length?values.join(" → "):"Valores por nível disponíveis na fonte")+'</span></div>'}).join("")+'</section>'}
@@ -103,7 +117,7 @@ function renderDefenseProgression(item){
  if(!entries.length)return "";
  return '<details class="detail-disclosure"><summary>Progressão de defesa por Gear Score <span>'+escapeHtml(entries[0][1])+' → '+escapeHtml(entries[entries.length-1][1])+'</span></summary><div class="progression-grid">'+entries.map(([level,value])=>'<div><small>Nível '+escapeHtml(level)+'</small><strong>'+escapeHtml(value)+'</strong></div>').join("")+'</div></details>';
 }
-function renderArmorDefenseAttributes(item){
+function renderArmorDefenseAttributes(item,score){
  const found={physical:null,magical:null};
  const normalize=value=>String(value||"").toLowerCase().replace(/[^a-z]/g,"");
  function walk(node,path=[],depth=0){
@@ -116,15 +130,15 @@ function renderArmorDefenseAttributes(item){
    const physical=/(physical|physic|physdef)/.test(joined)&&/(defense|defence|def)/.test(joined);
    const magical=/(magical|magic|mag)/.test(joined)&&/(defense|defence|def)/.test(joined);
    if((physical||magical)&&value!==null&&value!==undefined){
-    let amount=value;
+    let amount=value,map=null;
     if(typeof value==="object"){
-     const levels=value.gearScore&&typeof value.gearScore==="object"?value.gearScore:null;
-     if(levels){const sorted=Object.entries(levels).sort((a,b)=>Number(a[0])-Number(b[0]));amount=levels["1"]??sorted[0]?.[1]}
+     map=value.gearScore&&typeof value.gearScore==="object"?value.gearScore:null;
+     if(map){const sorted=Object.entries(map).sort((a,b)=>Number(a[0])-Number(b[0]));amount=map[String(score)]??map["1"]??sorted[0]?.[1]}
      else amount=value.statValue??value.value??value.amount??value.statValue1??value.baseValue;
     }
     if(amount!==undefined&&amount!==null&&(typeof amount!=="object"||Array.isArray(amount))){
      const target=physical?"physical":"magical";
-     if(found[target]===null)found[target]=amount;
+     if(found[target]===null)found[target]={value:amount,map};
     }
    }
    if(value&&typeof value==="object"&&!Array.isArray(value))walk(value,next,depth+1);
@@ -136,13 +150,14 @@ function renderArmorDefenseAttributes(item){
  if(found.physical!==null)rows.push(["Defesa física",found.physical]);
  if(found.magical!==null)rows.push(["Defesa mágica",found.magical]);
  if(!rows.length)return "";
- return '<div class="stat-list armor-defense-stats">'+rows.map(([label,value])=>'<div class="stat-line"><span>'+label+'</span><strong>'+escapeHtml(value)+'</strong><small></small></div>').join("")+'</div>';
+ return '<div class="stat-list armor-defense-stats">'+rows.map(([label,data])=>'<div class="stat-line"><span>'+label+'</span><strong '+(data.map?'data-gear-score-map="'+escapeHtml(JSON.stringify(data.map))+'"':'')+'>'+escapeHtml(data.value)+'</strong><small></small></div>').join("")+'</div>';
 }
 function renderArmorStats(item){
- const base=renderItemStats(item);
- const defenses=renderArmorDefenseAttributes(item);
- if(!defenses)return base;
- return base.startsWith('<div class="stat-list">')?base.slice(0,-6)+defenses+'</div>':'<div class="stat-list">'+defenses+'</div>';
+ const base=renderItemStats(item),levels=item?.equipmentStats?.defense?.gearScore;
+ const score=levels?defaultGearScore(item,levels):1;
+ const defenses=renderArmorDefenseAttributes(item,score);
+ const combined=base.startsWith('<div class="stat-list">')&&defenses?base.slice(0,-6)+defenses+'</div>':defenses?'<div class="stat-list">'+defenses+'</div>':base;
+ return (levels?renderGearScoreControl(item,levels,"Defesa"):"")+combined;
 }
 function detailedArmorMarkup(item,catalogItem){
  const info=item?.itemInfo||{},grade=item?.equipmentGradeInfo||{};
@@ -178,4 +193,15 @@ async function loadArmorData(){
 }
 ["armor-search","armor-type-filter","armor-rarity-filter","armor-set-filter"].forEach(id=>$(id).addEventListener(id==="armor-search"?"input":"change",renderArmorList));
 document.querySelectorAll(".armor-mode").forEach(b=>b.addEventListener("click",()=>{armorMode=b.dataset.armorMode;document.querySelectorAll(".armor-mode").forEach(x=>x.classList.toggle("active",x===b));renderArmorList()}));
+document.addEventListener("input",event=>{
+ const slider=event.target;
+ if(!slider.matches(".gear-score-slider"))return;
+ const score=String(slider.value),live=slider.closest(".detail-live");
+ if(!live)return;
+ const current=live.querySelector(".gear-score-current");
+ if(current)current.textContent=score;
+ live.querySelectorAll("[data-gear-score-map]").forEach(node=>{
+  try{const values=JSON.parse(node.getAttribute("data-gear-score-map"));const value=values[score]??values["1"];if(value!==undefined&&value!==null)node.textContent=String(value)}catch(error){}
+ });
+});
 renderClasses();loadData();loadArmorData();
