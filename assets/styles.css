@@ -71,3 +71,12 @@
  background:linear-gradient(110deg,color-mix(in srgb,var(--rarity) 15%,#14232e),color-mix(in srgb,var(--rarity) 7%,#0d1922));
  border-color:color-mix(in srgb,var(--rarity) 38%,#3a4c58);
 }
+
+
+/* Gear Score simulator */
+.gear-score-control{margin:0 0 12px;padding:12px 13px;background:#0d1922;border:1px solid #344552}
+.gear-score-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--gold2);font-size:11px;letter-spacing:.4px}
+.gear-score-heading strong{font-size:13px;color:var(--text);font-variant-numeric:tabular-nums}
+.gear-score-heading small{font-size:9px;color:var(--muted);font-weight:400}
+.gear-score-slider{display:block;width:100%;margin:13px 0 5px;accent-color:#c3a36a;cursor:pointer}
+.gear-score-scale{display:flex;justify-content:space-between;color:var(--faint);font-size:9px;font-variant-numeric:tabular-nums}
