@@ -164,3 +164,54 @@ footer{border-color:#393528;color:var(--faint)}
  .catalog-layout>.detail-panel::-webkit-scrollbar-track{background:#11110e}
  .catalog-layout>.detail-panel::-webkit-scrollbar-thumb{background:#746344;border-color:#11110e}
 }
+
+
+/* Raridades mais expressivas: contraste reforçado sem perder a base medieval */
+:root{
+ --common:#c0c7ce;
+ --uncommon:#55c982;
+ --rare:#55a9f5;
+ --epic:#bd82f2;
+ --legendary:#efbd50;
+}
+/* Lista de armas e armaduras: a cor da raridade deve ser percebida na superfície */
+.weapon-row{
+ background:linear-gradient(100deg,
+  color-mix(in srgb,var(--rarity) 27%,#11110e),
+  color-mix(in srgb,var(--rarity) 13%,#11110e) 72%,
+  color-mix(in srgb,var(--rarity) 5%,transparent));
+ border-bottom-color:color-mix(in srgb,var(--rarity) 23%,#343126);
+}
+.weapon-row:hover,.weapon-row.selected{
+ background:linear-gradient(100deg,
+  color-mix(in srgb,var(--rarity) 39%,#17150f),
+  color-mix(in srgb,var(--rarity) 22%,#17150f) 75%);
+}
+.weapon-symbol{
+ background:color-mix(in srgb,var(--rarity) 29%,#17150f);
+ border-color:color-mix(in srgb,var(--rarity) 82%,#494333);
+ color:var(--rarity);
+}
+.rarity-label,.detail-rarity{color:var(--rarity);text-shadow:0 0 12px color-mix(in srgb,var(--rarity) 22%,transparent)}
+/* Ficha: cor mais presente no fundo, borda, imagem e blocos de atributos */
+.detail-panel{
+ background:linear-gradient(135deg,
+  color-mix(in srgb,var(--rarity) 31%,#211f18),
+  color-mix(in srgb,var(--rarity) 17%,#15140f) 56%,
+  color-mix(in srgb,var(--rarity) 8%,#11110e));
+ border-color:color-mix(in srgb,var(--rarity) 76%,#494333);
+}
+.detail-icon{
+ background:color-mix(in srgb,var(--rarity) 30%,#12120e);
+ border-color:color-mix(in srgb,var(--rarity) 90%,#494333);
+}
+.detail-meta-chip{
+ background:color-mix(in srgb,var(--rarity) 17%,#15140f);
+ border-color:color-mix(in srgb,var(--rarity) 42%,#393528);
+}
+.detail-section.stats-primary .stat-line{
+ background:linear-gradient(110deg,
+  color-mix(in srgb,var(--rarity) 26%,#242117),
+  color-mix(in srgb,var(--rarity) 13%,#15140f));
+ border-color:color-mix(in srgb,var(--rarity) 54%,#4a4230);
+}
