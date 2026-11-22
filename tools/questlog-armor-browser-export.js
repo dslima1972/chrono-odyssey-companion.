@@ -48,6 +48,23 @@
     request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);
   });
   const unwrap=p=>p?.result?.data?.json??p?.result?.data??p?.data?.json??p?.data??p;
+  const findItemArray=value=>{
+    const seen=new Set();
+    const visit=node=>{
+      if(!node||typeof node!=="object"||seen.has(node))return null;
+      seen.add(node);
+      if(Array.isArray(node)&&node.length&&node.some(x=>x&&typeof x==="object"&&(x.id||x.compoundId)&&x.name)){
+        const valid=node.filter(x=>x&&typeof x==="object"&&(x.id||x.compoundId)&&x.name);
+        if(valid.length)return valid;
+      }
+      for(const key of ["items","results","records","data","json","result","catalog","rows"]){
+        if(node[key]!==undefined){const found=visit(node[key]);if(found)return found;}
+      }
+      for(const value of Object.values(node)){const found=visit(value);if(found)return found;}
+      return null;
+    };
+    return visit(value);
+  };
   const download=(filename,data)=>{
     const blob=new Blob([JSON.stringify(data)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
     a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
@@ -57,15 +74,25 @@
     show("Identificando a listagem de armaduras...","Lendo a chamada real do catálogo carregada nesta página.");
     const resources=performance.getEntriesByType("resource").map(x=>x.name).filter(x=>x.includes("database.getItems")&&x.includes("/chrono-odyssey/api/trpc/"));
     if(!resources.length)throw new Error("Não encontrei a chamada database.getItems. Confirme que a listagem de armaduras terminou de carregar e atualize a página.");
-    const catalogUrl=new URL(resources[resources.length-1]);
-    const response=await fetch(catalogUrl.href,{credentials:"same-origin",headers:{accept:"application/json"}});
-    if(!response.ok)throw new Error("Falha ao ler o catálogo (HTTP "+response.status+").");
-    const payload=unwrap(await response.json());
-    const rawItems=Array.isArray(payload)?payload:(payload?.items||payload?.data?.items||[]);
-    const items=rawItems.filter(x=>!x.isDisabled&&!/\(Test\)/i.test(String(x.name||""))&&(x.id||x.compoundId));
-    if(!items.length)throw new Error("A chamada foi encontrada, mas não retornou itens. Verifique se a página aberta é a categoria Armor.");
-    const wrong=items.filter(x=>String(x.mainCategory||"").toLowerCase()!=="armor");
-    if(wrong.length===items.length)throw new Error("A resposta encontrada não parece ser o catálogo de armaduras (mainCategory diferente de armor).");
+    let catalogUrl=null,items=[];
+    const diagnostics=[];
+    for(const resource of [...new Set(resources)].reverse()){
+      try{
+        const candidate=new URL(resource);
+        const response=await fetch(candidate.href,{credentials:"same-origin",headers:{accept:"application/json"}});
+        if(!response.ok){diagnostics.push("HTTP "+response.status+" em "+candidate.pathname);continue;}
+        const json=await response.json();
+        const found=findItemArray(json);
+        if(found&&found.length){
+          const armor=found.filter(x=>String(x.mainCategory||x.category||"").toLowerCase()==="armor");
+          const usable=armor.length?armor:found;
+          if(usable.length){catalogUrl=candidate;items=usable;break;}
+        }
+      }catch(e){diagnostics.push(String(e?.message||e));}
+    }
+    if(!items.length)throw new Error("Encontrei "+resources.length+" chamada(s) database.getItems, mas nenhuma contém uma lista reconhecível de itens. URLs: "+resources.map(x=>new URL(x).pathname+new URL(x).search).join(" | ")+". Diagnóstico: "+diagnostics.join("; "));
+    items=items.filter(x=>!x.isDisabled&&!/\\(Test\\)/i.test(String(x.name||""))&&(x.id||x.compoundId));
+    if(!items.length)throw new Error("A resposta contém dados, mas nenhum item válido após os filtros. Verifique a resposta do catálogo.");
     const catalog={source:"Questlog",category:"armor",pageUrl:location.href,catalogApi:catalogUrl.pathname+catalogUrl.search,pageCount:null,total:items.length,items};
     download("armor-export.json",catalog);
     show("Catálogo de armaduras salvo","Itens encontrados: "+items.length+". Iniciando consulta das fichas individuais.",0,items.length);
