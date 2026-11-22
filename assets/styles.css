@@ -80,3 +80,7 @@
 .gear-score-heading small{font-size:9px;color:var(--muted);font-weight:400}
 .gear-score-slider{display:block;width:100%;margin:13px 0 5px;accent-color:#c3a36a;cursor:pointer}
 .gear-score-scale{display:flex;justify-content:space-between;color:var(--faint);font-size:9px;font-variant-numeric:tabular-nums}
+
+
+/* Rolagem independente para fichas longas no painel de detalhes */
+@media(min-width:761px){.catalog-layout{align-items:stretch}.catalog-layout>.detail-panel{position:sticky;top:18px;max-height:calc(100vh - 36px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#8e754f #0b141c}.catalog-layout>.detail-panel::-webkit-scrollbar{width:8px}.catalog-layout>.detail-panel::-webkit-scrollbar-track{background:#0b141c}.catalog-layout>.detail-panel::-webkit-scrollbar-thumb{background:#6f6048;border:2px solid #0b141c;border-radius:8px}}
