@@ -306,7 +306,7 @@ document.addEventListener("input",event=>{
   try{const values=JSON.parse(node.getAttribute("data-gear-score-map"));const value=values[score]??values["1"];if(value!==undefined&&value!==null)node.textContent=String(value)}catch(error){}
  });
 });
-renderClasses();loadData();loadArmorData();initBuildPlanner();/* Build planner */
+/* Build planner */
 let buildWeaponDetails={},buildArmorDetails={},buildReady=false;
 const buildState={className:"",weaponType:"",weaponType2:"",weaponStats:["",""],armorStats:["",""],weapons:["",""],armor:{}};
 const BUILD_SLOTS=[["head","Cabeça"],["shoulder","Ombros"],["chest","Peito"],["hands","Mãos"],["waist","Cintura"],["legs","Pernas"],["feet","Pés"],["back","Costas"]];
@@ -424,3 +424,5 @@ function initBuildPlanner(){
  $("build-picker-close").addEventListener("click",()=>$("build-picker").hidden=true);
  renderBuildScreen();loadBuildData();
 }
+
+renderClasses();loadData();loadArmorData();initBuildPlanner();
