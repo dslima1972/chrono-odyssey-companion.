@@ -215,3 +215,44 @@ footer{border-color:#393528;color:var(--faint)}
   color-mix(in srgb,var(--rarity) 13%,#15140f));
  border-color:color-mix(in srgb,var(--rarity) 54%,#4a4230);
 }
+
+
+/* Sufixos e perks: respiro interno para evitar texto encostado ou visualmente cortado */
+.detail-option-list{
+ padding:6px 0;
+}
+.detail-option-row,
+.suffix-row,
+.perk-row{
+ box-sizing:border-box;
+ margin:0 7px 6px;
+ padding:12px 14px;
+ border:1px solid color-mix(in srgb,var(--rarity) 24%,#494333);
+ background:color-mix(in srgb,var(--rarity) 9%,#15140f);
+ border-radius:3px;
+ min-width:0;
+}
+.detail-option-row:last-child,
+.suffix-row:last-child,
+.perk-row:last-child{margin-bottom:0}
+.detail-option-row>strong,
+.perk-row>strong{
+ min-width:0;
+ overflow-wrap:anywhere;
+ line-height:1.5;
+}
+.detail-option-row>span,
+.perk-row>span{
+ min-width:0;
+ overflow-wrap:anywhere;
+ line-height:1.6;
+}
+@media(max-width:520px){
+ .detail-option-row,
+ .suffix-row,
+ .perk-row{
+  margin-left:6px;
+  margin-right:6px;
+  padding:11px 12px;
+ }
+}
