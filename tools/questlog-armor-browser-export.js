@@ -34,7 +34,7 @@
     const cr=await fetch(CATALOG_URL,{cache:"no-store"});
     if(!cr.ok)throw new Error("Não foi possível baixar data/armor-export.json (HTTP "+cr.status+"). Primeiro precisamos publicar o catálogo exportado.");
     const catalog=await cr.json(),raw=Array.isArray(catalog)?catalog:(catalog.items||catalog.records||[]);
-    const items=raw.filter(x=>x&&!x.isDisabled&&!/\\(Test\\)/i.test(String(x.name||""))&&(x.id||x.compoundId));
+    const items=raw.filter(x=>x&&!x.isDisabled&&!/\(Test\)/i.test(String(x.name||""))&&(x.id||x.compoundId));
     if(!items.length)throw new Error("O catálogo publicado não contém itens válidos.");
     const firstId=String(items[0].id||items[0].compoundId).replace(/^item-/,"");
     show("Testando consulta individual...","Primeira armadura: "+(items[0].name||firstId),0,items.length);
@@ -51,7 +51,7 @@
       for(let attempt=1;attempt<=MAX_ATTEMPTS;attempt++){
         try{
           const res=await fetch(API+"?input="+encodeURIComponent(JSON.stringify({id,language:"en"})),{credentials:"same-origin",headers:{accept:"application/json"}});
-          if(!res.ok)throw new Error("HTTP "+res.status+": "+(await res.text()).slice(0,160).replace(/\\s+/g," "));
+          if(!res.ok)throw new Error("HTTP "+res.status+": "+(await res.text()).slice(0,160).replace(/\s+/g," "));
           const detail=unwrap(await res.json());if(!valid(detail))throw new Error("Resposta sem os detalhes esperados");
           await dbReq("put",{id,detail});saved=true;success++;consecutive=0;break;
         }catch(e){lastError=String(e?.message||e);if(/HTTP 403|HTTP 429/.test(lastError))break;if(attempt<MAX_ATTEMPTS)await sleep(1200*attempt);}
