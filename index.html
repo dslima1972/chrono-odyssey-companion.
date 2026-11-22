@@ -9,8 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./assets/styles.css?v=20261122h">
-  <script src="./assets/app.js?v=20261122h" defer></script>
+  <link rel="stylesheet" href="./assets/styles.css?v=20261122i">
+  <script src="./assets/app.js?v=20261122i" defer></script>
 </head>
 <body>
   <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
@@ -28,12 +28,12 @@
       <div class="hero-rule"><i></i><span>✧</span><i></i></div>
     </section>
     <nav class="tabs" aria-label="Seções do Companion">
-      <button class="tab active" data-tab="weapons">Arsenal <span>01</span></button>
-      <button class="tab" data-tab="armor">Armaduras <span>02</span></button>
-      <button class="tab" data-tab="classes">Classes <span>03</span></button>
+      <button class="tab active" data-tab="classes">Classes <span>01</span></button>
+      <button class="tab" data-tab="weapons">Arsenal <span>02</span></button>
+      <button class="tab" data-tab="armor">Armaduras <span>03</span></button>
       <button class="tab" data-tab="about">Sobre os dados <span>04</span></button>
     </nav>
-    <section id="weapons-view" class="view active">
+    <section id="weapons-view" class="view">
       <div class="section-heading">
         <div><div class="eyebrow left">CATÁLOGO DE EQUIPAMENTOS</div><h2>Arsenal</h2></div>
         <div class="catalog-count" id="catalog-count">CARREGANDO…</div>
@@ -74,7 +74,7 @@
       <div class="mobile-detail" id="armor-mobile-detail" hidden></div>
       <p class="armor-data-note" id="armor-data-status">O catálogo de armaduras será armazenado separadamente do catálogo de armas.</p>
     </section>
-    <section id="classes-view" class="view">
+    <section id="classes-view" class="view active">
       <div class="section-heading"><div><div class="eyebrow left">CAMINHOS DE COMBATE</div><h2>Classes</h2></div></div>
       <p class="intro-copy">As classes abaixo organizam as famílias de armas associadas a cada estilo. Descrições aprofundadas e habilidades serão adicionadas somente após validação nas fontes.</p>
       <div class="class-grid" id="class-grid"></div><div class="class-detail" id="class-detail" hidden></div>
