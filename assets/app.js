@@ -82,7 +82,7 @@ function getItemStatEntries(item){
  const raw=item?.itemStats?.stats;
  if(Array.isArray(raw))raw.forEach(s=>add(s?.statType??s?.type??s?.key??"Atributo",s));
  else if(raw&&typeof raw==="object")Object.entries(raw).forEach(([key,value])=>add(key,value));
- const ignored=new Set(["gearscore","chancepercentage","statvalue","statvalue1","value","amount","min","max","minvalue","maxvalue","requiredlevel","tier","weight","maxdurability","candoreinforce","stats"]);
+ const ignored=new Set(["gearscore","chancepercentage","statvalue","statvalue1","value","amount","min","max","minvalue","maxvalue","requiredlevel","tier","weight","maxdurability","candoreinforce"]);
  const walk=(node,keyHint="",depth=0)=>{
   if(!node||depth>7)return;
   if(Array.isArray(node)){node.forEach(value=>walk(value,keyHint,depth+1));return}
@@ -94,6 +94,7 @@ function getItemStatEntries(item){
   for(const [key,value] of Object.entries(node)){if(ignored.has(key.toLowerCase()))continue;walk(value,key,depth+1)}
  };
  walk(item?.equipmentStats);
+ walk(item?.itemStats?.equipmentStats);
  if(typeof buildEquipmentPrimaryStats==="function")buildEquipmentPrimaryStats(item).forEach(stat=>add(stat.label,stat.value));
  return entries;
 }
