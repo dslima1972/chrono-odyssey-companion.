@@ -57,8 +57,18 @@ function compareItemPriority(a,b){const ga=Number(a.grade),gb=Number(b.grade),va
 function filtered(){const q=$("search").value.trim().toLowerCase(),c=$("class-filter").value,t=$("type-filter").value,r=$("rarity-filter").value;return weapons.filter(w=>(!q||String(w.name||"").toLowerCase().includes(q)||String(w.id||"").includes(q))&&(!c||weaponClass(w)===c)&&(!t||weaponType(w)===t)&&(!r||rarity(w)===r)).sort(compareItemPriority)}
 function renderList(){const rows=filtered();$("catalog-count").textContent=weapons.length?rows.length+" / "+weapons.length+" REGISTROS":"CATÁLOGO AINDA NÃO SINCRONIZADO";if(!weapons.length){$("weapon-list").innerHTML='<div class="empty-state">O catálogo ainda não foi carregado.<br>Assim que a primeira sincronização do Questlog terminar, as armas aparecerão aqui.</div>';return}if(!rows.length){$("weapon-list").innerHTML='<div class="empty-state">Nenhuma arma corresponde aos filtros selecionados.</div>';return}$("weapon-list").innerHTML=rows.map(w=>{const type=weaponType(w),color=rarityStyle(w);return '<button class="weapon-row '+(selected&&selected.id===w.id?'selected':'')+'" data-id="'+escapeHtml(w.id)+'" style="--rarity:'+color+'"><span class="weapon-symbol"><span>'+iconFor(type)+'</span>'+weaponImageMarkup(w)+'</span><span><span class="weapon-name">'+escapeHtml(w.name||"Item sem nome")+'</span><span class="weapon-meta">'+escapeHtml(weaponClass(w)||"Classe não mapeada")+' · '+escapeHtml(type)+'</span></span><span class="rarity-label">'+escapeHtml(rarity(w))+'</span></button>'}).join("");document.querySelectorAll("#weapon-list .weapon-row").forEach(b=>b.addEventListener("click",()=>selectWeapon(b.dataset.id)))}
 let itemDetailsDataPromise;
-const STAT_LABELS={increasedamage:"Aumento de dano",addmaximummana:"Mana máxima",damageonstagger:"Dano contra alvo cambaleante",attack:"Ataque",criticalchance:"Chance crítica",criticaldamage:"Dano crítico",defense:"Defesa",health:"Vida",maxhealth:"Vida máxima",maxhp:"HP máximo",maxlife:"Vida máxima",bagweightincrease:"Aumento da capacidade de peso",bagweightcapacityboost:"Aumento da capacidade de peso",stamina:"Vigor",liferegenpersecond:"Regeneração de vida por segundo",criticalhitchance:"Chance de acerto crítico",criticalhitdamage:"Dano crítico",criticalhitdamagereduce:"Redução de dano crítico",healing:"Cura"};
-function humanizeStat(value){const key=String(value||"").toLowerCase();return STAT_LABELS[key]||String(value||"Atributo").replace(/([a-z])([A-Z])/g,"$1 $2").replace(/[_-]/g," ").replace(/^./,x=>x.toUpperCase())}
+const STAT_LABELS={increasedamage:"Aumento de dano",addmaximummana:"Mana máxima",damageonstagger:"Dano contra alvo cambaleante",attack:"Ataque",basicattack:"Ataque",basicatk:"Ataque",criticalchance:"Chance crítica",criticaldamage:"Dano crítico",defense:"Defesa",physicaldefense:"Defesa física",defensephysical:"Defesa física",physicaldefence:"Defesa física",defencephysical:"Defesa física",physicalarmor:"Defesa física",physicalarmour:"Defesa física",magicdefense:"Defesa mágica",magicaldefense:"Defesa mágica",defensemagic:"Defesa mágica",defensemagical:"Defesa mágica",magicdefence:"Defesa mágica",magicaldefence:"Defesa mágica",defencemagic:"Defesa mágica",defencemagical:"Defesa mágica",magicarmor:"Defesa mágica",magicalarmor:"Defesa mágica",healing:"Cura",health:"Vida",maxhealth:"Vida máxima",maxhp:"HP máximo",maxlife:"Vida máxima",bagweightincrease:"Aumento da capacidade de peso",bagweightcapacityboost:"Aumento da capacidade de peso",stamina:"Vigor",liferegenpersecond:"Regeneração de vida por segundo",criticalhitchance:"Chance de acerto crítico",criticalhitdamage:"Dano crítico",criticalhitdamagereduce:"Redução de dano crítico"};
+function normalizeStatIdentity(value){
+ const key=String(value||"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"");
+ const aliases={attack:"attack",basicattack:"attack",basicatk:"attack",ataque:"attack",ataquebasico:"attack",physicaldefense:"physicaldefense",defensephysical:"physicaldefense",physicaldefence:"physicaldefense",defencephysical:"physicaldefense",physicalarmor:"physicaldefense",physicalarmour:"physicaldefense",defesafisica:"physicaldefense",magicdefense:"magicdefense",magicaldefense:"magicdefense",defensemagic:"magicdefense",defensemagical:"magicdefense",magicdefence:"magicdefense",magicaldefence:"magicdefense",defencemagic:"magicdefense",defencemagical:"magicdefense",magicarmor:"magicdefense",magicalarmor:"magicdefense",defesamagica:"magicdefense"};
+ return aliases[key]||key;
+}
+function humanizeStat(value){
+ const key=normalizeStatIdentity(value);
+ if(STAT_LABELS[key])return STAT_LABELS[key];
+ const original=String(value||"Atributo");
+ return original.replace(/([a-z])([A-Z])/g,"$1 $2").replace(/[_-]/g," ").replace(/^./,x=>x.toUpperCase());
+}
 const PERCENT_STAT_TYPES=new Set(["increasedamage","damageincrease","damageboost","criticalchance","criticalhitchance","criticaldamage","criticalhitdamage","criticaldamageboost","criticalhitdamagereduce","criticaldamagereduce","damageonstagger","damageovertime","damageovertimeattack","damagereduction","damagereduce"]);
 function formatStatValue(statType,value){
  if(value===null||value===undefined||value==="")return value;
@@ -89,11 +99,12 @@ function getItemStatEntries(item){
  const add=(key,raw)=>{
   const statType=raw&&typeof raw==="object"?(raw.statType??raw.type??raw.key??key):key;
   if(!statType)return;
-  const label=humanizeStat(statType),norm=label.toLocaleLowerCase("pt-BR"),value=resolveItemStatValue(raw,item);
-  if(value===null||value===undefined||value===""||seen.has(norm))return;
-  seen.add(norm);
+  const identity=normalizeStatIdentity(statType),label=humanizeStat(statType),value=resolveItemStatValue(raw,item);
+  if(value===null||value===undefined||value==="")return;
+  if(seen.has(identity))return;
+  seen.add(identity);
   const chance=raw&&typeof raw==="object"&&raw.chancePercentage!=null?Number(raw.chancePercentage).toLocaleString("pt-BR",{maximumFractionDigits:2})+"% de chance":"";
-  entries.push({key:statType,label,value:formatStatValue(statType,value),chance});
+  entries.push({key:statType,identity,label,value:formatStatValue(statType,value),chance});
  };
  const raw=item?.itemStats?.stats;
  if(Array.isArray(raw))raw.forEach(s=>add(s?.statType??s?.type??s?.key??"Atributo",s));
@@ -148,12 +159,13 @@ function renderGearScoreControl(item,levels,label){
  return '<div class="gear-score-control"><div class="gear-score-heading"><label>Gear Score</label><strong><span class="gear-score-current">'+initial+'</span><small> · '+escapeHtml(label)+'</small></strong></div><input class="gear-score-slider" type="range" min="'+min+'" max="'+max+'" step="1" value="'+initial+'" aria-label="Selecionar Gear Score"><div class="gear-score-scale"><span>'+min+'</span><span>'+max+'</span></div></div>';
 }
 function renderWeaponStats(item){
- const base=renderItemStats(item),levels=findWeaponAttackLevels(item);
- if(!levels)return base;
+ const levels=findWeaponAttackLevels(item);
+ if(!levels)return renderItemStats(item);
+ const entries=getItemStatEntries(item).filter(entry=>entry.identity!=="attack");
  const score=defaultGearScore(item,levels),attackValue=levels[String(score)]??Object.values(levels)[0];
- const row='<div class="stat-line"><span>Ataque básico</span><strong data-gear-score-map="'+escapeHtml(JSON.stringify(levels))+'">'+escapeHtml(attackValue)+'</strong><small></small></div>';
- const stats=base.startsWith('<div class="stat-list">')?base.replace('<div class="stat-list">','<div class="stat-list">'+row):'<div class="stat-list">'+row+'</div>'+base;
- return renderGearScoreControl(item,levels,"Ataque") + stats;
+ entries.unshift({label:"Ataque básico",value:attackValue,chance:""});
+ const stats='<div class="stat-list">'+entries.map(entry=>'<div class="stat-line"><span>'+escapeHtml(entry.label)+'</span><strong>'+escapeHtml(entry.value)+'</strong><small>'+escapeHtml(entry.chance||"")+'</small></div>').join("")+'</div>';
+ return renderGearScoreControl(item,levels,"Ataque")+stats;
 }
 function renderAttackProgression(item){const levels=findWeaponAttackLevels(item);if(!levels||typeof levels!=="object")return "";const entries=Object.entries(levels).sort((a,b)=>Number(a[0])-Number(b[0]));if(!entries.length)return "";const first=entries[0],last=entries[entries.length-1];return '<details class="detail-disclosure"><summary>Progressão de ataque por Gear Score <span>'+escapeHtml(first[1])+' → '+escapeHtml(last[1])+'</span></summary><div class="progression-grid">'+entries.map(([level,value])=>'<div><small>Nível '+escapeHtml(level)+'</small><strong>'+escapeHtml(value)+'</strong></div>').join("")+'</div></details>'}
 function optionListMarkup(title,rows,kind){
@@ -450,29 +462,25 @@ const BUILD_ARMOR_SLOTS=[["head","Cabeça"],["chest","Peito"],["hands","Mãos"],
 const BUILD_ACCESSORY_SLOTS=[["necklace","Colar"],["ring1","Anel 1"],["ring2","Anel 2"],["belt","Cinto"]];
 function buildEquipmentPrimaryStats(record){
  const aliases=[
-  {label:"Ataque",keys:["attack","basicattack"]},
-  {label:"Defesa física",keys:["physicaldefense","defensephysical","physicaldefence","defencephysical","physicalarmor","physicalarmour"]},
-  {label:"Defesa mágica",keys:["magicdefense","magicaldefense","defensemagic","defensemagical","magicdefence","magicaldefence","defencemagic","defencemagical","magicarmor","magicalarmor"]}
+  {label:"Ataque",keys:["attack","basicattack","basicatk","ataque","ataquebasico"]},
+  {label:"Defesa física",keys:["physicaldefense","defensephysical","physicaldefence","defencephysical","physicalarmor","physicalarmour","defesafisica"]},
+  {label:"Defesa mágica",keys:["magicdefense","magicaldefense","defensemagic","defensemagical","magicdefence","magicaldefence","defencemagic","defencemagical","magicarmor","magicalarmor","defesamagica"]}
  ];
- const normalize=value=>String(value||"").toLowerCase().replace(/[^a-z0-9]/g,"");
- const result=[];
- const visited=new Set(),pending=[record?.equipmentStats,record];
+ const result=[],seen=new Set(),visited=new Set(),pending=[record?.equipmentStats,record];
  while(pending.length){
   const node=pending.shift();
   if(!node||typeof node!=="object"||visited.has(node))continue;
   visited.add(node);
   if(Array.isArray(node)){node.forEach(value=>pending.push(value));continue}
   for(const [key,value] of Object.entries(node)){
-   const alias=aliases.find(entry=>entry.keys.includes(normalize(key)));
-   if(alias&&!result.some(x=>x.label===alias.label)){
+   const identity=normalizeStatIdentity(key),alias=aliases.find(entry=>entry.keys.some(k=>normalizeStatIdentity(k)===identity));
+   if(alias&&!seen.has(identity)){
     const levels=value&&typeof value==="object"?(value.gearScore??value.levels??value.values):null;
     let amount;
-    if(levels&&typeof levels==="object"){
-     const score=defaultGearScore(record,levels);
-     amount=levels[String(score)]??Object.values(levels)[0];
-    }else if(value&&typeof value==="object")amount=value.statValue??value.value??value.amount??value.statValue1;
+    if(levels&&typeof levels==="object"){const score=defaultGearScore(record,levels);amount=levels[String(score)]??Object.values(levels)[0]}
+    else if(value&&typeof value==="object")amount=value.statValue??value.statValue1??value.value??value.amount;
     else amount=value;
-    if(amount!==undefined&&amount!==null&&amount!=="")result.push({label:alias.label,value:amount});
+    if(amount!==undefined&&amount!==null&&amount!==""){result.push({label:alias.label,value:amount});seen.add(identity)}
    }
    if(value&&typeof value==="object")pending.push(value);
   }
@@ -480,20 +488,9 @@ function buildEquipmentPrimaryStats(record){
  return result;
 }
 function buildRecordStats(record){
- const found=new Map(),add=(key)=>{const label=humanizeStat(key);if(!label||label==="Atributo")return;const norm=label.toLocaleLowerCase("pt-BR");if(!found.has(norm))found.set(norm,label)};
+ const found=new Map(),add=(key)=>{const identity=normalizeStatIdentity(key),label=humanizeStat(key);if(!label||label==="Atributo")return;if(!found.has(identity))found.set(identity,label)};
  getItemStatEntries(record).forEach(stat=>add(stat.key));
  buildEquipmentPrimaryStats(record).forEach(stat=>add(stat.label));
- const visited=new Set(),walk=(node,depth=0)=>{
-  if(!node||typeof node!=="object"||depth>7||visited.has(node))return;visited.add(node);
-  if(Array.isArray(node)){node.forEach(x=>walk(x,depth+1));return}
-  if(node.statType||node.type||node.key)add(node.statType??node.type??node.key);
-  for(const [key,value] of Object.entries(node)){
-   if(["gearScore","chancePercentage","statValue","value","amount","min","max","statValue1"].includes(key))continue;
-   if(typeof value==="object"&&value!==null)walk(value,depth+1);
-  }
- };
- walk(record?.itemStats?.stats);
- walk(record?.equipmentStats);
  return [...found.values()].sort((a,b)=>a.localeCompare(b,"pt-BR"));
 }
 function buildItemMatches(item,record,selectedStats,mode="any"){
