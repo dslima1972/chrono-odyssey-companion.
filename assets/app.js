@@ -367,6 +367,7 @@ function renderClasses(){
   '</button>';
  }).join(""); grid.querySelectorAll(".class-filter-btn").forEach(b=>b.addEventListener("click",()=>{
   const c=CLASS_DATA.find(x=>x.name===b.dataset.class);
+  grid.classList.add("has-selection");
   grid.querySelectorAll(".class-filter-btn").forEach(btn=>{const selected=btn===b;btn.classList.toggle("is-selected",selected);btn.classList.toggle("is-muted",!selected);btn.setAttribute("aria-pressed",String(selected));});
   $("class-detail").hidden=false;
   $("class-detail").innerHTML='<button class="class-back" id="class-back">← VOLTAR ÀS CLASSES</button>'+classDetailMarkup(c);
@@ -380,6 +381,7 @@ function renderClasses(){
   });
   $("class-back").addEventListener("click",()=>{
    $("class-detail").hidden=true;
+   grid.classList.remove("has-selection");
    grid.querySelectorAll(".class-filter-btn").forEach(btn=>{btn.classList.remove("is-selected","is-muted");btn.setAttribute("aria-pressed","false");});
   });
  }));
