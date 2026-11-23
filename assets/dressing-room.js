@@ -38,15 +38,31 @@ function prepareAvatar(){
  };
  if(img.complete&&img.naturalWidth)process();else img.addEventListener("load",process,{once:true});
 }
+function renderAvatarOverlay(){
+ const host=$("dressing-avatar-image")?.parentElement;
+ if(!host)return;
+ host.querySelectorAll(".dressing-equipment-overlay").forEach(el=>el.remove());
+ const avatar=$("dressing-avatar-image");
+ const chest=equipped.chest;
+ if(!chest||String(chest.id||chest.compoundId)!=="10101"||!(avatar?.dataset.avatarFile||"").includes("avatar-male-base-3.jpg"))return;
+ const layer=document.createElement("img");
+ layer.className="dressing-equipment-overlay";
+ layer.src="https://cdn.questlog.gg/chrono-odyssey/assets/Game/Data/Icon/HighQuality/001M_U01_01.webp";
+ layer.alt="Ragged Clothes equipada";
+ layer.draggable=false;
+ layer.onerror=()=>{if(!layer.dataset.fallback){layer.dataset.fallback="1";layer.src="https://cdn.metabattle.com/game-files/chrono-odyssey/Data/Icon/Costume/Small/001M_U01_01.png";}};
+ host.appendChild(layer);
+}
 function renderItems(){
  const q=$("dressing-search").value.trim().toLowerCase(),r=$("dressing-rarity").value;
  const allowed=slotAliases[activeSlot]||[];
  const list=items.filter(x=>allowed.includes(String(x.subCategory||"").toLowerCase())&&(!q||String(x.name||"").toLowerCase().includes(q)||String(x.id||"").includes(q))&&(!r||rarity(x)===r));
  $("dressing-items").innerHTML=list.length?list.map(x=>{const id=String(x.id||x.compoundId),selected=String(equipped[activeSlot]?.id||"")===id;return '<button type="button" class="dressing-item '+(selected?"selected":"")+'" data-id="'+esc(id)+'">'+(image(x)?'<img src="'+esc(image(x))+'" alt="" loading="lazy">':'<span>✧</span>')+'<strong>'+esc(x.name||"Armadura")+'</strong><small>'+rarity(x)+(tier(x)?" · Tier "+tier(x):"")+'</small></button>'}).join(""):'<div class="dressing-empty">Nenhuma peça encontrada nesta categoria.</div>';
  $("dressing-count").textContent=list.length+" PEÇAS DISPONÍVEIS";
- $("dressing-items").querySelectorAll("[data-id]").forEach(btn=>btn.addEventListener("click",()=>{const item=list.find(x=>String(x.id||x.compoundId)===btn.dataset.id);if(item){equipped[activeSlot]=item;renderAll();if(activeSlot==="chest"&&String(item.id||item.compoundId)==="10101")$("dressing-status").textContent="Ragged Clothes selecionado no loadout. A aplicação visual das peças ainda está em preparação.";}}));
+ $("dressing-items").querySelectorAll("[data-id]").forEach(btn=>btn.addEventListener("click",()=>{const item=list.find(x=>String(x.id||x.compoundId)===btn.dataset.id);if(item){equipped[activeSlot]=item;renderAll();if(activeSlot==="chest"&&String(item.id||item.compoundId)==="10101")$("dressing-status").textContent="Ragged Clothes equipado no Avatar 3. Prévia visual experimental ativada.";}}));
 }
 function renderAll(){
+ renderAvatarOverlay();
  document.querySelectorAll("#dressing-slot-tabs [data-slot]").forEach(b=>b.classList.toggle("active",b.dataset.slot===activeSlot));
  $("dressing-equipped-list").innerHTML=Object.entries(equipped).length?Object.entries(equipped).map(([slot,item])=>'<div class="dressing-equipped-row">'+(image(item)?'<img src="'+esc(image(item))+'" alt="">':'<span>✧</span>')+'<div><strong>'+esc(item.name)+'</strong><small>'+slots[slot]+' · '+rarity(item)+'</small></div><button type="button" data-remove="'+slot+'" aria-label="Remover '+slots[slot]+'">×</button></div>').join(""):'<p class="dressing-empty">Nenhuma peça selecionada.</p>';
  $("dressing-equipped-list").querySelectorAll("[data-remove]").forEach(b=>b.addEventListener("click",()=>{delete equipped[b.dataset.remove];renderAll()}));
@@ -59,7 +75,7 @@ document.querySelectorAll(".dressing-avatar-switch [data-avatar]").forEach(butto
  document.querySelectorAll(".dressing-avatar-switch [data-avatar]").forEach(b=>{const active=b===button;b.classList.toggle("active",active);b.setAttribute("aria-pressed",String(active))});
  img.classList.remove("avatar-ready");img.dataset.avatarFile=button.dataset.avatar;
  img.alt=button.dataset.avatar==="avatar-male-base-3.jpg"?"Personagem masculino em perspectiva de três quartos":button.dataset.avatar==="avatar-male-base-2.jpg"?"Personagem masculino principal de corpo inteiro":"Personagem masculino de corpo inteiro";
- img.src="./assets/images/avatars/"+button.dataset.avatar;prepareAvatar();
+ img.src="./assets/images/avatars/"+button.dataset.avatar;renderAvatarOverlay();prepareAvatar();
  $("dressing-status").textContent=button.dataset.avatar==="avatar-male-base-3.jpg"?"Avatar 3 selecionado. As peças selecionadas foram mantidas.":"Avatar alterado. As peças selecionadas foram mantidas.";
 }));
 document.querySelectorAll("#dressing-slot-tabs [data-slot]").forEach(b=>b.addEventListener("click",()=>{activeSlot=b.dataset.slot;renderAll()}));
