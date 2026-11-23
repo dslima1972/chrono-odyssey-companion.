@@ -743,7 +743,7 @@ async function loadBuildArmorSlot(slot){
    Object.assign(buildArmorDetails,received);buildArmorSlotState[slot]="ready";buildLayerState.armor="ready";
    updateBuildLayerStatus();buildStatsOptions("armor",0);buildStatsOptions("armor",1);renderBuildSelectedStats();return true;
   }catch(error){
-   buildArmorSlotState[slot]="idle";buildArmorSlotPromises[slot]=null;
+   buildArmorBuildManifestPromise=null;buildArmorSlotState[slot]="idle";buildArmorSlotPromises[slot]=null;
    if(!Object.values(buildArmorSlotState).includes("ready"))buildLayerState.armor="idle";
    const status=$("build-data-status");if(status)status.textContent="Não foi possível carregar "+(BUILD_ARMOR_SLOTS.find(x=>x[0]===slot)?.[1]||"armaduras")+": "+(error.message||"erro desconhecido")+". Tente novamente.";
    buildStatsOptions("armor",0);buildStatsOptions("armor",1);return false;
