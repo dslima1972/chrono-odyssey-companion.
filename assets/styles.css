@@ -732,3 +732,26 @@ footer{border-color:#393528;color:var(--faint)}
 @media(max-width:1100px){#class-grid.class-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:760px){#class-grid.class-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}}
 @media(max-width:560px){#class-grid.class-grid{grid-template-columns:minmax(0,1fr);gap:12px}#class-grid .class-filter-btn{min-height:235px}}
+
+
+/* Destaque da classe aberta no seletor: demais opções ficam suavemente apagadas */
+#class-grid .class-filter-btn{
+ transition:opacity .25s ease,filter .25s ease,border-color .25s ease,transform .25s ease,box-shadow .25s ease;
+}
+#class-grid.has-selection .class-filter-btn.is-muted{
+ opacity:.38;
+ filter:saturate(.42) brightness(.62);
+}
+#class-grid .class-filter-btn.is-selected{
+ opacity:1;
+ filter:none;
+ border-color:var(--gold2);
+ box-shadow:0 0 0 2px #d9bd8052,0 10px 30px #0008;
+ transform:translateY(-2px);
+}
+#class-grid .class-filter-btn.is-selected .class-card-select{
+ color:var(--gold2);
+}
+@media(prefers-reduced-motion:reduce){
+ #class-grid .class-filter-btn{transition:none}
+}
