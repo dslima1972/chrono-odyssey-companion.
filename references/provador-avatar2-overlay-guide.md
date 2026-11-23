@@ -46,3 +46,18 @@ Arquivo recebido: `references/avatar-male-base-3.jpg` (1024 × 1024 px).
 - O fundo cinza uniforme parece adequado para o removedor de fundo por flood-fill já utilizado no provador.
 - A roupa escura é neutra, mas pode dificultar a leitura de calças e botas quando essas camadas forem sobrepostas.
 - Status: candidato promissor, ainda não aprovado como avatar principal. Antes de trocar o padrão, copiar para a pasta de avatares, testar remoção do fundo e comparar visualmente o alinhamento de um peitoral/capacete da referência.
+
+
+## Comparação de perspectiva — Avatar 3 x referências de armadura
+Comparação visual feita com:
+- `references/item-details-reference.jpg`: armadura peitoral isolada em perspectiva de três quartos.
+- `references/gear-example-reference.png`: personagem equipado no jogo.
+- `assets/images/avatars/avatar-male-base-3.jpg`: candidato de avatar.
+
+Conclusão visual:
+- O Avatar 3 tem orientação de três quartos, não frontal; a cabeça e o tronco mostram profundidade e o quadril/pernas mantêm uma rotação compatível.
+- A armadura isolada apresenta volume e perspectiva semelhantes. A correspondência é promissora e reduz a necessidade de transformar cada peça para uma vista frontal.
+- A captura do personagem equipado mostra que a armadura cobre ombros e tronco de forma contínua. O Avatar 3 deixa essas regiões visíveis e os braços suficientemente afastados para a sobreposição.
+- A correspondência exata de ângulo e escala ainda não pode ser certificada sem uma camada de peitoral recortada/alinhada sobre o avatar. Portanto, esta é uma aprovação da direção de pose, não uma validação final de encaixe.
+
+Decisão provisória: usar Avatar 3 como avatar padrão de desenvolvimento e manter Avatar 2 disponível como alternativa. O alinhamento definitivo será validado com a primeira camada transparente real.
