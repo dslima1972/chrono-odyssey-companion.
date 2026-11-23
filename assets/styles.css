@@ -868,7 +868,7 @@ footer{border-color:#393528;color:var(--faint)}
 /* Ficha horizontal sob a lista */
 .catalog-layout{display:block}
 .catalog-layout>.weapon-list{width:100%}
-.catalog-layout>.detail-panel{display:none!important}
+#catalog-layout>.detail-panel,#armor-catalog-layout>.detail-panel{display:none!important}
 .catalog-detail-host{margin-top:14px}
 .catalog-detail-host[hidden]{display:none}
 .catalog-detail-host>.detail-panel{display:block!important;position:relative!important;top:auto!important;max-height:none!important;overflow:visible!important;width:100%;padding:24px 30px;background:radial-gradient(ellipse at 82% 20%,color-mix(in srgb,var(--rarity) 17%,transparent),transparent 43%),linear-gradient(120deg,#171b1d 0%,#111719 58%,#0b1114 100%)}
