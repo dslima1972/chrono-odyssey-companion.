@@ -311,8 +311,40 @@ let buildWeaponDetails={},buildArmorDetails={},buildReady=false;
 let buildPickerRarity="";
 const buildState={className:"",weaponType:"",weaponType2:"",weaponStats:["",""],armorStats:["",""],weapons:["",""],armor:{}};
 const BUILD_SLOTS=[["head","Cabeça"],["shoulder","Ombros"],["chest","Peito"],["hands","Mãos"],["waist","Cintura"],["legs","Pernas"],["feet","Pés"],["back","Costas"]];
+function buildEquipmentPrimaryStats(record){
+ const aliases=[
+  {label:"Ataque",keys:["attack","basicattack"]},
+  {label:"Defesa física",keys:["physicaldefense","defensephysical","physicaldefence","defencephysical","physicalarmor","physicalarmour"]},
+  {label:"Defesa mágica",keys:["magicdefense","magicaldefense","defensemagic","defensemagical","magicdefence","magicaldefence","defencemagic","defencemagical","magicarmor","magicalarmor"]}
+ ];
+ const normalize=value=>String(value||"").toLowerCase().replace(/[^a-z0-9]/g,"");
+ const result=[];
+ const visited=new Set(),pending=[record?.equipmentStats,record];
+ while(pending.length){
+  const node=pending.shift();
+  if(!node||typeof node!=="object"||visited.has(node))continue;
+  visited.add(node);
+  if(Array.isArray(node)){node.forEach(value=>pending.push(value));continue}
+  for(const [key,value] of Object.entries(node)){
+   const alias=aliases.find(entry=>entry.keys.includes(normalize(key)));
+   if(alias&&!result.some(x=>x.label===alias.label)){
+    const levels=value&&typeof value==="object"?(value.gearScore??value.levels??value.values):null;
+    let amount;
+    if(levels&&typeof levels==="object"){
+     const score=defaultGearScore(record,levels);
+     amount=levels[String(score)]??Object.values(levels)[0];
+    }else if(value&&typeof value==="object")amount=value.statValue??value.value??value.amount??value.statValue1;
+    else amount=value;
+    if(amount!==undefined&&amount!==null&&amount!=="")result.push({label:alias.label,value:amount});
+   }
+   if(value&&typeof value==="object")pending.push(value);
+  }
+ }
+ return result;
+}
 function buildRecordStats(record){
  const found=new Map(),add=(key)=>{const label=humanizeStat(key);if(!label||label==="Atributo")return;const norm=label.toLocaleLowerCase("pt-BR");if(!found.has(norm))found.set(norm,label)};
+ buildEquipmentPrimaryStats(record).forEach(stat=>add(stat.label));
  const visited=new Set(),walk=(node,depth=0)=>{
   if(!node||typeof node!=="object"||depth>7||visited.has(node))return;visited.add(node);
   if(Array.isArray(node)){node.forEach(x=>walk(x,depth+1));return}
@@ -402,20 +434,27 @@ function renderBuildSelectedStats(){
  target.innerHTML=selected.map(entry=>'<article class="build-stat-summary-card" style="--rarity:'+rarityStyle(entry.item)+'"><header><span class="build-stat-summary-icon">'+weaponImageMarkup(entry.item)+'</span><span><small>'+escapeHtml(entry.label)+' · '+escapeHtml(rarity(entry.item))+'</small><strong>'+escapeHtml(entry.item.name||"Item")+'</strong></span></header>'+(entry.record?renderItemStats(entry.record):'<p class="build-empty">Ficha detalhada não carregada para este item.</p>')+'</article>').join("");
 }
 function buildPickerStatsMarkup(record){
+ const rows=[],seen=new Set();
+ const add=(label,amount,chance="")=>{
+  const norm=String(label||"").toLocaleLowerCase("pt-BR");
+  if(!label||!amount&&amount!==0||seen.has(norm)||rows.length>=4)return;
+  seen.add(norm);
+  rows.push('<span class="build-picker-stat"><small>'+escapeHtml(label)+'</small><strong>'+escapeHtml(amount??"Valor não informado")+'</strong>'+(chance?'<em>'+escapeHtml(chance)+'</em>':"")+'</span>');
+ };
+ buildEquipmentPrimaryStats(record).forEach(stat=>add(stat.label,stat.value));
  const raw=record?.itemStats?.stats;
  let entries=[];
  if(Array.isArray(raw))entries=raw.map(s=>[s?.statType??s?.type??s?.key??"Atributo",s]);
  else if(raw&&typeof raw==="object")entries=Object.entries(raw);
- const rows=entries.map(([key,value])=>{
+ entries.forEach(([key,value])=>{
   const label=humanizeStat(value&&typeof value==="object"?(value.statType??value.type??key):key);
   const amount=value&&typeof value==="object"?(value.statValue??value.value??value.amount??value.statValue1):value;
-  const chance=value&&typeof value==="object"&&value.chancePercentage!=null?' · '+Number(value.chancePercentage).toLocaleString("pt-BR",{maximumFractionDigits:2})+'%':'';
-  if(!label||label==="Atributo")return "";
-  return '<span class="build-picker-stat"><small>'+escapeHtml(label)+'</small><strong>'+escapeHtml(amount??"Valor não informado")+'</strong>'+ (chance?'<em>'+escapeHtml(chance)+'</em>':"")+'</span>';
- }).filter(Boolean);
+  const chance=value&&typeof value==="object"&&value.chancePercentage!=null?Number(value.chancePercentage).toLocaleString("pt-BR",{maximumFractionDigits:2})+"%":"";
+  add(label,amount,chance);
+ });
  if(!rows.length){
   const names=buildRecordStats(record);
-  return names.length?'<div class="build-picker-stats">'+names.map(name=>'<span class="build-picker-stat"><small>'+escapeHtml(name)+'</small><strong>Valor não informado</strong></span>').join("")+'</div>':'<div class="build-picker-no-stats">Atributos não disponíveis na ficha sincronizada.</div>';
+  return names.length?'<div class="build-picker-stats">'+names.slice(0,4).map(name=>'<span class="build-picker-stat"><small>'+escapeHtml(name)+'</small><strong>Valor não informado</strong></span>').join("")+'</div>':'<div class="build-picker-no-stats">Atributos não disponíveis na ficha sincronizada.</div>';
  }
  return '<div class="build-picker-stats">'+rows.join("")+'</div>';
 }
