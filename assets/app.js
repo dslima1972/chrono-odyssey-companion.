@@ -540,6 +540,7 @@ let buildWeaponDetails={},buildArmorDetails={},buildAccessoryDetails={};
 const buildLayerState={weapon:"idle",armor:"idle",accessory:"idle"};
 const buildLayerPromises={weapon:null,armor:null,accessory:null};
 let buildPickerRarity="";
+let buildPickerLimit=30;
 const buildState={className:"",weaponType:"",weaponType2:"",weaponStats:["",""],armorStats:["",""],accessoryStats:["",""],accessories:{},matchModes:{weapon0:"any",weapon1:"any",head:"any",chest:"any",hands:"any",legs:"any",feet:"any",back:"any",necklace:"any",ring1:"any",ring2:"any",belt:"any"},weapons:["",""],armor:{}};
 const BUILD_ARMOR_SLOTS=[["head","Cabeça"],["chest","Peito"],["hands","Mãos"],["legs","Pernas"],["feet","Pés"],["back","Costas"]];
 const BUILD_ACCESSORY_SLOTS=[["necklace","Colar"],["ring1","Anel 1"],["ring2","Anel 2"],["belt","Cinto"]];
@@ -583,9 +584,9 @@ function buildRecordStats(record){
 }
 function buildItemMatches(item,record,selectedStats,mode="any"){
  if(!record)return false;
- const stats=buildRecordStats(record).map(x=>x.toLocaleLowerCase("pt-BR"));
  const selected=selectedStats.filter(Boolean).map(s=>s.toLocaleLowerCase("pt-BR"));
  if(!selected.length)return true;
+ const stats=buildRecordStats(record).map(x=>x.toLocaleLowerCase("pt-BR"));
  return mode==="all"?selected.every(s=>stats.includes(s)):selected.some(s=>stats.includes(s));
 }
 function buildTypeOptions(){
@@ -686,6 +687,7 @@ function buildPickerStatsMarkup(record){
 async function buildPickList(slot,anchor){
  const isWeapon=slot==="weapon0"||slot==="weapon1",isAccessory=BUILD_ACCESSORY_SLOTS.some(([key])=>key===slot),kind=isWeapon?"weapon":isAccessory?"accessory":"armor";
  let rows=[];
+ buildPickerLimit=30;
  if(buildLayerState[kind]!=="ready"){
   const picker=$( "build-picker");if(picker.parentElement!==anchor)anchor.appendChild(picker);
   $("build-picker-title").textContent="Carregando "+BUILD_LAYER_CONFIG[kind].label+"…";$("build-picker-list").innerHTML='<p class="build-empty">Buscando as fichas detalhadas desta categoria no Questlog…</p>';picker.hidden=false;
@@ -699,7 +701,9 @@ async function buildPickList(slot,anchor){
  $("build-picker-title").textContent=isWeapon?"Selecionar arma":isAccessory?"Selecionar acessório":"Selecionar armadura";
  $("build-picker-stat-mode").value=buildState.matchModes[slot]||"any";
  const filteredRows=rows.filter(x=>!buildPickerRarity||rarity(x)===buildPickerRarity);
- $("build-picker-list").innerHTML=filteredRows.length?filteredRows.map(x=>{const source=isWeapon?buildWeaponDetails:isAccessory?buildAccessoryDetails:buildArmorDetails;const record=source[String(x.id||x.compoundId)];return '<button type="button" class="build-picker-item" style="--rarity:'+rarityStyle(x)+'" data-build-choose="'+(isWeapon?"weapon":isAccessory?"accessory":"armor")+'" data-slot="'+slot+'" data-id="'+escapeHtml(x.id||x.compoundId)+'"><span class="build-picker-item-head"><span class="build-picker-item-icon">'+(isAccessory?accessoryImageMarkup(x):weaponImageMarkup(x))+'</span><span class="build-picker-item-title"><strong>'+escapeHtml(x.name)+'</strong><small>'+escapeHtml(rarity(x))+'</small></span></span>'+buildPickerStatsMarkup(record)+'</button>'}).join(""):'<p class="build-empty">Nenhuma peça disponível com os filtros atuais.</p>';
+ const visibleRows=filteredRows.slice(0,buildPickerLimit);
+ $("build-picker-list").innerHTML=visibleRows.length?visibleRows.map(x=>{const source=isWeapon?buildWeaponDetails:isAccessory?buildAccessoryDetails:buildArmorDetails;const record=source[String(x.id||x.compoundId)];return '<button type="button" class="build-picker-item" style="--rarity:'+rarityStyle(x)+'" data-build-choose="'+(isWeapon?"weapon":isAccessory?"accessory":"armor")+'" data-slot="'+slot+'" data-id="'+escapeHtml(x.id||x.compoundId)+'"><span class="build-picker-item-head"><span class="build-picker-item-icon">'+(isAccessory?accessoryImageMarkup(x):weaponImageMarkup(x))+'</span><span class="build-picker-item-title"><strong>'+escapeHtml(x.name)+'</strong><small>'+escapeHtml(rarity(x))+'</small></span></span>'+buildPickerStatsMarkup(record)+'</button>'}).join(""):'<p class="build-empty">Nenhuma peça disponível com os filtros atuais.</p>';
+ if(filteredRows.length>visibleRows.length)$("build-picker-list").insertAdjacentHTML("beforeend",'<button type="button" class="build-picker-more" data-build-more>Exibir mais ('+(filteredRows.length-visibleRows.length)+' restantes)</button>');
  $("build-picker-rarity").value=buildPickerRarity;
  picker.hidden=false;
 }
@@ -750,6 +754,7 @@ function initBuildPlanner(){
  [["armor",0],["armor",1],["accessory",0],["accessory",1]].forEach(([kind,index])=>$("build-"+kind+"-stat"+(index+1)).addEventListener("focus",async()=>{if(buildLayerState[kind]!=="ready"){await loadBuildLayer(kind);buildStatsOptions(kind,0);buildStatsOptions(kind,1)}}));
  [["weapon",0],["weapon",1],["armor",0],["armor",1],["accessory",0],["accessory",1]].forEach(([kind,index])=>$("build-"+kind+"-stat"+(index+1)).addEventListener("change",e=>{const arr=kind==="weapon"?buildState.weaponStats:kind==="armor"?buildState.armorStats:buildState.accessoryStats;arr[index]=e.target.value;if(index===0&&arr[0]&&arr[0]===arr[1])arr[1]="";closeBuildPicker();buildStatsOptions(kind,0);buildStatsOptions(kind,1);renderBuildWeaponSlots();renderBuildArmorSlots();renderBuildSelectedStats()}));
  document.addEventListener("click",e=>{
+  const more=e.target.closest("[data-build-more]");if(more){buildPickerLimit+=30;const anchor=$("build-picker").parentElement;const slot=anchor?.dataset.buildPick??("weapon"+(anchor?.dataset.buildWeaponPick||"0"));buildPickList(slot,anchor);return}
   const chosen=e.target.closest("[data-build-choose]");if(chosen){const id=chosen.dataset.id,slot=chosen.dataset.slot;if(chosen.dataset.buildChoose==="weapon"){const index=slot==="weapon0"?0:1;buildState.weapons[index]=id}else if(chosen.dataset.buildChoose==="accessory")buildState.accessories[slot]=id;else buildState.armor[slot]=id;closeBuildPicker();renderBuildWeaponSlots();renderBuildArmorSlots();renderBuildSelectedStats();return}
   if(e.target.closest("#build-picker"))return;
   const pick=e.target.closest("[data-build-pick]");if(pick){buildPickList(pick.dataset.buildPick,pick);return}
