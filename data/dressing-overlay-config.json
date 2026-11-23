@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "status": "preparation",
+  "avatar": {
+    "id": "avatar3",
+    "src": "assets/images/avatars/avatar-male-base-3.jpg",
+    "canvas": {
+      "width": 1024,
+      "height": 1024
+    },
+    "defaultForDressingRoom": true
+  },
+  "overlayRules": {
+    "canvas": {
+      "width": 1024,
+      "height": 1024
+    },
+    "coordinateSystem": "full-avatar-canvas",
+    "avatarTransformMustBeShared": true,
+    "doNotCropOrResizeLayerIndependently": true,
+    "format": "PNG RGBA",
+    "background": "transparent"
+  },
+  "slots": {
+    "chest": {
+      "directory": "assets/images/equipment/chest/",
+      "firstCandidate": "ragged-clothes-avatar3.png",
+      "status": "waiting-for-artwork",
+      "anchors": {
+        "neckline": "pending-visual-calibration",
+        "leftShoulder": "pending-visual-calibration",
+        "rightShoulder": "pending-visual-calibration",
+        "waist": "pending-visual-calibration"
+      }
+    }
+  },
+  "notes": [
+    "Questlog inventory icons are not assumed to be overlay-ready textures.",
+    "Final placement must be calibrated using an actual transparent chest layer.",
+    "Do not claim an equipment item is rendered on the avatar until a real layer is integrated."
+  ]
+}
