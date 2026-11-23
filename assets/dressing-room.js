@@ -61,7 +61,8 @@ function renderOverlays(){
   layer.alt="";
   layer.setAttribute("aria-hidden","true");
   layer.src="./"+String(file).replace(/^\//,"");
-  layer.onerror=()=>{layer.remove();};
+  layer.onload=()=>{if(slot==="chest"&&String(equipped.chest?.id||equipped.chest?.compoundId)==="10101")$("dressing-status").textContent="Ragged Clothes aplicado ao Avatar 3.";};
+  layer.onerror=()=>{layer.remove();if(slot==="chest"&&String(equipped.chest?.id||equipped.chest?.compoundId)==="10101")$("dressing-status").textContent="A camada visual de Ragged Clothes ainda não foi encontrada. A seleção permanece no loadout.";};
   host.appendChild(layer);
  });
 }
@@ -71,7 +72,7 @@ function renderItems(){
  const list=items.filter(x=>allowed.includes(String(x.subCategory||"").toLowerCase())&&(!q||String(x.name||"").toLowerCase().includes(q)||String(x.id||"").includes(q))&&(!r||rarity(x)===r));
  $("dressing-items").innerHTML=list.length?list.map(x=>{const id=String(x.id||x.compoundId),selected=String(equipped[activeSlot]?.id||"")===id;return '<button type="button" class="dressing-item '+(selected?"selected":"")+'" data-id="'+esc(id)+'">'+(image(x)?'<img src="'+esc(image(x))+'" alt="" loading="lazy">':'<span>✧</span>')+'<strong>'+esc(x.name||"Armadura")+'</strong><small>'+rarity(x)+(tier(x)?" · Tier "+tier(x):"")+'</small></button>'}).join(""):'<div class="dressing-empty">Nenhuma peça encontrada nesta categoria.</div>';
  $("dressing-count").textContent=list.length+" PEÇAS DISPONÍVEIS";
- $("dressing-items").querySelectorAll("[data-id]").forEach(btn=>btn.addEventListener("click",()=>{const item=list.find(x=>String(x.id||x.compoundId)===btn.dataset.id);if(item){equipped[activeSlot]=item;renderAll();if(activeSlot==="chest"&&String(item.id||item.compoundId)==="10101")$("dressing-status").textContent="Ragged Clothes selecionado no loadout. A camada visual ainda não está disponível; nenhuma textura foi aplicada ao avatar."}}));
+ $("dressing-items").querySelectorAll("[data-id]").forEach(btn=>btn.addEventListener("click",()=>{const item=list.find(x=>String(x.id||x.compoundId)===btn.dataset.id);if(item){equipped[activeSlot]=item;renderAll();if(activeSlot==="chest"&&String(item.id||item.compoundId)==="10101"){const layer=overlayConfig&&overlayConfig.slots&&overlayConfig.slots.chest;$("dressing-status").textContent=layer&&layer.status==="ready"?"Ragged Clothes selecionado. Carregando a camada visual…":"Ragged Clothes selecionado no loadout. A imagem transparente ainda está pendente; nenhuma textura foi aplicada ao avatar."}}}));
 }
 function renderAll(){
  document.querySelectorAll("#dressing-slot-tabs [data-slot]").forEach(b=>b.classList.toggle("active",b.dataset.slot===activeSlot));
