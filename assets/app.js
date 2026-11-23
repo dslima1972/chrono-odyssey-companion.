@@ -763,11 +763,11 @@ document.addEventListener("click",event=>{
 document.addEventListener("input",event=>{
  const slider=event.target;
  if(!slider.matches(".gear-score-slider"))return;
- const score=String(slider.value),live=slider.closest(".detail-live");
- if(!live)return;
- const current=live.querySelector(".gear-score-current");
+ const score=String(slider.value),panel=slider.closest(".detail-panel");
+ if(!panel)return;
+ const current=panel.querySelector(".gear-score-current");
  if(current)current.textContent=score;
- live.querySelectorAll("[data-gear-score-map]").forEach(node=>{
+ panel.querySelectorAll("[data-gear-score-map]").forEach(node=>{
   try{const values=JSON.parse(node.getAttribute("data-gear-score-map"));const value=values[score]??values["1"];if(value!==undefined&&value!==null)node.textContent=String(value)}catch(error){}
  });
 });
