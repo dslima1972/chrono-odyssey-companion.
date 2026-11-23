@@ -678,7 +678,7 @@ footer{border-color:#393528;color:var(--faint)}
 .class-filter-btn:hover,.class-filter-btn:focus-visible{border-color:var(--gold);transform:translateY(-3px);box-shadow:0 10px 28px #0004;outline:none}
 .class-card-art{display:block;position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;background:radial-gradient(ellipse at center,var(--panel2),var(--bg))}
 .class-card-art:after{content:"";position:absolute;inset:25% 0 0;background:linear-gradient(180deg,transparent,#0a1118cc)}
-.class-card-art img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 30%;transition:transform .35s}
+.class-card-art img{position:absolute;inset:0;display:block;width:100%;height:100%;max-width:none;object-fit:cover;object-position:top center;transition:transform .35s}
 .class-filter-btn:hover .class-card-art img{transform:scale(1.045)}
 .class-card-art-fallback{background:linear-gradient(135deg,var(--panel2),var(--bg))}
 .class-card-number{position:absolute;z-index:1;top:12px;left:14px;color:#fff9;font:600 11px Cinzel,Georgia,serif;letter-spacing:2px}
