@@ -84,7 +84,7 @@ function humanizeStat(value){
  const original=String(value||"Atributo");
  return original.replace(/([a-z])([A-Z])/g,"$1 $2").replace(/[_-]/g," ").replace(/^./,x=>x.toUpperCase());
 }
-const PERCENT_STAT_TYPES=new Set(["increasedamage","damageincrease","damageboost","criticalchance","criticalhitchance","criticaldamage","criticalhitdamage","criticaldamageboost","criticalhitdamagereduce","criticaldamagereduce","criticalhitresistance","movementspeed","reducedamage","damageonstagger","damageovertime","damageovertimeattack","damagereduction","damagereduce"]);
+const PERCENT_STAT_TYPES=new Set(["increasedamage","damageincrease","damageboost","criticalchance","criticalhitchance","criticaldamage","criticalhitdamage","criticaldamageboost","criticalhitdamagereduce","criticaldamagereduce","criticalhitresistance","movementspeed","reducedamage","decreasemanacostfactor","staggerenforce","movementspeedfactor","damageonstagger","damageovertime","damageovertimeattack","damagereduction","damagereduce"]);
 function formatStatValue(statType,value){
  if(value===null||value===undefined||value==="")return value;
  const key=String(statType||"").toLowerCase().replace(/[^a-z0-9]/g,"");
