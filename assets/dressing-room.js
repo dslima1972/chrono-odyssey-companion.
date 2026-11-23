@@ -42,14 +42,6 @@ document.querySelectorAll("#dressing-slot-tabs [data-slot]").forEach(b=>b.classL
 }
 function readSaved(){try{return JSON.parse(localStorage.getItem("chronoDressingLooks")||"[]")}catch(e){return []}}
 function renderSaved(){const saved=readSaved();$("dressing-saved-list").innerHTML=saved.length?saved.map((x,i)=>'<button type="button" data-load="'+i+'">'+esc(x.name)+' · '+Object.keys(x.items||{}).length+' peças</button>').join(""):'<span class="dressing-empty">Nenhuma combinação salva.</span>';$("dressing-saved-list").querySelectorAll("[data-load]").forEach(b=>b.addEventListener("click",()=>{const x=saved[Number(b.dataset.load)];equipped=x.items||{};renderAll();$("dressing-status").textContent="Combinação carregada: "+x.name}))}
-document.querySelectorAll(".dressing-avatar-switch [data-avatar]").forEach(button=>button.addEventListener("click",()=>{
- const img=$("dressing-avatar-image");if(!img)return;
- document.querySelectorAll(".dressing-avatar-switch [data-avatar]").forEach(b=>{const active=b===button;b.classList.toggle("active",active);b.setAttribute("aria-pressed",String(active))});
- img.classList.remove("avatar-ready");img.dataset.avatarFile=button.dataset.avatar;
- img.alt=button.dataset.avatar==="avatar-male-base-3.jpg"?"Personagem masculino em perspectiva de três quartos":button.dataset.avatar==="avatar-male-base-2.jpg"?"Personagem masculino principal de corpo inteiro":"Personagem masculino de corpo inteiro";
- img.src="./assets/images/avatars/"+button.dataset.avatar;renderAvatarOverlay();prepareAvatar();
- $("dressing-status").textContent=button.dataset.avatar==="avatar-male-base-3.jpg"?"Avatar 3 selecionado. As peças selecionadas foram mantidas.":"Avatar alterado. As peças selecionadas foram mantidas.";
-}));
 document.querySelectorAll("#dressing-slot-tabs [data-slot]").forEach(b=>b.addEventListener("click",()=>{activeSlot=b.dataset.slot;renderAll()}));
 ["dressing-search","dressing-rarity"].forEach(id=>$(id).addEventListener(id==="dressing-search"?"input":"change",renderItems));
 $("dressing-clear").addEventListener("click",()=>{equipped={};renderAll();$("dressing-status").textContent="Todos os espaços foram limpos."});
