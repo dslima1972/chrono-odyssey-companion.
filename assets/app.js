@@ -392,7 +392,8 @@ function buildAccessorySlotMarkup(slot,label){
 function renderBuildScreen(){
  if(!$("build-class"))return;
  $("build-class").innerHTML='<option value="">Selecione uma classe</option>'+CLASS_DATA.map(c=>'<option>'+escapeHtml(c.name)+'</option>').join("");
- $("build-armor-slots").innerHTML=BUILD_ARMOR_SLOTS.map(([slot,label])=>buildSlotMarkup(slot,label)).join("")+BUILD_ACCESSORY_SLOTS.map(([slot,label])=>buildAccessorySlotMarkup(slot,label)).join("");
+ $("build-armor-slots").innerHTML=BUILD_ARMOR_SLOTS.map(([slot,label])=>buildSlotMarkup(slot,label)).join("");
+  $("build-accessory-slots").innerHTML=BUILD_ACCESSORY_SLOTS.map(([slot,label])=>buildAccessorySlotMarkup(slot,label)).join("");
  $("build-class").value=buildState.className;
  buildTypeOptions();buildStatsOptions("weapon",0);buildStatsOptions("weapon",1);buildStatsOptions("armor",0);buildStatsOptions("armor",1);
  const cls=CLASS_DATA.find(x=>x.name===buildState.className);
@@ -421,6 +422,26 @@ function renderBuildArmorSlots(){
   const item=armors.find(x=>String(x.id||x.compoundId)===String(buildState.armor[slot]));
   return '<article class="build-slot build-slot-clickable" data-build-pick="'+slot+'" tabindex="0" role="button" aria-label="Selecionar armadura: '+label+'"><div class="build-slot-icon" style="--rarity:'+(item?rarityStyle(item):"var(--gold2)")+'">'+(item?weaponImageMarkup(item):ARMOR_TYPE_ICONS[slot]||"✧")+'</div><div class="build-slot-copy"><small>'+label.toUpperCase()+'</small><strong class="build-slot-name">'+escapeHtml(item?.name||"Não selecionado")+'</strong><span class="build-slot-meta">'+(item?escapeHtml(rarity(item)):"Clique para escolher uma peça")+'</span></div><span class="build-slot-chevron">⌄</span></article>';
  }).join("");
+  $("build-accessory-slots").innerHTML=BUILD_ACCESSORY_SLOTS.map(([slot,label])=>buildAccessorySlotMarkup(slot,label)).join("");
+}
+function renderBuildSummaryStats(record){
+ const rows=[],seen=new Set();
+ const add=(label,value,chance="")=>{
+  const norm=String(label||"").toLocaleLowerCase("pt-BR");
+  if(!label||value===undefined||value===null||value===""||seen.has(norm))return;
+  seen.add(norm);
+  rows.push('<div class="stat-line"><span>'+escapeHtml(label)+'</span><strong>'+escapeHtml(value)+'</strong><small>'+escapeHtml(chance)+'</small></div>');
+ };
+ buildEquipmentPrimaryStats(record).forEach(stat=>add(stat.label,stat.value));
+ const raw=record?.itemStats?.stats;
+ const entries=Array.isArray(raw)?raw.map(s=>[s?.statType??s?.type??s?.key??"Atributo",s]):raw&&typeof raw==="object"?Object.entries(raw):[];
+ entries.forEach(([key,value])=>{
+  const label=humanizeStat(value&&typeof value==="object"?(value.statType??value.type??key):key);
+  const amount=value&&typeof value==="object"?(value.statValue??value.value??value.amount??value.statValue1):value;
+  const chance=value&&typeof value==="object"&&value.chancePercentage!=null?Number(value.chancePercentage).toLocaleString("pt-BR",{maximumFractionDigits:2})+"% de chance":"";
+  add(label,amount,chance);
+ });
+ return rows.length?'<div class="stat-list">'+rows.join("")+'</div>':'<p class="detail-muted">A fonte não retornou atributos básicos para este item.</p>';
 }
 function renderBuildSelectedStats(){
  const selected=[];
@@ -436,7 +457,7 @@ function renderBuildSelectedStats(){
  });
  const target=$("build-selected-stats");if(!target)return;
  if(!selected.length){target.innerHTML='<p class="build-empty">Selecione armas ou armaduras para visualizar aqui os atributos registrados nas fichas do Questlog.</p>';return}
- target.innerHTML=selected.map(entry=>'<article class="build-stat-summary-card" style="--rarity:'+rarityStyle(entry.item)+'"><header><span class="build-stat-summary-icon">'+weaponImageMarkup(entry.item)+'</span><span><small>'+escapeHtml(entry.label)+' · '+escapeHtml(rarity(entry.item))+'</small><strong>'+escapeHtml(entry.item.name||"Item")+'</strong></span></header>'+(entry.record?renderItemStats(entry.record):'<p class="build-empty">Ficha detalhada não carregada para este item.</p>')+'</article>').join("");
+ target.innerHTML=selected.map(entry=>'<article class="build-stat-summary-card" style="--rarity:'+rarityStyle(entry.item)+'"><header><span class="build-stat-summary-icon">'+weaponImageMarkup(entry.item)+'</span><span><small>'+escapeHtml(entry.label)+' · '+escapeHtml(rarity(entry.item))+'</small><strong>'+escapeHtml(entry.item.name||"Item")+'</strong></span></header>'+(entry.record?renderBuildSummaryStats(entry.record):'<p class="build-empty">Ficha detalhada não carregada para este item.</p>')+'</article>').join("");
 }
 function buildPickerStatsMarkup(record){
  const rows=[],seen=new Set();
