@@ -363,7 +363,7 @@ async function loadItemDetails(w,panelRoot){
  }
 }
 function mountInlineDetail(panelId,hostId){const panel=$(panelId),host=$(hostId);if(panel&&host){host.appendChild(panel);host.hidden=false;panel.classList.remove("empty-detail");}}
-function selectWeapon(id){selected=weapons.find(w=>String(w.id)===String(id)||String(w.compoundId)===String(id))||null;if(!selected)return;renderList();}
+function selectWeapon(id){const currentId=String(selected?.id||selected?.compoundId||"");if(selected&&currentId===String(id)){selected=null}else{selected=weapons.find(w=>String(w.id)===String(id)||String(w.compoundId)===String(id))||null}renderList();}
 function classWeaponIconMarkup(type,className){
  const classSlug=String(className||"").toLowerCase().replace(/[^a-z]/g,"");
  const weaponSlug=String(type||"").toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
@@ -645,7 +645,7 @@ async function loadArmorDetails(item,panelRoot){
   if(current&&selectedArmor&&String(selectedArmor.id||selectedArmor.compoundId)===id)current.innerHTML='<p class="detail-muted">A ficha detalhada não pôde ser carregada. Verifique se a sincronização do Questlog foi concluída.</p>';
  }
 }
-function selectArmor(id){selectedArmor=armors.find(x=>String(x.id)===String(id)||String(x.compoundId)===String(id));if(!selectedArmor)return;renderArmorList();}
+function selectArmor(id){const currentId=String(selectedArmor?.id||selectedArmor?.compoundId||"");if(selectedArmor&&currentId===String(id)){selectedArmor=null}else{selectedArmor=armors.find(x=>String(x.id)===String(id)||String(x.compoundId)===String(id))||null}renderArmorList();}
 function renderArmorList(){
  if(!armors.length){$("armor-catalog-count").textContent="AGUARDANDO CATÁLOGO";$("armor-list").innerHTML='<div class="empty-state">A estrutura do catálogo está pronta. Aguardando a exportação de armaduras do Questlog.</div>';return}
  const rowMarkup=x=>{
@@ -697,15 +697,33 @@ function renderAccessoryList(){
 function accessoryDetailMarkup(item){
  return '<div class="detail-panel detail-prototype detail-prototype-accessory" style="--rarity:'+rarityStyle(item)+'"><div class="detail-top"><div class="detail-heading-copy"><h3>'+escapeHtml(item.name||"Acessório")+'</h3><div class="detail-header-meta"></div></div><div class="detail-icon detail-hero"><span>'+accessoryIcon(item)+'</span>'+accessoryImageMarkup(item)+'<i class="detail-hero-glow"></i></div></div><div class="detail-live"><p class="detail-muted">Carregando ficha individual do Questlog…</p></div><a class="detail-source" href="https://questlog.gg/chrono-odyssey/en/db/item/'+encodeURIComponent(item.id||item.compoundId||"")+'" target="_blank" rel="noreferrer">CONSULTAR FICHA NO QUESTLOG ↗</a></div>';
 }
+function findAccessoryGearScore(item){
+ const stats=item?.itemStats?.equipmentStats||{};
+ for(const [key,entry] of Object.entries(stats)){
+  const levels=entry?.gearScore;
+  if(levels&&typeof levels==="object"&&Object.keys(levels).some(level=>Number.isFinite(Number(level))&&levels[level]!==null&&levels[level]!==undefined)){
+   return {key,statType:entry.statType||key,levels};
+  }
+ }
+ return null;
+}
 function renderAccessoryStats(item){
  const entries=dedupeStatEntries(getItemStatEntries(item));
- if(!entries.length)return '<p class="detail-muted">A fonte não retornou atributos básicos para este item.</p>';
- const rows=entries.map(entry=>'<div class="stat-line"><span>'+escapeHtml(entry.label)+'</span><strong>'+escapeHtml(formatStatValue(entry.key,entry.value))+'</strong><small>'+escapeHtml(entry.chance||"")+'</small></div>').join("");
- return '<div class="stat-list">'+rows+'</div>';
+ const progression=findAccessoryGearScore(item);
+ const score=progression?defaultGearScore(item,progression.levels):null;
+ let rows="";
+ if(progression){
+  const value=progression.levels[String(score)]??Object.values(progression.levels)[0];
+  const label=humanizeStat(progression.statType);
+  rows+='<div class="stat-line"><span>'+escapeHtml(label)+'</span><strong data-gear-score-map="'+escapeHtml(JSON.stringify(progression.levels))+'" data-stat-type="'+escapeHtml(progression.statType)+'">'+escapeHtml(formatStatValue(progression.statType,value))+'</strong><small></small></div>';
+ }
+ rows+=entries.map(entry=>'<div class="stat-line"><span>'+escapeHtml(entry.label)+'</span><strong>'+escapeHtml(formatStatValue(entry.key,entry.value))+'</strong><small>'+escapeHtml(entry.chance||"")+'</small></div>').join("");
+ if(!rows)return '<p class="detail-muted">A fonte não retornou atributos básicos para este item.</p>';
+ return (progression?renderGearScoreControl(item,progression.levels,"Atributo"):"")+'<div class="stat-list">'+rows+'</div>';
 }
 function detailedAccessoryMarkup(record,item){
  const info=record?.itemInfo||{},fields=[detailField("Nível requerido",info.requiredLevel),detailField("Tier",info.tier),detailField("Peso",info.weight),detailField("Durabilidade máxima",info.maxDurability),detailField("Pode reforçar",info.canReinforce===true?"Sim":info.canReinforce===false?"Não":null)].filter(Boolean).join("");
- return '<section class="detail-section stats-primary">'+renderAccessoryStats(record)+'</section>'+renderSuffixes(record)+renderPerks(record)+(fields?'<details class="detail-disclosure"><summary>Outras informações do acessório</summary><div class="detail-fields">'+fields+'</div></details>':"")+'<p class="detail-note">Dados da ficha individual do Questlog. Campos não fornecidos pela fonte não são exibidos.</p><div class="detail-id-footer">ID: '+escapeHtml(item.id||item.compoundId||"")+'</div>';
+ return '<section class="detail-section stats-primary">'+renderAccessoryStats(record)+'</section>'+renderOptionalItemOptions(record)+(fields?'<details class="detail-disclosure"><summary>Outras informações do acessório</summary><div class="detail-fields">'+fields+'</div></details>':"")+'<p class="detail-note">Dados da ficha individual do Questlog. Campos não fornecidos pela fonte não são exibidos.</p><div class="detail-id-footer">ID: '+escapeHtml(item.id||item.compoundId||"")+'</div>';
 }
 
 async function getAccessoryDetailsCatalog(){
@@ -735,7 +753,9 @@ async function loadAccessoryDetails(item,panelRoot){
  }
 }
 function selectAccessory(id){
- selectedAccessory=accessories.find(x=>String(x.id)===String(id)||String(x.compoundId)===String(id));if(!selectedAccessory)return;
+ const currentId=String(selectedAccessory?.id||selectedAccessory?.compoundId||"");
+ if(selectedAccessory&&currentId===String(id)){selectedAccessory=null}
+ else{selectedAccessory=accessories.find(x=>String(x.id)===String(id)||String(x.compoundId)===String(id))||null}
  renderAccessoryList();
 }
 async function loadAccessoryData(){
@@ -768,7 +788,7 @@ document.addEventListener("input",event=>{
  const current=panel.querySelector(".gear-score-current");
  if(current)current.textContent=score;
  panel.querySelectorAll("[data-gear-score-map]").forEach(node=>{
-  try{const values=JSON.parse(node.getAttribute("data-gear-score-map"));const value=values[score]??values["1"];if(value!==undefined&&value!==null)node.textContent=String(value)}catch(error){}
+  try{const values=JSON.parse(node.getAttribute("data-gear-score-map"));const value=values[score]??values["1"];if(value!==undefined&&value!==null)node.textContent=typeof formatStatValue==="function"?String(formatStatValue(node.dataset.statType,value)):String(value)}catch(error){}
  });
 });
 /* Build planner */
