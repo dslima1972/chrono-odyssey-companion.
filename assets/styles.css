@@ -1213,3 +1213,18 @@ input.gear-score-slider::-moz-range-thumb{width:9px;height:9px;border:1px solid 
   .dressing-avatar-placeholder .dressing-equipment-overlay{top:9.72%;width:44.52%;transform:translateX(-50%)}
 
 }
+
+/* Controles temporários para calibrar a camada visual do peitoral */
+.dressing-overlay-controls{margin:14px 0 2px;padding:14px;border:1px solid #414650;border-radius:8px;background:#171d24}
+.dressing-overlay-controls[hidden]{display:none}
+.dressing-overlay-controls-heading{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.dressing-overlay-controls-heading strong{font:500 12px Cinzel,Georgia,serif;color:#e0c58f}
+.dressing-overlay-controls-heading span,.dressing-overlay-controls p{font-size:10px;color:#91a0aa}
+.dressing-overlay-control-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.dressing-overlay-control-grid label{display:grid;gap:7px;color:#d8d9dc;font-size:10px}
+.dressing-overlay-control-grid output{color:#e0c58f;font-variant-numeric:tabular-nums;font-size:11px}
+.dressing-overlay-control-grid input[type=range]{width:100%;min-height:18px;accent-color:#c3a36a}
+.dressing-overlay-control-grid .dressing-overlay-visible{display:flex;align-items:center;gap:8px;align-self:end;padding-bottom:2px}
+.dressing-overlay-control-grid .dressing-overlay-visible input{width:auto;min-height:0;accent-color:#c3a36a}
+.dressing-overlay-controls p{margin:11px 0 0;line-height:1.5}
+@media(max-width:700px){.dressing-overlay-control-grid{grid-template-columns:1fr 1fr}.dressing-overlay-controls{padding:12px}}
