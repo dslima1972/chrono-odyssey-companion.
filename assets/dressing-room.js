@@ -24,7 +24,7 @@ function renderItems(){
  const list=items.filter(x=>allowed.includes(String(x.subCategory||"").toLowerCase())&&(!q||String(x.name||"").toLowerCase().includes(q)||String(x.id||"").includes(q))&&(!r||rarity(x)===r));
  $("dressing-items").innerHTML=list.length?list.map(x=>{const id=String(x.id||x.compoundId),selected=String(equipped[activeSlot]?.id||"")===id;return '<button type="button" class="dressing-item '+(selected?"selected":"")+'" data-id="'+esc(id)+'">'+(image(x)?'<img src="'+esc(image(x))+'" alt="" loading="lazy">':'<span>✧</span>')+'<strong>'+esc(x.name||"Armadura")+'</strong><small>'+rarity(x)+(tier(x)?" · Tier "+tier(x):"")+'</small></button>'}).join(""):'<div class="dressing-empty">Nenhuma peça encontrada nesta categoria.</div>';
  $("dressing-count").textContent=list.length+" PEÇAS DISPONÍVEIS";
- $("dressing-items").querySelectorAll("[data-id]").forEach(btn=>btn.addEventListener("click",()=>{const item=list.find(x=>String(x.id||x.compoundId)===btn.dataset.id);if(item){equipped[activeSlot]=item;renderAll();if(activeSlot==="chest"&&String(item.id||item.compoundId)==="10101")$("dressing-status").textContent=(($("dressing-avatar-image")?.dataset.avatarFile||"").includes("avatar-male-base-3.jpg"))?"Ragged Clothes adicionado à composição visual.":"Ragged Clothes adicionado à composição visual.";}}));
+ $("dressing-items").querySelectorAll("[data-id]").forEach(btn=>btn.addEventListener("click",()=>{const item=list.find(x=>String(x.id||x.compoundId)===btn.dataset.id);if(item){equipped[activeSlot]=item;renderAll();$("dressing-status").textContent=item.name+" adicionado à composição.";}}));
 }
 function renderAll(){
  renderComposition();
