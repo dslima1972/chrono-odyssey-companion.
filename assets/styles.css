@@ -1185,6 +1185,6 @@ input.gear-score-slider::-moz-range-thumb{width:9px;height:9px;border:1px solid 
 @media(max-width:700px){.dressing-room{grid-template-columns:1fr}.dressing-preview{grid-row:1}.dressing-stage{min-height:490px}.dressing-avatar-placeholder{transform:scale(.88)}.dressing-items{grid-template-columns:repeat(3,minmax(0,1fr));max-height:390px}.dressing-equipped{grid-column:auto}.dressing-equipped-list{grid-template-columns:1fr 1fr}.dressing-actions button{flex:1}}
 
 /* Avatar masculino do Provador */
-.dressing-avatar-placeholder{width:min(100%,470px);height:100%;min-height:500px;opacity:1;filter:drop-shadow(0 12px 24px #0008);display:flex;align-items:center;justify-content:center;flex-direction:column;position:relative}
-.dressing-avatar-placeholder #dressing-avatar-image{display:block;width:100%;height:100%;max-height:540px;object-fit:contain;object-position:center;image-rendering:auto}
-@media(max-width:700px){.dressing-avatar-placeholder{min-height:450px;width:100%}.dressing-avatar-placeholder #dressing-avatar-image{max-height:470px}}
+.dressing-avatar-placeholder{width:min(100%,520px);height:100%;min-height:540px;opacity:1;filter:drop-shadow(0 12px 24px #0008);display:flex;align-items:center;justify-content:center;flex-direction:column;position:relative}
+.dressing-avatar-placeholder #dressing-avatar-image{display:block;width:100%;height:100%;max-height:590px;object-fit:contain;object-position:center;image-rendering:auto}
+@media(max-width:700px){.dressing-avatar-placeholder{min-height:470px;width:100%}.dressing-avatar-placeholder #dressing-avatar-image{max-height:500px}}
