@@ -30,8 +30,24 @@ function weaponImageLoaded(img){img.classList.add("loaded");if(img.parentElement
 function weaponImageFallback(img){img.remove()}
 function weaponImageMarkup(w,extraClass=""){const path=String(w.icon||"").trim();if(!path)return "";let assetPath=path;if(/^https?:\/\//i.test(assetPath)){try{const parsed=new URL(assetPath);assetPath=parsed.pathname}catch(e){return ""}}assetPath=assetPath.replace(/^\/(?:chrono-odyssey\/)?/i,"");assetPath=assetPath.replace(/\.(?:png|jpe?g|webp)$/i,"");const src="https://cdn.questlog.gg/chrono-odyssey/"+assetPath+".webp";return '<img class="'+extraClass+'" src="'+escapeHtml(src)+'" alt="Imagem de '+escapeHtml(w.name||"item")+'" loading="lazy" decoding="async" referrerpolicy="no-referrer" onload="weaponImageLoaded(this)" onerror="weaponImageFallback(this)">'}
 
-function accessoryImageFallback(img){const formats=[".webp",".png",".jpg",".jpeg"],next=Number(img.dataset.formatIndex||0)+1;if(next<formats.length){img.dataset.formatIndex=String(next);img.src=img.dataset.imageBase+formats[next];return}weaponImageFallback(img)}
-function accessoryImageMarkup(item,extraClass=""){const path=String(item.icon||"").trim();if(!path)return "";let assetPath=path;if(/^https?:\/\//i.test(assetPath)){try{assetPath=new URL(assetPath).pathname}catch(e){return ""}}assetPath=assetPath.replace(/^\/(?:chrono-odyssey\/)?/i,"").replace(/\.(?:png|jpe?g|webp)$/i,"");const base="https://cdn.questlog.gg/chrono-odyssey/"+assetPath;return '<img class="'+extraClass+'" src="'+escapeHtml(base+".webp")+'" data-image-base="'+escapeHtml(base)+'" data-format-index="0" alt="Imagem de '+escapeHtml(item.name||"acessório")+'" loading="lazy" decoding="async" referrerpolicy="no-referrer" onload="weaponImageLoaded(this)" onerror="accessoryImageFallback(this)">'}
+function accessoryImageFallback(img){
+ try{
+  const candidates=JSON.parse(img.dataset.imageCandidates||"[]"),next=Number(img.dataset.imageIndex||0)+1;
+  if(next<candidates.length){img.dataset.imageIndex=String(next);img.src=candidates[next];return}
+ }catch(e){}
+ weaponImageFallback(img)
+}
+function accessoryImageMarkup(item,extraClass=""){
+ const path=String(item.icon||"").trim();if(!path)return "";
+ let assetPath=path;
+ if(/^https?:\/\//i.test(assetPath)){try{assetPath=new URL(assetPath).pathname}catch(e){return ""}}
+ assetPath=assetPath.replace(/^\/(?:chrono-odyssey\/)?/i,"").replace(/\.(?:png|jpe?g|webp)$/i,"");
+ const parts=assetPath.split("/"),file=parts.pop()||"",dot=file.lastIndexOf(".");
+ const normalized=dot>0&&file.slice(0,dot)===file.slice(dot+1)?[...parts,file.slice(0,dot)].join("/"):assetPath;
+ const formats=[".webp",".png",".jpg",".jpeg"],bases=[normalized,...(normalized!==assetPath?[assetPath]:[])],candidates=[];
+ bases.forEach(base=>formats.forEach(ext=>candidates.push("https://cdn.questlog.gg/chrono-odyssey/"+base+ext)));
+ return '<img class="'+extraClass+'" src="'+escapeHtml(candidates[0])+'" data-image-candidates="'+escapeHtml(JSON.stringify(candidates))+'" data-image-index="0" alt="Imagem de '+escapeHtml(item.name||"acessório")+'" loading="lazy" decoding="async" referrerpolicy="no-referrer" onload="weaponImageLoaded(this)" onerror="accessoryImageFallback(this)">'
+}
 
 function rarityColorForLabel(label){const i=RARITIES.indexOf(label);return i<0?"var(--text)":RARITY_COLORS[i]}
 function fillRarityOptions(id){const el=$(id);if(!el)return;const selected=el.value;el.innerHTML='<option value="">Todas as raridades</option>'+RARITIES.map(label=>'<option value="'+label+'" style="color:'+rarityColorForLabel(label)+'">'+label+'</option>').join("");el.value=selected}
