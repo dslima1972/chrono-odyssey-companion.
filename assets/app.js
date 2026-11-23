@@ -473,7 +473,7 @@ function renderBuildScreen(){
  $("build-class-summary").textContent=cls?cls.role:"Escolha uma classe para liberar as opções de equipamento.";
  $("build-weapon-type").disabled=!cls;$("build-weapon-type2").disabled=!cls;
  $("build-weapon-stat1").disabled=!buildState.weaponType;$("build-weapon-stat2").disabled=!buildState.weaponType;
- $("build-armor-stat1").disabled=!cls;$("build-armor-stat2").disabled=!cls;
+ $("build-armor-stat1").disabled=!cls;$("build-armor-stat2").disabled=!cls;$("build-accessory-stat1").disabled=!cls||!buildReady;$("build-accessory-stat2").disabled=!cls||!buildReady;
  renderBuildWeaponSlots();renderBuildArmorSlots();renderBuildSelectedStats();
 }
 function renderBuildWeaponSlots(){
@@ -533,7 +533,7 @@ function renderBuildSelectedStats(){
   if(item)selected.push({label,item,record:buildAccessoryDetails[String(item.id||item.compoundId)]});
  });
  const target=$("build-selected-stats");if(!target)return;
- if(!selected.length){target.innerHTML='<p class="build-empty">Selecione armas ou armaduras para visualizar aqui os atributos registrados nas fichas do Questlog.</p>';return}
+ if(!selected.length){target.innerHTML='<p class="build-empty">Selecione armas, armaduras ou acessórios para visualizar os atributos registrados nas fichas do Questlog.</p>';return}
  target.innerHTML=selected.map(entry=>'<article class="build-stat-summary-card" style="--rarity:'+rarityStyle(entry.item)+'"><header><span class="build-stat-summary-icon">'+weaponImageMarkup(entry.item)+'</span><span><small>'+escapeHtml(entry.label)+' · '+escapeHtml(rarity(entry.item))+'</small><strong>'+escapeHtml(entry.item.name||"Item")+'</strong></span></header>'+(entry.record?renderBuildSummaryStats(entry.record):'<p class="build-empty">Ficha detalhada não carregada para este item.</p>')+'</article>').join("");
 }
 function buildPickerStatsMarkup(record){
