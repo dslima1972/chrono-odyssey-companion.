@@ -20,6 +20,12 @@ jobs:
     steps:
       - name: Baixar repositório
         uses: actions/checkout@v4
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Gerar índices compactos de estatísticas
+        run: node scripts/build-stat-index.mjs
       - name: Preparar GitHub Pages
         uses: actions/configure-pages@v5
       - name: Montar site estático
