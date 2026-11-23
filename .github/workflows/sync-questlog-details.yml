@@ -45,6 +45,8 @@ jobs:
             git push
           fi
 
+      - name: Gerar índices compactos de estatísticas
+        run: node scripts/build-stat-index.mjs
       - name: Preparar GitHub Pages
         uses: actions/configure-pages@v5
 
