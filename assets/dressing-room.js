@@ -8,14 +8,64 @@ const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&
 const rarity=item=>({0:"Comum",1:"Incomum",2:"Raro",3:"Épico",4:"Lendário"})[Number(item.grade)]||"Não identificada";
 const image=item=>{let p=String(item.icon||"").replace(/^\//,"").replace(/\.(png|jpe?g|webp)$/i,"");return p?"https://cdn.questlog.gg/chrono-odyssey/"+p+".webp":""};
 const tier=item=>{const raw=String(item.itemInfo?.tier??item.tier??"");const m=raw.match(/[1-5]/);return m?m[0]:""};
+const layoutDefaults={head:{x:38,y:2,w:24,h:19},chest:{x:30,y:24,w:40,h:31},hands:{x:5,y:27,w:22,h:27},back:{x:73,y:27,w:22,h:27},legs:{x:32,y:57,w:36,h:27},feet:{x:35,y:83,w:30,h:15}};
+let freeLayout=readLayout();
+let compositionMode="fixed";
+function readLayout(){try{return {...layoutDefaults,...JSON.parse(localStorage.getItem("chronoDressingLayout")||"{}")}}catch(e){return {...layoutDefaults}}}
+function saveLayout(){try{localStorage.setItem("chronoDressingLayout",JSON.stringify(freeLayout))}catch(e){}}
+function applyFreeLayout(){
+ const root=$("dressing-composition");
+ root.classList.toggle("free-layout",compositionMode==="free");
+ root.classList.toggle("fixed-layout",compositionMode==="fixed");
+ root.querySelectorAll("[data-composition-slot]").forEach(node=>{
+  const slot=node.dataset.compositionSlot,p=freeLayout[slot]||layoutDefaults[slot];
+  if(compositionMode==="free"){
+   Object.assign(node.style,{left:p.x+"%",top:p.y+"%",width:p.w+"%",height:p.h+"%",zIndex:""+(slot==="chest"?4:slot==="head"?5:3)});
+   if(!node.querySelector(".composition-resize"))node.insertAdjacentHTML("beforeend",'<span class="composition-resize" aria-label="Redimensionar peça"></span>');
+  }else{
+   ["left","top","width","height","zIndex"].forEach(k=>node.style[k]="");
+   node.querySelector(".composition-resize")?.remove();
+  }
+ });
+}
 function renderComposition(){
  const root=$("dressing-composition");if(!root)return;
- const labels={head:"Cabeça",chest:"Peitoral",hands:"Mãos",back:"Costas",legs:"Pernas",feet:"Pés"};
+ const labels={head:"Cabeça",chest:"Peitoral",hands:"Mãos",back:"Capa",legs:"Calça",feet:"Pés"};
  root.querySelectorAll("[data-composition-slot]").forEach(node=>{
   const slot=node.dataset.compositionSlot,item=equipped[slot];
   node.innerHTML=item?(image(item)?'<img src="'+esc(image(item))+'" alt="'+esc(item.name||labels[slot])+'" loading="lazy">':''):'<span>'+labels[slot]+'</span>';
   node.classList.toggle("is-equipped",!!item);
  });
+ applyFreeLayout();
+}
+function setCompositionMode(mode){
+ compositionMode=mode;
+ $("dressing-mode-fixed").classList.toggle("active",mode==="fixed");
+ $("dressing-mode-free").classList.toggle("active",mode==="free");
+ $("dressing-status").textContent=mode==="free"?"Arraste as peças para mover. Use a alça no canto para redimensionar.":"Visualização em posições fixas de inventário.";
+ applyFreeLayout();
+}
+function initCompositionEditor(){
+ const root=$("dressing-composition");
+ root.addEventListener("pointerdown",ev=>{
+  if(compositionMode!=="free")return;
+  const node=ev.target.closest("[data-composition-slot]");if(!node||!equipped[node.dataset.compositionSlot])return;
+  const slot=node.dataset.compositionSlot,p=freeLayout[slot]||{...layoutDefaults[slot]},rect=root.getBoundingClientRect();
+  const resizing=ev.target.classList.contains("composition-resize");
+  const startX=ev.clientX,startY=ev.clientY,start={...p};
+  ev.preventDefault();node.setPointerCapture(ev.pointerId);
+  const move=e=>{
+   const dx=(e.clientX-startX)/rect.width*100,dy=(e.clientY-startY)/rect.height*100;
+   if(resizing){p.w=Math.max(7,Math.min(80,start.w+dx));p.h=Math.max(7,Math.min(80,start.h+dy))}
+   else{p.x=Math.max(0,Math.min(100-p.w,start.x+dx));p.y=Math.max(0,Math.min(100-p.h,start.y+dy))}
+   freeLayout[slot]={...p};applyFreeLayout();
+  };
+  const end=()=>{node.removeEventListener("pointermove",move);node.removeEventListener("pointerup",end);node.removeEventListener("pointercancel",end);saveLayout()};
+  node.addEventListener("pointermove",move);node.addEventListener("pointerup",end);node.addEventListener("pointercancel",end);
+ });
+ $("dressing-mode-fixed").addEventListener("click",()=>setCompositionMode("fixed"));
+ $("dressing-mode-free").addEventListener("click",()=>setCompositionMode("free"));
+ $("dressing-layout-reset").addEventListener("click",()=>{freeLayout={...layoutDefaults};saveLayout();applyFreeLayout();$("dressing-status").textContent="Posições e tamanhos da montagem livre restaurados."});
 }
 function renderItems(){
  const q=$("dressing-search").value.trim().toLowerCase(),r=$("dressing-rarity").value,allowed=slotAliases[activeSlot]||[];
@@ -32,7 +82,8 @@ function renderSaved(){
 }
 function renderAll(){
  renderComposition();
- document.querySelectorAll("#dressing-slot-tabs [data-slot]").forEach(b=>b.classList.toggle("active",b.dataset.slot===activeSlot));
+ initCompositionEditor();
+document.querySelectorAll("#dressing-slot-tabs [data-slot]").forEach(b=>b.classList.toggle("active",b.dataset.slot===activeSlot));
  $("dressing-equipped-list").innerHTML=Object.entries(equipped).length?Object.entries(equipped).map(([slot,item])=>'<div class="dressing-equipped-row">'+(image(item)?'<img src="'+esc(image(item))+'" alt="">':'<span>✧</span>')+'<div><strong>'+esc(item.name)+'</strong><small>'+slots[slot]+' · '+rarity(item)+'</small></div><button type="button" data-remove="'+slot+'" aria-label="Remover '+slots[slot]+'">×</button></div>').join(""):'<p class="dressing-empty">Nenhuma peça selecionada.</p>';
  $("dressing-equipped-list").querySelectorAll("[data-remove]").forEach(b=>b.addEventListener("click",()=>{delete equipped[b.dataset.remove];renderAll()}));
  renderItems();renderSaved();
