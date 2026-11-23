@@ -252,10 +252,16 @@ function findWeaponAttackLevels(item){
 function defaultGearScore(item,levels){
  const entries=Object.entries(levels||{}).filter(([key,value])=>Number.isFinite(Number(key))&&value!==null&&value!==undefined).sort((a,b)=>Number(a[0])-Number(b[0]));
  if(!entries.length)return 1;
- const tier=Number.parseInt(item?.itemInfo?.tier,10);
+ const rawTier=item?.itemInfo?.tier??item?.tier??"";
+ const tierText=String(typeof rawTier==="object"?(rawTier.name??rawTier.value??rawTier.label??""):rawTier).trim().toUpperCase();
+ const romanTiers={I:1,II:2,III:3,IV:4,V:5};
+ const numericMatch=tierText.match(/(?:TIER|T)?\\s*([1-5])(?:\\D|$)/);
+ const romanMatch=tierText.match(/\\b(I|II|III|IV|V)\\b/);
+ const tier=Number(numericMatch?.[1]??romanTiers[romanMatch?.[1]]??(Number.isFinite(Number(rawTier))?Number(rawTier):NaN));
  const tierDefaults={1:1,2:5,3:15,4:25,5:40};
  const preferred=tierDefaults[tier];
- if(preferred!==undefined&&levels[String(preferred)]!==undefined)return preferred;
+ const preferredEntry=entries.find(([key])=>Number(key)===preferred);
+ if(preferredEntry)return Number(preferredEntry[0]);
  return Number(entries[0][0]);
 }
 function renderGearScoreControl(item,levels,label){
