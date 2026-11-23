@@ -330,8 +330,9 @@ function renderArmorDefenseAttributes(item,score){
   const basePath=descriptor!==undefined&&descriptor!==null?path.concat(String(descriptor)):path;
   for(const [key,value] of Object.entries(node)){
    const next=[...basePath,key],joined=normalize(next.join(""));
-   const physical=/(physical|physic|physdef)/.test(joined)&&/(defense|defence|def)/.test(joined);
-   const magical=/(magical|magic|mag)/.test(joined)&&/(defense|defence|def)/.test(joined);
+   const identity=normalizeStatIdentity(joined);
+   const physical=identity==="physicaldefense";
+   const magical=identity==="magicdefense";
    if((physical||magical)&&value!==null&&value!==undefined){
     let amount=value,map=null;
     if(typeof value==="object"){
