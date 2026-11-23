@@ -4,7 +4,7 @@ const $=id=>document.getElementById(id);
 const slots={head:"Cabeça",chest:"Peitoral",hands:"Mãos",back:"Costas",legs:"Pernas",feet:"Pés"};
 const slotAliases={head:["head","helmet"],chest:["chest","body"],hands:["hands","gloves"],back:["back","cloak"],legs:["legs","pants"],feet:["feet","boots"]};
 let items=[],activeSlot="head",equipped={};
-const overlaySettings={x:50,y:18,w:42,visible:true};
+const overlaySettings={x:50,y:16,w:50,visible:true};
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const rarity=item=>({0:"Comum",1:"Incomum",2:"Raro",3:"Épico",4:"Lendário"})[Number(item.grade)]||"Não identificada";
 const image=item=>{let p=String(item.icon||"").replace(/^\//,"").replace(/\.(png|jpe?g|webp)$/i,"");return p?"https://cdn.questlog.gg/chrono-odyssey/"+p+".webp":""};
