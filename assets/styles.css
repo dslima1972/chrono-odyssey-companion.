@@ -1228,3 +1228,20 @@ input.gear-score-slider::-moz-range-thumb{width:9px;height:9px;border:1px solid 
 .dressing-overlay-control-grid .dressing-overlay-visible input{width:auto;min-height:0;accent-color:#c3a36a}
 .dressing-overlay-controls p{margin:11px 0 0;line-height:1.5}
 @media(max-width:700px){.dressing-overlay-control-grid{grid-template-columns:1fr 1fr}.dressing-overlay-controls{padding:12px}}
+
+/* Composição de equipamentos sem avatar: encaixe visual por slots */
+.dressing-composition-stage{min-height:610px;padding:22px 10px;background:radial-gradient(ellipse at 50% 38%,#343a43 0,#1b2028 52%,#101318 100%)}
+.dressing-composition{position:relative;width:min(100%,460px);height:560px;margin:auto}
+.composition-piece{position:absolute;display:flex;align-items:center;justify-content:center;flex-direction:column;min-width:0;min-height:0;text-align:center;z-index:2}
+.composition-piece img{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 5px 7px #0009)}
+.composition-piece small{display:block;max-width:100%;margin-top:2px;color:#e3d1ad;font-size:9px;line-height:1.2;text-shadow:0 1px 4px #000;overflow-wrap:anywhere}
+.composition-piece>span{display:flex;align-items:center;justify-content:center;width:100%;height:100%;border:1px dashed #59616c;border-radius:10px;color:#8f969e;font-size:10px;letter-spacing:.5px;background:#151a2070}
+.composition-piece.is-equipped>span{display:none}
+.composition-head{left:38%;top:0;width:24%;height:112px;z-index:5}
+.composition-chest{left:27%;top:17%;width:46%;height:172px;z-index:4}
+.composition-back{left:29%;top:18%;width:42%;height:170px;z-index:2;opacity:.88}
+.composition-hands{left:3%;top:27%;width:22%;height:154px;z-index:3}
+.composition-legs{left:31%;top:46%;width:38%;height:184px;z-index:3}
+.composition-feet{left:34%;top:77%;width:32%;height:112px;z-index:4}
+.composition-note{margin:9px 0 0;color:#9da5af;font-size:10px;line-height:1.45;text-align:center}
+@media(max-width:700px){.dressing-composition-stage{min-height:570px}.dressing-composition{height:530px;width:min(100%,390px)}.composition-head{height:104px}.composition-chest{height:158px}.composition-back{height:158px}.composition-hands{height:142px}.composition-legs{height:172px}.composition-feet{height:102px}}
