@@ -36,3 +36,13 @@ Esses valores são referências visuais iniciais, não coordenadas finais. Devem
 
 ## Observação
 A referência isolada de armadura está em perspectiva de três quartos. Para gerar uma camada que encaixe no Avatar 2, o prompt do gerador deverá priorizar vista frontal ortográfica e usar a referência do jogo apenas para materiais e desenho. A pose do avatar deve ser preservada como base separada.
+
+
+## Avaliação do candidato Avatar 3
+Arquivo recebido: `references/avatar-male-base-3.jpg` (1024 × 1024 px).
+- Pose em três quartos, com cabeça, tronco e pernas orientados de forma consistente.
+- Corpo inteiro dentro do quadro; braços afastados o suficiente para visualizar o tronco e as mãos.
+- A orientação parece mais próxima da referência `item-details-reference.jpg` do que a pose frontal do Avatar 2.
+- O fundo cinza uniforme parece adequado para o removedor de fundo por flood-fill já utilizado no provador.
+- A roupa escura é neutra, mas pode dificultar a leitura de calças e botas quando essas camadas forem sobrepostas.
+- Status: candidato promissor, ainda não aprovado como avatar principal. Antes de trocar o padrão, copiar para a pasta de avatares, testar remoção do fundo e comparar visualmente o alinhamento de um peitoral/capacete da referência.
