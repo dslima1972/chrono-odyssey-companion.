@@ -109,7 +109,9 @@ function resolveItemStatValue(raw,item){
  }
  return value;
 }
+const itemStatEntriesCache=new WeakMap();
 function getItemStatEntries(item){
+ if(item&&typeof item==="object"&&itemStatEntriesCache.has(item))return itemStatEntriesCache.get(item);
  const entries=[],seen=new Set();
  const add=(key,raw)=>{
   const statType=raw&&typeof raw==="object"?(raw.statType??raw.type??raw.key??key):key;
