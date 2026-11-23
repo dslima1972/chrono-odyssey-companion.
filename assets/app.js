@@ -148,7 +148,7 @@ function getItemStatEntries(item){
 function renderItemStats(item){
  const entries=getItemStatEntries(item);
  if(!entries.length)return '<p class="detail-muted">A fonte não retornou atributos básicos para este item.</p>';
- return '<div class="stat-list">'+entries.map(entry=>'<div class="stat-line"><span>'+escapeHtml(entry.label)+'</span><strong>'+escapeHtml(entry.value)+'</strong><small>'+escapeHtml(entry.chance)+'</small></div>').join("")+'</div>';
+ return '<div class="stat-list">'+entries.map(entry=>'<div class="stat-line"><span>'+escapeHtml(entry.label)+'</span><strong>'+escapeHtml(formatStatValue(entry.key,entry.value))+'</strong><small>'+escapeHtml(entry.chance)+'</small></div>').join("")+'</div>';
 }
 function findWeaponAttackLevels(item){
  const visited=new Set(),pending=[item];
@@ -186,7 +186,7 @@ function renderWeaponStats(item){
   entries.unshift({key:"attack",identity:"attack",label:"Ataque",value:attackValue,chance:"",gearScoreMap:escapeHtml(JSON.stringify(levels))});
  }
  if(!entries.length)return '<p class="detail-muted">A fonte não retornou atributos básicos para este item.</p>';
- const stats='<div class="stat-list">'+entries.map(entry=>'<div class="stat-line"><span>'+escapeHtml(entry.label)+'</span><strong '+(entry.gearScoreMap?'data-gear-score-map="'+entry.gearScoreMap+'"':'')+'>'+escapeHtml(entry.value)+'</strong><small>'+escapeHtml(entry.chance||"")+'</small></div>').join("")+'</div>';
+ const stats='<div class="stat-list">'+entries.map(entry=>'<div class="stat-line"><span>'+escapeHtml(entry.label)+'</span><strong '+(entry.gearScoreMap?'data-gear-score-map="'+entry.gearScoreMap+'"':'')+'>'+escapeHtml(formatStatValue(entry.key,entry.value))+'</strong><small>'+escapeHtml(entry.chance||"")+'</small></div>').join("")+'</div>';
  return (levels?renderGearScoreControl(item,levels,"Ataque"):"")+stats;
 }
 
@@ -386,7 +386,7 @@ function renderArmorDefenseAttributes(item,score){
 function renderArmorStats(item){
  const levels=findArmorDefenseLevels(item),score=levels?defaultGearScore(item,levels):1;
  const entries=dedupeStatEntries(getItemStatEntries(item)).filter(entry=>!["physicaldefense","magicdefense"].includes(statFamily(entry.identity)));
- const baseRows=entries.map(entry=>'<div class="stat-line"><span>'+escapeHtml(entry.label)+'</span><strong>'+escapeHtml(entry.value)+'</strong><small>'+escapeHtml(entry.chance||"")+'</small></div>').join("");
+ const baseRows=entries.map(entry=>'<div class="stat-line"><span>'+escapeHtml(entry.label)+'</span><strong>'+escapeHtml(formatStatValue(entry.key,entry.value))+'</strong><small>'+escapeHtml(entry.chance||"")+'</small></div>').join("");
  const defenses=renderArmorDefenseAttributes(item,score);
  const defenseRows=defenses.replace(/^<div class="stat-list armor-defense-stats">/,"").replace(/<\/div>$/,"");
  const rows=baseRows+defenseRows;
@@ -462,7 +462,7 @@ function accessoryDetailMarkup(item){
 function renderAccessoryStats(item){
  const entries=dedupeStatEntries(getItemStatEntries(item));
  if(!entries.length)return '<p class="detail-muted">A fonte não retornou atributos básicos para este item.</p>';
- const rows=entries.map(entry=>'<div class="stat-line"><span>'+escapeHtml(entry.label)+'</span><strong>'+escapeHtml(entry.value)+'</strong><small>'+escapeHtml(entry.chance||"")+'</small></div>').join("");
+ const rows=entries.map(entry=>'<div class="stat-line"><span>'+escapeHtml(entry.label)+'</span><strong>'+escapeHtml(formatStatValue(entry.key,entry.value))+'</strong><small>'+escapeHtml(entry.chance||"")+'</small></div>').join("");
  return '<div class="stat-list">'+rows+'</div>';
 }
 function detailedAccessoryMarkup(record,item){
@@ -657,7 +657,7 @@ function renderBuildArmorSlots(){
   $("build-accessory-slots").innerHTML=BUILD_ACCESSORY_SLOTS.map(([slot,label])=>buildAccessorySlotMarkup(slot,label)).join("");
 }
 function renderBuildSummaryStats(record){
- const rows=getItemStatEntries(record).map(entry=>'<div class="stat-line"><span>'+escapeHtml(entry.label)+'</span><strong>'+escapeHtml(entry.value)+'</strong><small>'+escapeHtml(entry.chance)+'</small></div>');
+ const rows=getItemStatEntries(record).map(entry=>'<div class="stat-line"><span>'+escapeHtml(entry.label)+'</span><strong>'+escapeHtml(formatStatValue(entry.key,entry.value))+'</strong><small>'+escapeHtml(entry.chance)+'</small></div>');
  return rows.length?'<div class="stat-list">'+rows.join("")+'</div>':'<p class="detail-muted">A fonte não retornou atributos básicos para este item.</p>';
 }
 function renderBuildSelectedStats(){
@@ -682,7 +682,7 @@ function renderBuildSelectedStats(){
  target.innerHTML=selected.map(entry=>'<article class="build-stat-summary-card" style="--rarity:'+rarityStyle(entry.item)+'"><header><span class="build-stat-summary-icon">'+weaponImageMarkup(entry.item)+'</span><span><small>'+escapeHtml(entry.label)+' · '+escapeHtml(rarity(entry.item))+'</small><strong>'+escapeHtml(entry.item.name||"Item")+'</strong></span></header>'+(entry.record?renderBuildSummaryStats(entry.record):'<p class="build-empty">Ficha detalhada não carregada para este item.</p>')+'</article>').join("");
 }
 function buildPickerStatsMarkup(record){
- const rows=getItemStatEntries(record).slice(0,4).map(entry=>'<span class="build-picker-stat"><small>'+escapeHtml(entry.label)+'</small><strong>'+escapeHtml(entry.value??"Valor não informado")+'</strong>'+(entry.chance?'<em>'+escapeHtml(entry.chance)+'</em>':"")+'</span>');
+ const rows=getItemStatEntries(record).slice(0,4).map(entry=>'<span class="build-picker-stat"><small>'+escapeHtml(entry.label)+'</small><strong>'+escapeHtml(formatStatValue(entry.key,entry.value??"Valor não informado"))+'</strong>'+(entry.chance?'<em>'+escapeHtml(entry.chance)+'</em>':"")+'</span>');
  if(!rows.length){
   const names=buildRecordStats(record);
   return names.length?'<div class="build-picker-stats">'+names.slice(0,4).map(name=>'<span class="build-picker-stat"><small>'+escapeHtml(name)+'</small><strong>Valor não informado</strong></span>').join("")+'</div>':'<div class="build-picker-no-stats">Atributos não disponíveis na ficha sincronizada.</div>';
