@@ -308,7 +308,8 @@ document.addEventListener("input",event=>{
 });
 /* Build planner */
 let buildWeaponDetails={},buildArmorDetails={},buildReady=false;
-let buildPickerRarity="";\nconst buildState={className:"",weaponType:"",weaponType2:"",weaponStats:["",""],armorStats:["",""],weapons:["",""],armor:{}};
+let buildPickerRarity="";
+const buildState={className:"",weaponType:"",weaponType2:"",weaponStats:["",""],armorStats:["",""],weapons:["",""],armor:{}};
 const BUILD_SLOTS=[["head","Cabeça"],["shoulder","Ombros"],["chest","Peito"],["hands","Mãos"],["waist","Cintura"],["legs","Pernas"],["feet","Pés"],["back","Costas"]];
 function buildRecordStats(record){
  const found=new Map(),add=(key)=>{const label=humanizeStat(key);if(!label||label==="Atributo")return;const norm=label.toLocaleLowerCase("pt-BR");if(!found.has(norm))found.set(norm,label)};
@@ -413,17 +414,23 @@ async function loadBuildData(){
   renderBuildScreen();
  }catch(error){$("build-data-status").textContent="Não foi possível carregar as fichas detalhadas do Questlog. As sugestões por atributos ficarão indisponíveis até a sincronização dos arquivos. "+(error.message||"");}
 }
-function closeBuildPicker(){const picker=$("build-picker");picker.hidden=true;$("build-view").appendChild(picker)}\nfunction initBuildPlanner(){
+function closeBuildPicker(){const picker=$("build-picker");picker.hidden=true;$("build-view").appendChild(picker)}
+function initBuildPlanner(){
  $("build-class").addEventListener("change",e=>{buildState.className=e.target.value;buildState.weaponType="";buildState.weaponType2="";buildState.weapons=["",""];buildState.armor={};buildState.weaponStats=["",""];buildState.armorStats=["",""];renderBuildScreen()});
  ["build-weapon-type","build-weapon-type2"].forEach((id,index)=>$(id).addEventListener("change",e=>{if(index){buildState.weaponType2=e.target.value;buildState.weapons[1]=""}else{buildState.weaponType=e.target.value;buildState.weapons[0]=""}buildState.weaponStats=["",""];renderBuildScreen()}));
  [["weapon",0],["weapon",1],["armor",0],["armor",1]].forEach(([kind,index])=>$("build-"+kind+"-stat"+(index+1)).addEventListener("change",e=>{const arr=kind==="weapon"?buildState.weaponStats:buildState.armorStats;arr[index]=e.target.value;if(index===0&&arr[0]&&arr[0]===arr[1])arr[1]="";buildStatsOptions(kind,0);buildStatsOptions(kind,1);renderBuildWeaponSlots();renderBuildArmorSlots()}));
  document.addEventListener("click",e=>{
-  const pick=e.target.closest("[data-build-pick]");if(pick){buildPickList(pick.dataset.buildPick,pick);return}\n  const wp=e.target.closest("[data-build-weapon-pick]");if(wp){buildPickList("weapon"+wp.dataset.buildWeaponPick,wp);return}\n  const chosen=e.target.closest("[data-build-choose]");if(chosen){const id=chosen.dataset.id,slot=chosen.dataset.slot;if(chosen.dataset.buildChoose==="weapon"){const index=slot==="weapon0"?0:1;buildState.weapons[index]=id}else buildState.armor[slot]=id;closeBuildPicker();renderBuildWeaponSlots();renderBuildArmorSlots();return}
+  const pick=e.target.closest("[data-build-pick]");if(pick){buildPickList(pick.dataset.buildPick,pick);return}
+  const wp=e.target.closest("[data-build-weapon-pick]");if(wp){buildPickList("weapon"+wp.dataset.buildWeaponPick,wp);return}
+  const chosen=e.target.closest("[data-build-choose]");if(chosen){const id=chosen.dataset.id,slot=chosen.dataset.slot;if(chosen.dataset.buildChoose==="weapon"){const index=slot==="weapon0"?0:1;buildState.weapons[index]=id}else buildState.armor[slot]=id;closeBuildPicker();renderBuildWeaponSlots();renderBuildArmorSlots();return}
   const result=e.target.closest("[data-build-weapon]");if(result){buildState.weapons[Number(result.dataset.buildWeapon)]=result.dataset.id;renderBuildWeaponSlots();return}
   const armorResult=e.target.closest("[data-build-armor]");if(armorResult){buildState.armor[armorResult.dataset.buildArmor]=armorResult.dataset.id;renderBuildArmorSlots()}
  });
- $("build-picker-rarity").addEventListener("change",e=>{buildPickerRarity=e.target.value;const anchor=$("build-picker").parentElement;const slot=anchor?.dataset.buildPick??("weapon"+(anchor?.dataset.buildWeaponPick||"0"));buildPickList(slot,anchor)});\n $("build-picker-close").addEventListener("click",closeBuildPicker);
+ $("build-picker-rarity").addEventListener("change",e=>{buildPickerRarity=e.target.value;const anchor=$("build-picker").parentElement;const slot=anchor?.dataset.buildPick??("weapon"+(anchor?.dataset.buildWeaponPick||"0"));buildPickList(slot,anchor)});
+ $("build-picker-close").addEventListener("click",closeBuildPicker);
  renderBuildScreen();loadBuildData();
 }
 
-renderClasses();loadData();loadArmorData();initBuildPlanner()\n $("build-picker-rarity").addEventListener("change",e=>{buildPickerRarity=e.target.value;const anchor=$("build-picker").parentElement;const slot=anchor?.dataset.buildPick??("weapon"+(anchor?.dataset.buildWeaponPick||"0"));buildPickList(slot,anchor)});\n $("build-picker-close").addEventListener("click",closeBuildPicker);;
+renderClasses();loadData();loadArmorData();initBuildPlanner()
+ $("build-picker-rarity").addEventListener("change",e=>{buildPickerRarity=e.target.value;const anchor=$("build-picker").parentElement;const slot=anchor?.dataset.buildPick??("weapon"+(anchor?.dataset.buildWeaponPick||"0"));buildPickList(slot,anchor)});
+ $("build-picker-close").addEventListener("click",closeBuildPicker);;
