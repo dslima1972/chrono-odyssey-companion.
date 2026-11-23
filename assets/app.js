@@ -249,26 +249,38 @@ function findWeaponAttackLevels(item){
  }
  return null;
 }
-function defaultGearScore(item,levels){
- const entries=Object.entries(levels||{}).filter(([key,value])=>Number.isFinite(Number(key))&&value!==null&&value!==undefined).sort((a,b)=>Number(a[0])-Number(b[0]));
- if(!entries.length)return 1;
+function equipmentTier(item){
  const rawTier=item?.itemInfo?.tier??item?.tier??"";
  const tierText=String(typeof rawTier==="object"?(rawTier.name??rawTier.value??rawTier.label??""):rawTier).trim().toUpperCase();
  const romanTiers={I:1,II:2,III:3,IV:4,V:5};
  const numericMatch=tierText.match(/(?:TIER|T)?\s*([1-5])(?:\D|$)/);
  const romanMatch=tierText.match(/\b(I|II|III|IV|V)\b/);
  const tier=Number(numericMatch?.[1]??romanTiers[romanMatch?.[1]]??(Number.isFinite(Number(rawTier))?Number(rawTier):NaN));
+ return Number.isInteger(tier)&&tier>=1&&tier<=5?tier:null;
+}
+function gearScoreRange(item,levels){
+ const ranges={1:[1,5],2:[5,15],3:[15,25],4:[25,40],5:[40,60]};
+ const tier=equipmentTier(item),range=ranges[tier];
+ if(range)return range;
+ const entries=Object.entries(levels||{}).filter(([key,value])=>Number.isFinite(Number(key))&&value!==null&&value!==undefined).sort((a,b)=>Number(a[0])-Number(b[0]));
+ return entries.length?[Number(entries[0][0]),Number(entries[entries.length-1][0])]:[1,1];
+}
+function defaultGearScore(item,levels){
+ const entries=Object.entries(levels||{}).filter(([key,value])=>Number.isFinite(Number(key))&&value!==null&&value!==undefined).sort((a,b)=>Number(a[0])-Number(b[0]));
+ if(!entries.length)return 1;
  const tierDefaults={1:1,2:5,3:15,4:25,5:40};
- const preferred=tierDefaults[tier];
+ const preferred=tierDefaults[equipmentTier(item)];
  const preferredEntry=entries.find(([key])=>Number(key)===preferred);
  if(preferredEntry)return Number(preferredEntry[0]);
- return Number(entries[0][0]);
+ const [min,max]=gearScoreRange(item,levels);
+ const available=entries.map(([key])=>Number(key)).filter(score=>score>=min&&score<=max);
+ return available[0]??Number(entries[0][0]);
 }
 function renderGearScoreControl(item,levels,label){
  if(!levels||typeof levels!=="object")return "";
  const entries=Object.entries(levels).filter(([key,value])=>Number.isFinite(Number(key))&&value!==null&&value!==undefined).sort((a,b)=>Number(a[0])-Number(b[0]));
  if(!entries.length)return "";
- const min=Number(entries[0][0]),max=Number(entries[entries.length-1][0]),initial=Math.min(max,Math.max(min,defaultGearScore(item,levels)));
+ const [min,max]=gearScoreRange(item,levels),initial=Math.min(max,Math.max(min,defaultGearScore(item,levels)));
  return '<div class="gear-score-control"><div class="gear-score-value"><label>Equipment Score</label><strong class="gear-score-current">'+initial+'</strong></div><input class="gear-score-slider" type="range" min="'+min+'" max="'+max+'" step="1" value="'+initial+'" aria-label="Selecionar Equipment Score"></div>';
 }
 function renderWeaponStats(item){
