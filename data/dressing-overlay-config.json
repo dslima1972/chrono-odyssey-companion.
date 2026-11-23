@@ -31,7 +31,10 @@
         "leftShoulder": "pending-visual-calibration",
         "rightShoulder": "pending-visual-calibration",
         "waist": "pending-visual-calibration"
-      }
+      },
+      "itemIds": [
+        "10101"
+      ]
     }
   },
   "notes": [
