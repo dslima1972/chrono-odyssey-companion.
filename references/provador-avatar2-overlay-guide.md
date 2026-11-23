@@ -1,7 +1,7 @@
-# Guia de alinhamento do Provador — Avatar 2
+# Guia de alinhamento do Provador — Avatar 3
 
 ## Objetivo
-Preparar as futuras camadas transparentes de equipamentos para o arquivo `assets/images/avatars/avatar-male-base-2.jpg`, sem editar a imagem-base.
+Preparar as futuras camadas transparentes de equipamentos para o arquivo `assets/images/avatars/avatar-male-base-3.jpg`, sem editar a imagem-base.
 
 ## Referências visuais existentes
 - `references/item-details-reference.jpg`: render de uma armadura peitoral isolada, em perspectiva de três quartos. É útil para observar gola, placas, ombreiras, volume e acabamento. Não deve ser copiada diretamente como camada do avatar porque o ângulo não é frontal.
@@ -61,3 +61,23 @@ Conclusão visual:
 - A correspondência exata de ângulo e escala ainda não pode ser certificada sem uma camada de peitoral recortada/alinhada sobre o avatar. Portanto, esta é uma aprovação da direção de pose, não uma validação final de encaixe.
 
 Decisão provisória: usar Avatar 3 como avatar padrão de desenvolvimento e manter Avatar 2 disponível como alternativa. O alinhamento definitivo será validado com a primeira camada transparente real.
+
+
+## Base de desenvolvimento atual
+O Avatar 3 foi selecionado como padrão de desenvolvimento após comparação visual com as referências. O Avatar 2 permanece disponível no seletor, mas não é mais a base primária.
+Arquivo-base: `assets/images/avatars/avatar-male-base-3.jpg`.
+Canvas observado: 1024 × 1024 px.
+As futuras camadas devem usar o mesmo canvas quadrado e ser alinhadas em coordenadas relativas ao canvas completo. Não redimensionar, recortar ou reposicionar o avatar separadamente da camada.
+
+## Estrutura de camadas prevista
+Diretório reservado: `assets/images/equipment/chest/`.
+Nome recomendado para a primeira camada validada: `ragged-clothes-avatar3.png`.
+Formato: PNG RGBA com transparência real.
+O arquivo final deverá conter somente a peça, sem corpo, fundo, sombra externa ou manequim. A posição da peça dentro do canvas deve coincidir com a posição do corpo no avatar.
+A imagem de ícone do Questlog não será usada como textura de sobreposição sem avaliação: ícones de inventário não garantem vista, escala ou recorte adequados.
+
+## Estado
+- Perspectiva do Avatar 3: aprovada como direção de trabalho.
+- Remoção de fundo: validada pelo usuário.
+- Correspondência exata de ângulo: ainda depende de teste com camada real.
+- Peitoral transparente: ainda não produzido; aguardando geração/arte compatível.
