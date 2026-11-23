@@ -1209,3 +1209,9 @@ input.gear-score-slider::-moz-range-thumb{width:9px;height:9px;border:1px solid 
     transform:scale(1.06);
   }
 }
+
+
+/* Camada conceitual inicial do peitoral Ragged Clothes — calibrada para o Avatar 1 */
+#dressing-chest-prototype{display:none;position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:2;transform:scale(1.18);transform-origin:center center}
+.dressing-avatar-placeholder.chest-prototype-active #dressing-chest-prototype{display:block}
+@media(max-width:700px){#dressing-chest-prototype{transform:scale(1.06)}}
