@@ -6,7 +6,7 @@ Esta pasta armazena as imagens-base dos personagens usados no Provador de Equipa
 
 Quando estiver pronto, envie o arquivo PNG com transparência para este caminho:
 
-`assets/images/avatars/avatar-male-base.png`
+`assets/images/avatars/avatar-male-base.jpg`
 
 Requisitos recomendados:
 - PNG com canal alfa (fundo realmente transparente)
