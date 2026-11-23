@@ -439,7 +439,7 @@ function renderBuildSummaryStats(record){
   const label=humanizeStat(value&&typeof value==="object"?(value.statType??value.type??key):key);
   const amount=value&&typeof value==="object"?(value.statValue??value.value??value.amount??value.statValue1):value;
   const chance=value&&typeof value==="object"&&value.chancePercentage!=null?Number(value.chancePercentage).toLocaleString("pt-BR",{maximumFractionDigits:2})+"% de chance":"";
-  add(label,amount,chance);
+  add(label,formatStatValue(value&&typeof value==="object"?(value.statType??value.type??key):key,amount),chance);
  });
  return rows.length?'<div class="stat-list">'+rows.join("")+'</div>':'<p class="detail-muted">A fonte não retornou atributos básicos para este item.</p>';
 }
@@ -476,7 +476,7 @@ function buildPickerStatsMarkup(record){
   const label=humanizeStat(value&&typeof value==="object"?(value.statType??value.type??key):key);
   const amount=value&&typeof value==="object"?(value.statValue??value.value??value.amount??value.statValue1):value;
   const chance=value&&typeof value==="object"&&value.chancePercentage!=null?Number(value.chancePercentage).toLocaleString("pt-BR",{maximumFractionDigits:2})+"%":"";
-  add(label,amount,chance);
+  add(label,formatStatValue(value&&typeof value==="object"?(value.statType??value.type??key):key,amount),chance);
  });
  if(!rows.length){
   const names=buildRecordStats(record);
