@@ -56,15 +56,15 @@ function renderOverlays(){
   if(!config)return;
   const ids=(config.itemIds||[]).map(String);
   if(ids.length&&!ids.includes(String(item.id||item.compoundId)))return;
-  const file=config.asset||config.firstCandidate;
+  const file=config.asset||(config.directory&&config.firstCandidate?config.directory+config.firstCandidate:config.firstCandidate);
   if(!file)return;
   const layer=document.createElement("img");
   layer.className="dressing-equipment-layer";
   layer.alt="";
   layer.setAttribute("aria-hidden","true");
-  layer.src="./"+String(file).replace(/^\//,"");
   layer.onload=()=>{if(slot==="chest"&&$("dressing-avatar-image")?.dataset.avatarFile==="avatar-male-base-3.jpg"&&String(equipped.chest?.id||equipped.chest?.compoundId)==="10101")$("dressing-status").textContent="Ragged Clothes aplicado ao Avatar 3.";};
   layer.onerror=()=>{layer.remove();if(slot==="chest"&&String(equipped.chest?.id||equipped.chest?.compoundId)==="10101")$("dressing-status").textContent="A camada visual de Ragged Clothes ainda não foi encontrada. A seleção permanece no loadout.";};
+  layer.src="./"+String(file).replace(/^\//,"");
   host.appendChild(layer);
  });
 }
