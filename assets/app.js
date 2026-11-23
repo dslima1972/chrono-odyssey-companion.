@@ -59,10 +59,25 @@ function renderList(){const rows=filtered();$("catalog-count").textContent=weapo
 let itemDetailsDataPromise;
 const STAT_LABELS={increasedamage:"Aumento de dano",addmaximummana:"Mana máxima",damageonstagger:"Dano contra alvo cambaleante",attack:"Ataque",basicattack:"Ataque",basicatk:"Ataque",criticalchance:"Chance crítica",criticaldamage:"Dano crítico",defense:"Defesa",physicaldefense:"Defesa física",defensephysical:"Defesa física",physicaldefence:"Defesa física",defencephysical:"Defesa física",physicalarmor:"Defesa física",physicalarmour:"Defesa física",magicdefense:"Defesa mágica",magicaldefense:"Defesa mágica",defensemagic:"Defesa mágica",defensemagical:"Defesa mágica",magicdefence:"Defesa mágica",magicaldefence:"Defesa mágica",defencemagic:"Defesa mágica",defencemagical:"Defesa mágica",magicarmor:"Defesa mágica",magicalarmor:"Defesa mágica",healing:"Cura",health:"Vida",maxhealth:"Vida máxima",maxhp:"HP máximo",maxlife:"Vida máxima",bagweightincrease:"Aumento da capacidade de peso",bagweightcapacityboost:"Aumento da capacidade de peso",stamina:"Vigor",liferegenpersecond:"Regeneração de vida por segundo",criticalhitchance:"Chance de acerto crítico",criticalhitdamage:"Dano crítico",criticalhitdamagereduce:"Redução de dano crítico"};
 function normalizeStatIdentity(value){
- const key=String(value||"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"");
- const aliases={attack:"attack",basicattack:"attack",basicatk:"attack",ataque:"attack",ataquebasico:"attack",physicaldefense:"physicaldefense",defensephysical:"physicaldefense",physicaldefence:"physicaldefense",defencephysical:"physicaldefense",physicalarmor:"physicaldefense",physicalarmour:"physicaldefense",defesafisica:"physicaldefense",magicdefense:"magicdefense",magicaldefense:"magicdefense",defensemagic:"magicdefense",defensemagical:"magicdefense",magicdefence:"magicdefense",magicaldefence:"magicdefense",defencemagic:"magicdefense",defencemagical:"magicdefense",magicarmor:"magicdefense",magicalarmor:"magicdefense",defesamagica:"magicdefense"};
- return aliases[key]||key;
+ const key=String(value||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"");
+ const defenseWord=/(defense|defence|defesa|armor|armour|def)/.test(key);
+ if((defenseWord&&/(physical|physic|physdef)/.test(key))||key.includes("defesafisica"))return "physicaldefense";
+ if((defenseWord&&/(magic|magical|mag|magdef)/.test(key))||key.includes("defesamagica"))return "magicdefense";
+ if(key==="attack"||key==="ataque"||key==="ataquebasico"||key==="basicattack"||key==="basicatk"||key==="attackpower"||key==="attackvalue")return "attack";
+ return key;
 }
+function statFamily(value){return normalizeStatIdentity(value)}
+function dedupeStatEntries(entries){
+ const result=[],seen=new Set();
+ for(const entry of entries||[]){
+  const identity=statFamily(entry.identity||entry.key||entry.label);
+  if(seen.has(identity))continue;
+  seen.add(identity);
+  result.push({...entry,identity,label:humanizeStat(identity)});
+ }
+ return result;
+}
+
 function humanizeStat(value){
  const key=normalizeStatIdentity(value);
  if(STAT_LABELS[key])return STAT_LABELS[key];
@@ -160,14 +175,16 @@ function renderGearScoreControl(item,levels,label){
 }
 function renderWeaponStats(item){
  const levels=findWeaponAttackLevels(item);
- if(!levels)return renderItemStats(item);
- const entries=getItemStatEntries(item).filter(entry=>entry.identity!=="attack");
- const score=defaultGearScore(item,levels),attackValue=levels[String(score)]??Object.values(levels)[0];
- const attackMap=escapeHtml(JSON.stringify(levels));
- entries.unshift({label:"Ataque",value:attackValue,chance:"",gearScoreMap:attackMap});
+ let entries=dedupeStatEntries(getItemStatEntries(item)).filter(entry=>statFamily(entry.identity)!=="attack");
+ if(levels){
+  const score=defaultGearScore(item,levels),attackValue=levels[String(score)]??Object.values(levels)[0];
+  entries.unshift({key:"attack",identity:"attack",label:"Ataque",value:attackValue,chance:"",gearScoreMap:escapeHtml(JSON.stringify(levels))});
+ }
+ if(!entries.length)return '<p class="detail-muted">A fonte não retornou atributos básicos para este item.</p>';
  const stats='<div class="stat-list">'+entries.map(entry=>'<div class="stat-line"><span>'+escapeHtml(entry.label)+'</span><strong '+(entry.gearScoreMap?'data-gear-score-map="'+entry.gearScoreMap+'"':'')+'>'+escapeHtml(entry.value)+'</strong><small>'+escapeHtml(entry.chance||"")+'</small></div>').join("")+'</div>';
- return renderGearScoreControl(item,levels,"Ataque")+stats;
+ return (levels?renderGearScoreControl(item,levels,"Ataque"):"")+stats;
 }
+
 function renderAttackProgression(item){const levels=findWeaponAttackLevels(item);if(!levels||typeof levels!=="object")return "";const entries=Object.entries(levels).sort((a,b)=>Number(a[0])-Number(b[0]));if(!entries.length)return "";const first=entries[0],last=entries[entries.length-1];return '<details class="detail-disclosure"><summary>Progressão de ataque por Gear Score <span>'+escapeHtml(first[1])+' → '+escapeHtml(last[1])+'</span></summary><div class="progression-grid">'+entries.map(([level,value])=>'<div><small>Nível '+escapeHtml(level)+'</small><strong>'+escapeHtml(value)+'</strong></div>').join("")+'</div></details>'}
 function optionListMarkup(title,rows,kind){
  if(!rows.length)return "";
@@ -340,7 +357,7 @@ function renderArmorDefenseAttributes(item,score){
 }
 function renderArmorStats(item){
  const levels=findArmorDefenseLevels(item),score=levels?defaultGearScore(item,levels):1;
- const entries=getItemStatEntries(item).filter(entry=>entry.identity!=="physicaldefense"&&entry.identity!=="magicdefense");
+ const entries=dedupeStatEntries(getItemStatEntries(item)).filter(entry=>!["physicaldefense","magicdefense"].includes(statFamily(entry.identity)));
  const baseRows=entries.map(entry=>'<div class="stat-line"><span>'+escapeHtml(entry.label)+'</span><strong>'+escapeHtml(entry.value)+'</strong><small>'+escapeHtml(entry.chance||"")+'</small></div>').join("");
  const defenses=renderArmorDefenseAttributes(item,score);
  const defenseRows=defenses.replace(/^<div class="stat-list armor-defense-stats">/,"").replace(/<\/div>$/,"");
@@ -348,6 +365,7 @@ function renderArmorStats(item){
  const stats=rows?'<div class="stat-list">'+rows+'</div>':'<p class="detail-muted">A fonte não retornou atributos básicos para este item.</p>';
  return (levels?renderGearScoreControl(item,levels,"Defesa"):"")+stats;
 }
+
 function detailedArmorMarkup(item,catalogItem){
  const info=item?.itemInfo||{},grade=item?.equipmentGradeInfo||{};
  const quick=compactMeta("ID",catalogItem.id||catalogItem.compoundId)+compactMeta("Nível",info.requiredLevel)+compactMeta("Tier",info.tier)+compactMeta("Conjunto",armorSetLabel(catalogItem));
@@ -396,10 +414,17 @@ function renderAccessoryList(){
 function accessoryDetailMarkup(item){
  return '<div class="detail-panel" style="--rarity:'+rarityStyle(item)+'"><div class="detail-top"><div class="detail-icon"><span>'+accessoryIcon(item)+'</span>'+accessoryImageMarkup(item)+'</div><div class="detail-heading-copy"><h3>'+escapeHtml(item.name||"Acessório")+'</h3><p>'+escapeHtml(accessoryType(item))+'</p><div class="detail-rarity">'+escapeHtml(rarity(item))+'</div><div class="detail-header-meta">'+compactMeta("ID",item.id||item.compoundId)+'</div></div></div><div class="detail-live" id="accessory-detail-live"><p class="detail-muted">Carregando ficha individual do Questlog…</p></div><a class="detail-source" href="https://questlog.gg/chrono-odyssey/en/db/item/'+encodeURIComponent(item.id||item.compoundId||"")+'" target="_blank" rel="noreferrer">CONSULTAR FICHA NO QUESTLOG ↗</a></div>';
 }
+function renderAccessoryStats(item){
+ const entries=dedupeStatEntries(getItemStatEntries(item));
+ if(!entries.length)return '<p class="detail-muted">A fonte não retornou atributos básicos para este item.</p>';
+ const rows=entries.map(entry=>'<div class="stat-line"><span>'+escapeHtml(entry.label)+'</span><strong>'+escapeHtml(entry.value)+'</strong><small>'+escapeHtml(entry.chance||"")+'</small></div>').join("");
+ return '<div class="stat-list">'+rows+'</div>';
+}
 function detailedAccessoryMarkup(record,item){
  const info=record?.itemInfo||{},fields=[detailField("Nível requerido",info.requiredLevel),detailField("Tier",info.tier),detailField("Peso",info.weight),detailField("Durabilidade máxima",info.maxDurability),detailField("Pode reforçar",info.canReinforce===true?"Sim":info.canReinforce===false?"Não":null)].filter(Boolean).join("");
- return '<section class="detail-section stats-primary"><h4>Atributos e efeitos</h4>'+renderItemStats(record)+'</section>'+renderSuffixes(record)+renderPerks(record)+(fields?'<details class="detail-disclosure"><summary>Outras informações do acessório</summary><div class="detail-fields">'+fields+'</div></details>':"")+'<p class="detail-note">Dados da ficha individual do Questlog. Campos não fornecidos pela fonte não são exibidos.</p>';
+ return '<section class="detail-section stats-primary"><h4>Atributos e efeitos</h4>'+renderAccessoryStats(record)+'</section>'+renderSuffixes(record)+renderPerks(record)+(fields?'<details class="detail-disclosure"><summary>Outras informações do acessório</summary><div class="detail-fields">'+fields+'</div></details>':"")+'<p class="detail-note">Dados da ficha individual do Questlog. Campos não fornecidos pela fonte não são exibidos.</p>';
 }
+
 async function loadAccessoryDetails(item){
  const id=String(item.id||item.compoundId||""),target=$("accessory-detail-live");if(!target)return;
  try{
