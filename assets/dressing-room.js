@@ -8,6 +8,32 @@ const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&
 const rarity=item=>({0:"Comum",1:"Incomum",2:"Raro",3:"Épico",4:"Lendário"})[Number(item.grade)]||"Não identificada";
 const image=item=>{let p=String(item.icon||"").replace(/^\//,"").replace(/\.(png|jpe?g|webp)$/i,"");return p?"https://cdn.questlog.gg/chrono-odyssey/"+p+".webp":""};
 const tier=item=>{const raw=String(item.itemInfo?.tier??item.tier??"");const m=raw.match(/[1-5]/);return m?m[0]:""};
+// Converte a imagem JPEG (atualmente armazenada com extensão .png) em PNG transparente no navegador.
+function prepareAvatar(){
+ const img=$("dressing-avatar-image");
+ if(!img)return;
+ const process=()=>{
+  try{
+   const w=img.naturalWidth,h=img.naturalHeight;
+   if(!w||!h)throw new Error("Imagem do avatar inválida");
+   const canvas=document.createElement("canvas");canvas.width=w;canvas.height=h;
+   const ctx=canvas.getContext("2d",{willReadFrequently:true});ctx.drawImage(img,0,0);
+   const frame=ctx.getImageData(0,0,w,h),d=frame.data,seen=new Uint8Array(w*h),queue=new Int32Array(w*h);
+   const corners=[[0,0],[w-1,0],[0,h-1],[w-1,h-1]];
+   const samples=corners.map(([x,y])=>{const k=(y*w+x)*4;return [d[k],d[k+1],d[k+2]];});
+   const bg=samples.reduce((a,c)=>a.map((v,i)=>v+c[i]/samples.length),[0,0,0]);
+   const isBg=(p)=>{const k=p*4,r=d[k],g=d[k+1],b=d[k+2],max=Math.max(r,g,b),min=Math.min(r,g,b),neutral=max-min<48,dist=Math.sqrt((r-bg[0])**2+(g-bg[1])**2+(b-bg[2])**2);return neutral&&dist<88&&r>95&&g>95&&b>95;};
+   let head=0,tail=0;
+   const add=p=>{if(p<0||p>=w*h||seen[p]||!isBg(p))return;seen[p]=1;queue[tail++]=p;};
+   for(let x=0;x<w;x++){add(x);add((h-1)*w+x);}
+   for(let y=0;y<h;y++){add(y*w);add(y*w+w-1);}
+   while(head<tail){const p=queue[head++],x=p%w;if(x)add(p-1);if(x<w-1)add(p+1);if(p>=w)add(p-w);if(p<(h-1)*w)add(p+w);}
+   for(let p=0;p<seen.length;p++)if(seen[p])d[p*4+3]=0;
+   ctx.putImageData(frame,0,0);img.src=canvas.toDataURL("image/png");img.classList.add("avatar-ready");
+  }catch(err){$("dressing-status").textContent="Não foi possível processar a transparência do avatar: "+err.message;}
+ };
+ if(img.complete&&img.naturalWidth)process();else img.addEventListener("load",process,{once:true});
+}
 function renderItems(){
  const q=$("dressing-search").value.trim().toLowerCase(),r=$("dressing-rarity").value;
  const allowed=slotAliases[activeSlot]||[];
@@ -29,5 +55,6 @@ document.querySelectorAll("#dressing-slot-tabs [data-slot],#dressing-slots [data
 ["dressing-search","dressing-rarity"].forEach(id=>$(id).addEventListener(id==="dressing-search"?"input":"change",renderItems));
 $("dressing-clear").addEventListener("click",()=>{equipped={};renderAll();$("dressing-status").textContent="Todos os espaços foram limpos."});
 $("dressing-save").addEventListener("click",()=>{if(!Object.keys(equipped).length){$("dressing-status").textContent="Selecione pelo menos uma peça antes de salvar.";return}const name=prompt("Nome desta combinação:","Meu visual");if(!name)return;const saved=readSaved();saved.push({name:name.trim(),items:equipped});try{localStorage.setItem("chronoDressingLooks",JSON.stringify(saved));renderSaved();$("dressing-status").textContent="Combinação salva neste navegador."}catch(e){$("dressing-status").textContent="Não foi possível salvar a combinação neste navegador."}});
+prepareAvatar();
 fetch("./data/armor-export.json",{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error("Catálogo indisponível");return r.json()}).then(data=>{items=(Array.isArray(data.items)?data.items:data).filter(x=>!x.isDisabled&&!/\(Test\)/i.test(String(x.name||"")));$("dressing-status").textContent="Catálogo carregado. Escolha uma peça para equipar no espaço correspondente.";renderAll()}).catch(()=>{$("dressing-count").textContent="CATÁLOGO INDISPONÍVEL";$("dressing-items").innerHTML='<div class="dressing-empty">Não foi possível carregar data/armor-export.json.</div>'});
 })();
