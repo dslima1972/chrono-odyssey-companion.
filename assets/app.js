@@ -695,7 +695,7 @@ function renderAccessoryList(){
  if(selectedAccessory){const panel=$("accessory-list").querySelector(".inline-item-detail .detail-panel");if(panel)loadAccessoryDetails(selectedAccessory,panel)}
 }
 function accessoryDetailMarkup(item){
- return '<div class="detail-panel detail-prototype detail-prototype-accessory" style="--rarity:'+rarityStyle(item)+'"><div class="detail-top"><div class="detail-heading-copy"><div class="detail-kicker">ACESSÓRIO · EQUIPAMENTO</div><h3>'+escapeHtml(item.name||"Acessório")+'</h3><p>'+escapeHtml(accessoryType(item))+'</p><div class="detail-rarity">'+escapeHtml(rarity(item))+'</div><div class="detail-header-meta">'+compactMeta("ID",item.id||item.compoundId)+'</div></div><div class="detail-icon detail-hero"><span>'+accessoryIcon(item)+'</span>'+accessoryImageMarkup(item)+'<i class="detail-hero-glow"></i></div></div><div class="detail-live"><p class="detail-muted">Carregando ficha individual do Questlog…</p></div><a class="detail-source" href="https://questlog.gg/chrono-odyssey/en/db/item/'+encodeURIComponent(item.id||item.compoundId||"")+'" target="_blank" rel="noreferrer">CONSULTAR FICHA NO QUESTLOG ↗</a></div>';
+ return '<div class="detail-panel detail-prototype detail-prototype-accessory" style="--rarity:'+rarityStyle(item)+'"><div class="detail-top"><div class="detail-heading-copy"><h3>'+escapeHtml(item.name||"Acessório")+'</h3><div class="detail-header-meta"></div></div><div class="detail-icon detail-hero"><span>'+accessoryIcon(item)+'</span>'+accessoryImageMarkup(item)+'<i class="detail-hero-glow"></i></div></div><div class="detail-live"><p class="detail-muted">Carregando ficha individual do Questlog…</p></div><a class="detail-source" href="https://questlog.gg/chrono-odyssey/en/db/item/'+encodeURIComponent(item.id||item.compoundId||"")+'" target="_blank" rel="noreferrer">CONSULTAR FICHA NO QUESTLOG ↗</a></div>';
 }
 function renderAccessoryStats(item){
  const entries=dedupeStatEntries(getItemStatEntries(item));
@@ -705,7 +705,7 @@ function renderAccessoryStats(item){
 }
 function detailedAccessoryMarkup(record,item){
  const info=record?.itemInfo||{},fields=[detailField("Nível requerido",info.requiredLevel),detailField("Tier",info.tier),detailField("Peso",info.weight),detailField("Durabilidade máxima",info.maxDurability),detailField("Pode reforçar",info.canReinforce===true?"Sim":info.canReinforce===false?"Não":null)].filter(Boolean).join("");
- return '<section class="detail-section stats-primary"><h4>Atributos e efeitos</h4>'+renderAccessoryStats(record)+'</section>'+renderSuffixes(record)+renderPerks(record)+(fields?'<details class="detail-disclosure"><summary>Outras informações do acessório</summary><div class="detail-fields">'+fields+'</div></details>':"")+'<p class="detail-note">Dados da ficha individual do Questlog. Campos não fornecidos pela fonte não são exibidos.</p>';
+ return '<section class="detail-section stats-primary">'+renderAccessoryStats(record)+'</section>'+renderSuffixes(record)+renderPerks(record)+(fields?'<details class="detail-disclosure"><summary>Outras informações do acessório</summary><div class="detail-fields">'+fields+'</div></details>':"")+'<p class="detail-note">Dados da ficha individual do Questlog. Campos não fornecidos pela fonte não são exibidos.</p><div class="detail-id-footer">ID: '+escapeHtml(item.id||item.compoundId||"")+'</div>';
 }
 
 async function getAccessoryDetailsCatalog(){
@@ -727,7 +727,7 @@ async function loadAccessoryDetails(item,panelRoot){
   if(current&&selectedAccessory&&String(selectedAccessory.id||selectedAccessory.compoundId)===id){
    current.innerHTML=detailedAccessoryMarkup(record,item);
    const meta=current.closest(".detail-panel")?.querySelector(".detail-header-meta");
-   if(meta)meta.insertAdjacentHTML("beforeend",compactMeta("Nível",record?.itemInfo?.requiredLevel)+compactMeta("Tier",record?.itemInfo?.tier));
+   if(meta)meta.innerHTML=compactMeta("Tier",record?.itemInfo?.tier)+compactMeta("Raridade",rarity(item))+compactMeta("Nível",record?.itemInfo?.requiredLevel)+compactMeta("Classe","Todas")+compactMeta("Tipo",accessoryType(item));
   }
  }catch(e){
   const current=panelRoot.querySelector(".detail-live");
