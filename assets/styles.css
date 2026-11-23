@@ -572,13 +572,27 @@ footer{border-color:#393528;color:var(--faint)}
 }
 
 
-/* Remove any decorative outline from the item name in the build picker */
-.build-picker-item-title strong{
+/* Keep item names plain: remove inherited text outlines and decorative effects */
+.build-picker-item .build-picker-item-head .build-picker-item-title > strong{
+ all:unset!important;
+ display:block!important;
+ width:100%!important;
+ min-width:0!important;
+ max-width:100%!important;
+ box-sizing:border-box!important;
+ font:500 10px Cinzel,Georgia,serif!important;
+ line-height:1.35!important;
+ color:var(--text)!important;
+ white-space:normal!important;
+ overflow-wrap:anywhere!important;
+ word-break:normal!important;
  text-shadow:none!important;
- -webkit-text-stroke:0 transparent!important;
- outline:0!important;
+ -webkit-text-stroke:0px transparent!important;
+ -webkit-text-fill-color:var(--text)!important;
+ text-decoration:none!important;
+ outline:none!important;
  border:0!important;
  box-shadow:none!important;
- background:transparent!important;
+ background:none!important;
  filter:none!important;
 }
