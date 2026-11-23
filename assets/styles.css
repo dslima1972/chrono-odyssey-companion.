@@ -967,3 +967,76 @@ input.gear-score-slider::-moz-range-thumb{width:9px;height:9px;border:1px solid 
  .inline-item-detail .detail-prototype .detail-icon.detail-hero{grid-row:1;height:165px;min-height:145px}
  .inline-item-detail .detail-prototype .detail-heading-copy{grid-row:2}
 }
+
+
+/* Hierarquia compacta dos detalhes de armas e armaduras */
+.inline-item-detail .detail-kicker,
+.inline-item-detail .detail-rarity,
+.inline-item-detail .detail-heading-copy>p{display:none!important}
+.inline-item-detail .detail-prototype .detail-top{align-items:center}
+.inline-item-detail .detail-prototype .detail-heading-copy{min-width:0;flex:1}
+.inline-item-detail .detail-prototype .detail-top h3{margin:0 0 12px}
+.inline-item-detail .detail-header-meta{
+ display:flex;flex-wrap:nowrap;align-items:flex-start;justify-content:flex-start;gap:clamp(10px,2vw,24px);
+ margin:0!important;white-space:nowrap;overflow-x:auto;scrollbar-width:none;
+}
+.inline-item-detail .detail-header-meta::-webkit-scrollbar{display:none}
+.inline-item-detail .detail-header-meta .detail-meta-chip{
+ display:flex;flex-direction:column;align-items:flex-start;gap:3px;flex:0 0 auto;
+ padding:0!important;background:transparent!important;border:0!important;
+}
+.inline-item-detail .detail-header-meta .detail-meta-chip small{
+ font-size:8px;line-height:1;color:var(--muted);letter-spacing:1px;text-transform:uppercase
+}
+.inline-item-detail .detail-header-meta .detail-meta-chip strong{
+ color:var(--text);font-size:11px;font-weight:500;line-height:1.3
+}
+.inline-item-detail .detail-header-meta .detail-meta-chip:nth-child(2) strong{color:var(--rarity)}
+.inline-item-detail .detail-id-footer{
+ margin-top:16px;padding-top:8px;border-top:1px solid rgba(190,170,125,.09);
+ color:rgba(190,190,180,.42);font-size:9px;letter-spacing:.2px;text-align:right
+}
+.inline-item-detail .detail-note{margin-bottom:0}
+.inline-item-detail .stats-primary{padding-top:0!important;border-top:0!important}
+.inline-item-detail .stats-primary .stat-list{
+ display:flex!important;flex-direction:column!important;align-items:stretch;gap:0!important;
+ width:min(100%,520px);margin-top:12px
+}
+.inline-item-detail .stats-primary .stat-line{
+ display:grid;grid-template-columns:minmax(0,1fr) auto minmax(40px,auto);align-items:center;
+ gap:14px;padding:8px 2px!important;background:transparent!important;border:0!important;
+ border-bottom:1px solid rgba(190,170,125,.11)!important
+}
+.inline-item-detail .stats-primary .stat-line span{font-size:11px;color:var(--muted)}
+.inline-item-detail .stats-primary .stat-line strong{font-size:14px;color:var(--text)}
+.inline-item-detail .stats-primary .stat-line small{font-size:9px;color:var(--muted);text-align:right}
+.inline-item-detail .gear-score-control{
+ display:flex!important;align-items:flex-end;justify-content:flex-start;gap:24px;
+ width:min(100%,480px);max-width:none!important;margin:2px 0 12px!important;padding:0!important;
+ background:transparent!important;border:0!important
+}
+.inline-item-detail .gear-score-value{display:flex;flex-direction:column;align-items:flex-start;gap:4px;flex:0 0 auto}
+.inline-item-detail .gear-score-value label{
+ color:var(--muted);font-size:8px;line-height:1;letter-spacing:1.2px;text-transform:uppercase
+}
+.inline-item-detail .gear-score-value strong{
+ color:#e6c98e;font:600 27px Cinzel,Georgia,serif;line-height:1.05;
+ text-shadow:0 0 16px rgba(210,176,112,.16)
+}
+.inline-item-detail input.gear-score-slider{
+ flex:1 1 190px;width:auto!important;max-width:220px;margin:0 0 7px!important
+}
+@media(max-width:760px){
+ .inline-item-detail .detail-header-meta{gap:13px}
+ .inline-item-detail .detail-header-meta .detail-meta-chip small{font-size:7px}
+ .inline-item-detail .gear-score-control{gap:16px}
+}
+@media(max-width:460px){
+ .inline-item-detail .detail-header-meta{gap:11px}
+ .inline-item-detail .detail-header-meta .detail-meta-chip strong{font-size:10px}
+ .inline-item-detail .detail-prototype .detail-top{grid-template-columns:minmax(0,1fr) minmax(105px,.65fr)}
+ .inline-item-detail .detail-prototype .detail-icon.detail-hero{grid-row:auto;height:145px;min-height:130px}
+ .inline-item-detail .detail-prototype .detail-heading-copy{grid-row:auto}
+ .inline-item-detail .stats-primary .stat-line{grid-template-columns:minmax(0,1fr) auto;gap:8px}
+ .inline-item-detail .stats-primary .stat-line small{grid-column:1/-1;text-align:left}
+}
