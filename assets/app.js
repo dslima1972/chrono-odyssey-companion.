@@ -30,6 +30,9 @@ function weaponImageLoaded(img){img.classList.add("loaded");if(img.parentElement
 function weaponImageFallback(img){img.remove()}
 function weaponImageMarkup(w,extraClass=""){const path=String(w.icon||"").trim();if(!path)return "";let assetPath=path;if(/^https?:\/\//i.test(assetPath)){try{const parsed=new URL(assetPath);assetPath=parsed.pathname}catch(e){return ""}}assetPath=assetPath.replace(/^\/(?:chrono-odyssey\/)?/i,"");assetPath=assetPath.replace(/\.(?:png|jpe?g|webp)$/i,"");const src="https://cdn.questlog.gg/chrono-odyssey/"+assetPath+".webp";return '<img class="'+extraClass+'" src="'+escapeHtml(src)+'" alt="Imagem de '+escapeHtml(w.name||"item")+'" loading="lazy" decoding="async" referrerpolicy="no-referrer" onload="weaponImageLoaded(this)" onerror="weaponImageFallback(this)">'}
 
+function accessoryImageFallback(img){const formats=[".webp",".png",".jpg",".jpeg"],next=Number(img.dataset.formatIndex||0)+1;if(next<formats.length){img.dataset.formatIndex=String(next);img.src=img.dataset.imageBase+formats[next];return}weaponImageFallback(img)}
+function accessoryImageMarkup(item,extraClass=""){const path=String(item.icon||"").trim();if(!path)return "";let assetPath=path;if(/^https?:\/\//i.test(assetPath)){try{assetPath=new URL(assetPath).pathname}catch(e){return ""}}assetPath=assetPath.replace(/^\/(?:chrono-odyssey\/)?/i,"").replace(/\.(?:png|jpe?g|webp)$/i,"");const base="https://cdn.questlog.gg/chrono-odyssey/"+assetPath;return '<img class="'+extraClass+'" src="'+escapeHtml(base+".webp")+'" data-image-base="'+escapeHtml(base)+'" data-format-index="0" alt="Imagem de '+escapeHtml(item.name||"acessório")+'" loading="lazy" decoding="async" referrerpolicy="no-referrer" onload="weaponImageLoaded(this)" onerror="accessoryImageFallback(this)">'}
+
 function rarityColorForLabel(label){const i=RARITIES.indexOf(label);return i<0?"var(--text)":RARITY_COLORS[i]}
 function fillRarityOptions(id){const el=$(id);if(!el)return;const selected=el.value;el.innerHTML='<option value="">Todas as raridades</option>'+RARITIES.map(label=>'<option value="'+label+'" style="color:'+rarityColorForLabel(label)+'">'+label+'</option>').join("");el.value=selected}
 function updateWeaponTypeOptions(){const className=$("class-filter").value,current=$("type-filter").value;const available=[...new Set(weapons.filter(w=>!className||weaponClass(w)===className).map(weaponType).filter(x=>x&&x!=="Tipo não identificado"))].sort((a,b)=>a.localeCompare(b,"pt-BR"));$("type-filter").innerHTML='<option value="">Todos os tipos</option>'+available.map(x=>'<option>'+escapeHtml(x)+'</option>').join("");$("type-filter").value=available.includes(current)?current:""}
@@ -38,7 +41,7 @@ function compareItemPriority(a,b){const ga=Number(a.grade),gb=Number(b.grade),va
 function filtered(){const q=$("search").value.trim().toLowerCase(),c=$("class-filter").value,t=$("type-filter").value,r=$("rarity-filter").value;return weapons.filter(w=>(!q||String(w.name||"").toLowerCase().includes(q)||String(w.id||"").includes(q))&&(!c||weaponClass(w)===c)&&(!t||weaponType(w)===t)&&(!r||rarity(w)===r)).sort(compareItemPriority)}
 function renderList(){const rows=filtered();$("catalog-count").textContent=weapons.length?rows.length+" / "+weapons.length+" REGISTROS":"CATÁLOGO AINDA NÃO SINCRONIZADO";if(!weapons.length){$("weapon-list").innerHTML='<div class="empty-state">O catálogo ainda não foi carregado.<br>Assim que a primeira sincronização do Questlog terminar, as armas aparecerão aqui.</div>';return}if(!rows.length){$("weapon-list").innerHTML='<div class="empty-state">Nenhuma arma corresponde aos filtros selecionados.</div>';return}$("weapon-list").innerHTML=rows.map(w=>{const type=weaponType(w),color=rarityStyle(w);return '<button class="weapon-row '+(selected&&selected.id===w.id?'selected':'')+'" data-id="'+escapeHtml(w.id)+'" style="--rarity:'+color+'"><span class="weapon-symbol"><span>'+iconFor(type)+'</span>'+weaponImageMarkup(w)+'</span><span><span class="weapon-name">'+escapeHtml(w.name||"Item sem nome")+'</span><span class="weapon-meta">'+escapeHtml(weaponClass(w)||"Classe não mapeada")+' · '+escapeHtml(type)+'</span></span><span class="rarity-label">'+escapeHtml(rarity(w))+'</span></button>'}).join("");document.querySelectorAll("#weapon-list .weapon-row").forEach(b=>b.addEventListener("click",()=>selectWeapon(b.dataset.id)))}
 let itemDetailsDataPromise;
-const STAT_LABELS={increasedamage:"Aumento de dano",addmaximummana:"Mana máxima",damageonstagger:"Dano contra alvo cambaleante",attack:"Ataque",criticalchance:"Chance crítica",criticaldamage:"Dano crítico",defense:"Defesa",health:"Vida",maxhealth:"Vida máxima",stamina:"Vigor",liferegenpersecond:"Regeneração de vida por segundo",criticalhitchance:"Chance de acerto crítico",criticalhitdamage:"Dano crítico",criticalhitdamagereduce:"Redução de dano crítico",healing:"Cura"};
+const STAT_LABELS={increasedamage:"Aumento de dano",addmaximummana:"Mana máxima",damageonstagger:"Dano contra alvo cambaleante",attack:"Ataque",criticalchance:"Chance crítica",criticaldamage:"Dano crítico",defense:"Defesa",health:"Vida",maxhealth:"Vida máxima",maxhp:"HP máximo",maxlife:"Vida máxima",bagweightincrease:"Aumento da capacidade de peso",bagweightcapacityboost:"Aumento da capacidade de peso",stamina:"Vigor",liferegenpersecond:"Regeneração de vida por segundo",criticalhitchance:"Chance de acerto crítico",criticalhitdamage:"Dano crítico",criticalhitdamagereduce:"Redução de dano crítico",healing:"Cura"};
 function humanizeStat(value){const key=String(value||"").toLowerCase();return STAT_LABELS[key]||String(value||"Atributo").replace(/([a-z])([A-Z])/g,"$1 $2").replace(/[_-]/g," ").replace(/^./,x=>x.toUpperCase())}
 const PERCENT_STAT_TYPES=new Set(["increasedamage","damageincrease","damageboost","criticalchance","criticalhitchance","criticaldamage","criticalhitdamage","criticaldamageboost","criticalhitdamagereduce","criticaldamagereduce","damageonstagger","damageovertime","damageovertimeattack","damagereduction","damagereduce"]);
 function formatStatValue(statType,value){
@@ -52,7 +55,53 @@ function formatStatValue(statType,value){
  return percentage.toLocaleString("pt-BR",{minimumFractionDigits:3,maximumFractionDigits:3})+"%";
 }
 function detailField(label,value){if(value===undefined||value===null||value==="")return "";return '<div class="detail-field"><small>'+escapeHtml(label)+'</small><strong>'+escapeHtml(Array.isArray(value)?value.join(", "):String(value))+'</strong></div>'}
-function renderItemStats(item){const raw=item?.itemStats?.stats;let entries=[];if(Array.isArray(raw)){entries=raw.map(s=>[s?.statType??s?.type??s?.key??"Atributo",s])}else if(raw&&typeof raw==="object"){entries=Object.entries(raw)}if(!entries.length)return '<p class="detail-muted">A fonte não retornou atributos básicos para este item.</p>';return '<div class="stat-list">'+entries.map(([key,s])=>{const statType=s&&typeof s==="object"?(s.statType??s.type??key):key;const value=s&&typeof s==="object"?(s.statValue??s.value??s.amount??s.statValue1??"—"):s;const formatted=formatStatValue(statType,value);const chance=s&&typeof s==="object"&&s.chancePercentage!=null?' · '+Number(s.chancePercentage).toLocaleString("pt-BR",{maximumFractionDigits:2})+'% de chance':'';return '<div class="stat-line"><span>'+escapeHtml(humanizeStat(statType))+'</span><strong>'+escapeHtml(formatted)+'</strong><small>'+escapeHtml(chance)+'</small></div>'}).join("")+'</div>'}
+function resolveItemStatValue(raw,item){
+ if(raw===null||raw===undefined)return null;
+ let value=raw;
+ if(value&&typeof value==="object"){
+  const levels=value.gearScore??value.levels??value.values;
+  if(levels&&typeof levels==="object"){
+   const score=typeof defaultGearScore==="function"?defaultGearScore(item,levels):null;
+   value=levels[String(score)]??Object.values(levels)[0];
+  }
+  if(value&&typeof value==="object")value=value.statValue??value.statValue1??value.value??value.amount??value.maxValue??value.minValue??null;
+ }
+ return value;
+}
+function getItemStatEntries(item){
+ const entries=[],seen=new Set();
+ const add=(key,raw)=>{
+  const statType=raw&&typeof raw==="object"?(raw.statType??raw.type??raw.key??key):key;
+  if(!statType)return;
+  const label=humanizeStat(statType),norm=label.toLocaleLowerCase("pt-BR"),value=resolveItemStatValue(raw,item);
+  if(value===null||value===undefined||value===""||seen.has(norm))return;
+  seen.add(norm);
+  const chance=raw&&typeof raw==="object"&&raw.chancePercentage!=null?Number(raw.chancePercentage).toLocaleString("pt-BR",{maximumFractionDigits:2})+"% de chance":"";
+  entries.push({key:statType,label,value:formatStatValue(statType,value),chance});
+ };
+ const raw=item?.itemStats?.stats;
+ if(Array.isArray(raw))raw.forEach(s=>add(s?.statType??s?.type??s?.key??"Atributo",s));
+ else if(raw&&typeof raw==="object")Object.entries(raw).forEach(([key,value])=>add(key,value));
+ const ignored=new Set(["gearscore","chancepercentage","statvalue","statvalue1","value","amount","min","max","minvalue","maxvalue","requiredlevel","tier","weight","maxdurability","candoreinforce","stats"]);
+ const walk=(node,keyHint="",depth=0)=>{
+  if(!node||depth>7)return;
+  if(Array.isArray(node)){node.forEach(value=>walk(value,keyHint,depth+1));return}
+  if(typeof node!=="object"){if(keyHint)add(keyHint,node);return}
+  const explicit=node.statType??node.type??node.key;
+  const hasValue=["gearScore","levels","values","statValue","statValue1","value","amount"].some(k=>Object.prototype.hasOwnProperty.call(node,k));
+  if(explicit&&hasValue){add(explicit,node);return}
+  if(keyHint&&hasValue){add(keyHint,node);return}
+  for(const [key,value] of Object.entries(node)){if(ignored.has(key.toLowerCase()))continue;walk(value,key,depth+1)}
+ };
+ walk(item?.equipmentStats);
+ if(typeof buildEquipmentPrimaryStats==="function")buildEquipmentPrimaryStats(item).forEach(stat=>add(stat.label,stat.value));
+ return entries;
+}
+function renderItemStats(item){
+ const entries=getItemStatEntries(item);
+ if(!entries.length)return '<p class="detail-muted">A fonte não retornou atributos básicos para este item.</p>';
+ return '<div class="stat-list">'+entries.map(entry=>'<div class="stat-line"><span>'+escapeHtml(entry.label)+'</span><strong>'+escapeHtml(entry.value)+'</strong><small>'+escapeHtml(entry.chance)+'</small></div>').join("")+'</div>';
+}
 function findWeaponAttackLevels(item){
  const visited=new Set(),pending=[item];
  while(pending.length){
@@ -309,11 +358,11 @@ function fillAccessoryFilters(){fillRarityOptions("accessory-rarity-filter")}
 function renderAccessoryList(){
  const rows=accessoryFiltered();$("accessory-catalog-count").textContent=accessories.length?rows.length+" / "+accessories.length+" PEÇAS":"AGUARDANDO CATÁLOGO";
  if(!rows.length){$("accessory-list").innerHTML='<div class="empty-state">'+(accessories.length?"Nenhum acessório corresponde aos filtros selecionados.":"Aguardando a exportação do Questlog.")+'</div>';return}
- $("accessory-list").innerHTML=rows.map(x=>'<button class="weapon-row armor-row '+(selectedAccessory&&String(selectedAccessory.id)===String(x.id)?"selected":"")+'" data-accessory-id="'+escapeHtml(x.id)+'" style="--rarity:'+rarityStyle(x)+'"><span class="weapon-symbol"><span>'+accessoryIcon(x)+'</span>'+weaponImageMarkup(x)+'</span><span><span class="weapon-name">'+escapeHtml(x.name||"Acessório")+'</span><span class="weapon-meta">'+escapeHtml(accessoryType(x))+'</span></span><span class="rarity-label">'+escapeHtml(rarity(x))+'</span></button>').join("");
+ $("accessory-list").innerHTML=rows.map(x=>'<button class="weapon-row armor-row '+(selectedAccessory&&String(selectedAccessory.id)===String(x.id)?"selected":"")+'" data-accessory-id="'+escapeHtml(x.id)+'" style="--rarity:'+rarityStyle(x)+'"><span class="weapon-symbol"><span>'+accessoryIcon(x)+'</span>'+accessoryImageMarkup(x)+'</span><span><span class="weapon-name">'+escapeHtml(x.name||"Acessório")+'</span><span class="weapon-meta">'+escapeHtml(accessoryType(x))+'</span></span><span class="rarity-label">'+escapeHtml(rarity(x))+'</span></button>').join("");
  document.querySelectorAll("#accessory-list [data-accessory-id]").forEach(b=>b.addEventListener("click",()=>selectAccessory(b.dataset.accessoryId)));
 }
 function accessoryDetailMarkup(item){
- return '<div class="detail-panel" style="--rarity:'+rarityStyle(item)+'"><div class="detail-top"><div class="detail-icon"><span>'+accessoryIcon(item)+'</span>'+weaponImageMarkup(item)+'</div><div class="detail-heading-copy"><h3>'+escapeHtml(item.name||"Acessório")+'</h3><p>'+escapeHtml(accessoryType(item))+'</p><div class="detail-rarity">'+escapeHtml(rarity(item))+'</div><div class="detail-header-meta">'+compactMeta("ID",item.id||item.compoundId)+'</div></div></div><div class="detail-live" id="accessory-detail-live"><p class="detail-muted">Carregando ficha individual do Questlog…</p></div><a class="detail-source" href="https://questlog.gg/chrono-odyssey/en/db/item/'+encodeURIComponent(item.id||item.compoundId||"")+'" target="_blank" rel="noreferrer">CONSULTAR FICHA NO QUESTLOG ↗</a></div>';
+ return '<div class="detail-panel" style="--rarity:'+rarityStyle(item)+'"><div class="detail-top"><div class="detail-icon"><span>'+accessoryIcon(item)+'</span>'+accessoryImageMarkup(item)+'</div><div class="detail-heading-copy"><h3>'+escapeHtml(item.name||"Acessório")+'</h3><p>'+escapeHtml(accessoryType(item))+'</p><div class="detail-rarity">'+escapeHtml(rarity(item))+'</div><div class="detail-header-meta">'+compactMeta("ID",item.id||item.compoundId)+'</div></div></div><div class="detail-live" id="accessory-detail-live"><p class="detail-muted">Carregando ficha individual do Questlog…</p></div><a class="detail-source" href="https://questlog.gg/chrono-odyssey/en/db/item/'+encodeURIComponent(item.id||item.compoundId||"")+'" target="_blank" rel="noreferrer">CONSULTAR FICHA NO QUESTLOG ↗</a></div>';
 }
 function detailedAccessoryMarkup(record,item){
  const info=record?.itemInfo||{},fields=[detailField("Nível requerido",info.requiredLevel),detailField("Tier",info.tier),detailField("Peso",info.weight),detailField("Durabilidade máxima",info.maxDurability),detailField("Pode reforçar",info.canReinforce===true?"Sim":info.canReinforce===false?"Não":null)].filter(Boolean).join("");
@@ -415,6 +464,7 @@ function buildEquipmentPrimaryStats(record){
 }
 function buildRecordStats(record){
  const found=new Map(),add=(key)=>{const label=humanizeStat(key);if(!label||label==="Atributo")return;const norm=label.toLocaleLowerCase("pt-BR");if(!found.has(norm))found.set(norm,label)};
+ getItemStatEntries(record).forEach(stat=>add(stat.key));
  buildEquipmentPrimaryStats(record).forEach(stat=>add(stat.label));
  const visited=new Set(),walk=(node,depth=0)=>{
   if(!node||typeof node!=="object"||depth>7||visited.has(node))return;visited.add(node);
@@ -459,7 +509,7 @@ function buildSlotMarkup(slot,label){
 function buildAccessorySlotMarkup(slot,label){
  const item=accessories.find(x=>String(x.id||x.compoundId)===String(buildState.accessories[slot]));
  const glyph=accessoryIcon({subCategory:slot==="belt"?"belt":slot==="necklace"?"necklace":"ring"});
- return '<article class="build-slot build-slot-clickable" data-build-pick="'+slot+'" tabindex="0" role="button" aria-label="Selecionar acessório: '+label+'"><div class="build-slot-icon" style="--rarity:'+(item?rarityStyle(item):"var(--gold2)")+'">'+(item?weaponImageMarkup(item):glyph)+'</div><div class="build-slot-copy"><small>'+label.toUpperCase()+'</small><strong class="build-slot-name">'+escapeHtml(item?.name||"Não selecionado")+'</strong><span class="build-slot-meta">'+(item?escapeHtml(rarity(item)):"Clique para escolher um acessório")+'</span></div><span class="build-slot-chevron">⌄</span></article>';
+ return '<article class="build-slot build-slot-clickable" data-build-pick="'+slot+'" tabindex="0" role="button" aria-label="Selecionar acessório: '+label+'"><div class="build-slot-icon" style="--rarity:'+(item?rarityStyle(item):"var(--gold2)")+'">'+(item?accessoryImageMarkup(item):glyph)+'</div><div class="build-slot-copy"><small>'+label.toUpperCase()+'</small><strong class="build-slot-name">'+escapeHtml(item?.name||"Não selecionado")+'</strong><span class="build-slot-meta">'+(item?escapeHtml(rarity(item)):"Clique para escolher um acessório")+'</span></div><span class="build-slot-chevron">⌄</span></article>';
 }
 function renderBuildScreen(){
  if(!$("build-class"))return;
@@ -497,22 +547,7 @@ function renderBuildArmorSlots(){
   $("build-accessory-slots").innerHTML=BUILD_ACCESSORY_SLOTS.map(([slot,label])=>buildAccessorySlotMarkup(slot,label)).join("");
 }
 function renderBuildSummaryStats(record){
- const rows=[],seen=new Set();
- const add=(label,value,chance="")=>{
-  const norm=String(label||"").toLocaleLowerCase("pt-BR");
-  if(!label||value===undefined||value===null||value===""||seen.has(norm))return;
-  seen.add(norm);
-  rows.push('<div class="stat-line"><span>'+escapeHtml(label)+'</span><strong>'+escapeHtml(value)+'</strong><small>'+escapeHtml(chance)+'</small></div>');
- };
- buildEquipmentPrimaryStats(record).forEach(stat=>add(stat.label,stat.value));
- const raw=record?.itemStats?.stats;
- const entries=Array.isArray(raw)?raw.map(s=>[s?.statType??s?.type??s?.key??"Atributo",s]):raw&&typeof raw==="object"?Object.entries(raw):[];
- entries.forEach(([key,value])=>{
-  const label=humanizeStat(value&&typeof value==="object"?(value.statType??value.type??key):key);
-  const amount=value&&typeof value==="object"?(value.statValue??value.value??value.amount??value.statValue1):value;
-  const chance=value&&typeof value==="object"&&value.chancePercentage!=null?Number(value.chancePercentage).toLocaleString("pt-BR",{maximumFractionDigits:2})+"% de chance":"";
-  add(label,formatStatValue(value&&typeof value==="object"?(value.statType??value.type??key):key,amount),chance);
- });
+ const rows=getItemStatEntries(record).map(entry=>'<div class="stat-line"><span>'+escapeHtml(entry.label)+'</span><strong>'+escapeHtml(entry.value)+'</strong><small>'+escapeHtml(entry.chance)+'</small></div>');
  return rows.length?'<div class="stat-list">'+rows.join("")+'</div>':'<p class="detail-muted">A fonte não retornou atributos básicos para este item.</p>';
 }
 function renderBuildSelectedStats(){
@@ -537,24 +572,7 @@ function renderBuildSelectedStats(){
  target.innerHTML=selected.map(entry=>'<article class="build-stat-summary-card" style="--rarity:'+rarityStyle(entry.item)+'"><header><span class="build-stat-summary-icon">'+weaponImageMarkup(entry.item)+'</span><span><small>'+escapeHtml(entry.label)+' · '+escapeHtml(rarity(entry.item))+'</small><strong>'+escapeHtml(entry.item.name||"Item")+'</strong></span></header>'+(entry.record?renderBuildSummaryStats(entry.record):'<p class="build-empty">Ficha detalhada não carregada para este item.</p>')+'</article>').join("");
 }
 function buildPickerStatsMarkup(record){
- const rows=[],seen=new Set();
- const add=(label,amount,chance="")=>{
-  const norm=String(label||"").toLocaleLowerCase("pt-BR");
-  if(!label||!amount&&amount!==0||seen.has(norm)||rows.length>=4)return;
-  seen.add(norm);
-  rows.push('<span class="build-picker-stat"><small>'+escapeHtml(label)+'</small><strong>'+escapeHtml(amount??"Valor não informado")+'</strong>'+(chance?'<em>'+escapeHtml(chance)+'</em>':"")+'</span>');
- };
- buildEquipmentPrimaryStats(record).forEach(stat=>add(stat.label,stat.value));
- const raw=record?.itemStats?.stats;
- let entries=[];
- if(Array.isArray(raw))entries=raw.map(s=>[s?.statType??s?.type??s?.key??"Atributo",s]);
- else if(raw&&typeof raw==="object")entries=Object.entries(raw);
- entries.forEach(([key,value])=>{
-  const label=humanizeStat(value&&typeof value==="object"?(value.statType??value.type??key):key);
-  const amount=value&&typeof value==="object"?(value.statValue??value.value??value.amount??value.statValue1):value;
-  const chance=value&&typeof value==="object"&&value.chancePercentage!=null?Number(value.chancePercentage).toLocaleString("pt-BR",{maximumFractionDigits:2})+"%":"";
-  add(label,formatStatValue(value&&typeof value==="object"?(value.statType??value.type??key):key,amount),chance);
- });
+ const rows=getItemStatEntries(record).slice(0,4).map(entry=>'<span class="build-picker-stat"><small>'+escapeHtml(entry.label)+'</small><strong>'+escapeHtml(entry.value??"Valor não informado")+'</strong>'+(entry.chance?'<em>'+escapeHtml(entry.chance)+'</em>':"")+'</span>');
  if(!rows.length){
   const names=buildRecordStats(record);
   return names.length?'<div class="build-picker-stats">'+names.slice(0,4).map(name=>'<span class="build-picker-stat"><small>'+escapeHtml(name)+'</small><strong>Valor não informado</strong></span>').join("")+'</div>':'<div class="build-picker-no-stats">Atributos não disponíveis na ficha sincronizada.</div>';
@@ -572,7 +590,7 @@ function buildPickList(slot,anchor){
  $("build-picker-title").textContent=isWeapon?"Selecionar arma":isAccessory?"Selecionar acessório":"Selecionar armadura";
  $("build-picker-stat-mode").value=buildState.matchModes[slot]||"any";
  const filteredRows=rows.filter(x=>!buildPickerRarity||rarity(x)===buildPickerRarity);
- $("build-picker-list").innerHTML=filteredRows.length?filteredRows.map(x=>{const source=isWeapon?buildWeaponDetails:isAccessory?buildAccessoryDetails:buildArmorDetails;const record=source[String(x.id||x.compoundId)];return '<button type="button" class="build-picker-item" style="--rarity:'+rarityStyle(x)+'" data-build-choose="'+(isWeapon?"weapon":isAccessory?"accessory":"armor")+'" data-slot="'+slot+'" data-id="'+escapeHtml(x.id||x.compoundId)+'"><span class="build-picker-item-head"><span class="build-picker-item-icon">'+weaponImageMarkup(x)+'</span><span class="build-picker-item-title"><strong>'+escapeHtml(x.name)+'</strong><small>'+escapeHtml(rarity(x))+'</small></span></span>'+buildPickerStatsMarkup(record)+'</button>'}).join(""):'<p class="build-empty">Nenhuma peça disponível com os filtros atuais.</p>';
+ $("build-picker-list").innerHTML=filteredRows.length?filteredRows.map(x=>{const source=isWeapon?buildWeaponDetails:isAccessory?buildAccessoryDetails:buildArmorDetails;const record=source[String(x.id||x.compoundId)];return '<button type="button" class="build-picker-item" style="--rarity:'+rarityStyle(x)+'" data-build-choose="'+(isWeapon?"weapon":isAccessory?"accessory":"armor")+'" data-slot="'+slot+'" data-id="'+escapeHtml(x.id||x.compoundId)+'"><span class="build-picker-item-head"><span class="build-picker-item-icon">'+(isAccessory?accessoryImageMarkup(x):weaponImageMarkup(x))+'</span><span class="build-picker-item-title"><strong>'+escapeHtml(x.name)+'</strong><small>'+escapeHtml(rarity(x))+'</small></span></span>'+buildPickerStatsMarkup(record)+'</button>'}).join(""):'<p class="build-empty">Nenhuma peça disponível com os filtros atuais.</p>';
  $("build-picker-rarity").value=buildPickerRarity;
  picker.hidden=false;
 }
