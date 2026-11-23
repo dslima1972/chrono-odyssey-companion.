@@ -398,7 +398,8 @@ function buildPickList(slot,anchor){
  const picker=$("build-picker");
  if(picker.parentElement!==anchor)anchor.appendChild(picker);
  $("build-picker-title").textContent=isWeapon?"Selecionar arma":"Selecionar armadura";
- $("build-picker-list").innerHTML=rows.length?rows.filter(x=>!buildPickerRarity||rarity(x)===buildPickerRarity).map(x=>'<button type="button" class="build-picker-item" style="--rarity:'+rarityStyle(x)+'" data-build-choose="'+(isWeapon?"weapon":"armor")+'" data-slot="'+slot+'" data-id="'+escapeHtml(x.id||x.compoundId)+'"><span>'+weaponImageMarkup(x)+'</span><strong>'+escapeHtml(x.name)+'</strong><small>'+escapeHtml(rarity(x))+'</small></button>').join(""):'<p class="build-empty">Nenhuma peça disponível com os filtros atuais.</p>';
+ const filteredRows=rows.filter(x=>!buildPickerRarity||rarity(x)===buildPickerRarity);
+ $("build-picker-list").innerHTML=filteredRows.length?filteredRows.map(x=>'<button type="button" class="build-picker-item" style="--rarity:'+rarityStyle(x)+'" data-build-choose="'+(isWeapon?"weapon":"armor")+'" data-slot="'+slot+'" data-id="'+escapeHtml(x.id||x.compoundId)+'"><span>'+weaponImageMarkup(x)+'</span><strong>'+escapeHtml(x.name)+'</strong><small>'+escapeHtml(rarity(x))+'</small></button>').join(""):'<p class="build-empty">Nenhuma peça disponível com os filtros atuais.</p>';
  $("build-picker-rarity").value=buildPickerRarity;
  picker.hidden=false;
 }
@@ -428,6 +429,7 @@ function initBuildPlanner(){
  });
  $("build-picker-rarity").addEventListener("change",e=>{buildPickerRarity=e.target.value;const anchor=$("build-picker").parentElement;const slot=anchor?.dataset.buildPick??("weapon"+(anchor?.dataset.buildWeaponPick||"0"));buildPickList(slot,anchor)});
  $("build-picker-close").addEventListener("click",closeBuildPicker);
+ document.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.matches(".build-slot-clickable")){e.preventDefault();const el=e.target;if(el.dataset.buildPick)buildPickList(el.dataset.buildPick,el);else buildPickList("weapon"+el.dataset.buildWeaponPick,el)}});
  renderBuildScreen();loadBuildData();
 }
 
