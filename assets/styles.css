@@ -692,3 +692,22 @@ footer{border-color:#393528;color:var(--faint)}
 .class-card-weapons span{padding:6px 8px;border:1px solid var(--border);background:#0b151e88;color:var(--text);font-size:9px;line-height:1.2}
 @media(max-width:760px){.class-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.class-card-body{padding:13px 12px 15px}.class-card-name{font-size:17px}.class-card-role{font-size:10px;min-height:45px}.class-card-weapons{gap:5px}.class-card-weapons span{font-size:8px;padding:5px 6px}}
 @media(max-width:430px){.class-grid{grid-template-columns:1fr}.class-card-art{aspect-ratio:16/7}.class-card-body{padding:14px 15px 16px}.class-card-role{min-height:0}}
+
+
+/* Cartoes de classe em formato banner: arte como fundo integral */
+#class-grid .class-filter-btn{position:relative;isolation:isolate;display:flex;flex-direction:column;justify-content:flex-end;min-height:258px;padding:0;overflow:hidden;text-align:left;border:1px solid var(--border);background:#0a1118;color:#fff}
+#class-grid .class-card-art{position:absolute;z-index:-1;inset:0;width:100%;height:100%;aspect-ratio:auto;overflow:hidden}
+#class-grid .class-card-art:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#07101922 0%,#07101908 28%,#071019b8 67%,#071019f2 100%)}
+#class-grid .class-card-art img{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover;object-position:center 24%;transition:transform .4s}
+#class-grid .class-filter-btn:hover .class-card-art img{transform:scale(1.055)}
+#class-grid .class-card-number{top:13px;left:14px;color:#fff;font-size:10px;text-shadow:0 2px 8px #000}
+#class-grid .class-card-select{top:13px;right:13px;bottom:auto;color:#fff;font-size:8px;text-shadow:0 2px 8px #000}
+#class-grid .class-card-body{position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;width:100%;margin-top:auto;padding:68px 14px 15px;background:linear-gradient(180deg,transparent,#07101920)}
+#class-grid .class-card-name{color:#f3d69a;font-size:19px;margin:0 0 5px;text-shadow:0 2px 8px #000}
+#class-grid .class-card-role{min-height:0;color:#f0f2f3;font-size:10px;line-height:1.45;text-shadow:0 1px 5px #000}
+#class-grid .class-card-weapons-label{margin-top:10px;color:#e2c58c;text-shadow:0 1px 5px #000}
+#class-grid .class-card-weapons{gap:5px;margin-top:6px}
+#class-grid .class-card-weapons span{padding:4px 6px;border:1px solid #ffffff55;background:#08121bbd;color:#fff;font-size:8px;line-height:1.2}
+#class-grid .class-card-art-fallback{background:linear-gradient(135deg,var(--panel2),var(--bg))}
+@media(max-width:760px){#class-grid .class-filter-btn{min-height:245px}#class-grid .class-card-body{padding:62px 11px 13px}#class-grid .class-card-name{font-size:17px}}
+@media(max-width:430px){#class-grid .class-filter-btn{min-height:230px}}
