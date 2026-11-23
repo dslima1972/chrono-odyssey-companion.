@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Teste de camada — Ragged Clothes</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:24px;font:15px/1.45 system-ui,sans-serif;background:#17191d;color:#f2f2f2}
+main{max-width:900px;margin:auto}h1{font-size:1.35rem;margin:0 0 8px}p{color:#c4c7cc;margin:0 0 18px}
+.preview{width:min(88vw,640px);aspect-ratio:1;margin:0 auto 20px;position:relative;background:#34373c;overflow:hidden;border-radius:12px}
+.avatar{display:block;width:100%;height:100%;object-fit:contain}
+.garment{position:absolute;left:50%;top:18%;width:42%;height:auto;transform:translateX(-50%);pointer-events:none;filter:drop-shadow(0 1px 1px #0005)}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;padding:16px;border:1px solid #454950;border-radius:12px;background:#22252a}
+label{display:grid;gap:6px;color:#e6e8eb;font-size:14px}input{width:100%}.value{color:#aeb5bf;font-variant-numeric:tabular-nums}
+.note{font-size:13px;color:#aeb5bf;margin-top:14px}.toggle{display:flex;align-items:center;gap:8px}
+@media(max-width:480px){body{padding:14px}.controls{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<h1>Protótipo isolado — Ragged Clothes (ID 10101)</h1>
+<p>Este teste não altera o Provador. A imagem da peça fica sobre o Avatar 3 e os controles permitem ajustar posição e escala para avaliar o encaixe.</p>
+<div class="preview" id="preview">
+<img class="avatar" src="../assets/images/avatars/avatar-male-base-3.jpg" alt="Avatar masculino base 3">
+<img class="garment" id="garment" src="https://cdn.questlog.gg/chrono-odyssey/assets/Game/Data/Icon/HighQuality/001M_U01_01.webp" alt="Ragged Clothes" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://cdn.metabattle.com/game-files/chrono-odyssey/Data/Icon/Costume/Small/001M_U01_01.png'}">
+</div>
+<div class="controls">
+<label>Posição horizontal <span class="value" id="xv">50%</span><input id="x" type="range" min="35" max="65" value="50"></label>
+<label>Posição vertical <span class="value" id="yv">18%</span><input id="y" type="range" min="10" max="32" value="18"></label>
+<label>Largura da peça <span class="value" id="wv">42%</span><input id="w" type="range" min="25" max="60" value="42"></label>
+<label class="toggle"><input id="visible" type="checkbox" checked> Mostrar camada</label>
+</div>
+<p class="note">A imagem principal é carregada do Questlog. Se não estiver disponível, o teste tenta usar a cópia do mesmo arquivo no CDN do MetaBattle. Os ajustes são temporários e servem apenas para avaliação visual.</p>
+</main>
+<script>
+const garment=document.getElementById('garment');
+const controls={x:document.getElementById('x'),y:document.getElementById('y'),w:document.getElementById('w')};
+function update(){
+ garment.style.left=controls.x.value+'%';
+ garment.style.top=controls.y.value+'%';
+ garment.style.width=controls.w.value+'%';
+ document.getElementById('xv').textContent=controls.x.value+'%';
+ document.getElementById('yv').textContent=controls.y.value+'%';
+ document.getElementById('wv').textContent=controls.w.value+'%';
+}
+Object.values(controls).forEach(el=>el.addEventListener('input',update));
+document.getElementById('visible').addEventListener('change',e=>garment.hidden=!e.target.checked);
+update();
+</script>
+</body>
+</html>
