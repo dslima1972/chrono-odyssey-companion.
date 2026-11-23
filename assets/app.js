@@ -110,6 +110,8 @@ function resolveItemStatValue(raw,item){
  return value;
 }
 const itemStatEntriesCache=new WeakMap();
+const equipmentPrimaryStatsCache=new WeakMap();
+const buildRecordStatsCache=new WeakMap();
 function getItemStatEntries(item){
  if(item&&typeof item==="object"&&itemStatEntriesCache.has(item))return itemStatEntriesCache.get(item);
  const entries=[],seen=new Set();
@@ -140,6 +142,7 @@ function getItemStatEntries(item){
  walk(item?.equipmentStats);
  walk(item?.itemStats?.equipmentStats);
  if(typeof buildEquipmentPrimaryStats==="function")buildEquipmentPrimaryStats(item).forEach(stat=>add(stat.label,stat.value));
+ itemStatEntriesCache.set(item,entries);
  return entries;
 }
 function renderItemStats(item){
@@ -539,14 +542,15 @@ const buildState={className:"",weaponType:"",weaponType2:"",weaponStats:["",""],
 const BUILD_ARMOR_SLOTS=[["head","Cabeça"],["chest","Peito"],["hands","Mãos"],["legs","Pernas"],["feet","Pés"],["back","Costas"]];
 const BUILD_ACCESSORY_SLOTS=[["necklace","Colar"],["ring1","Anel 1"],["ring2","Anel 2"],["belt","Cinto"]];
 function buildEquipmentPrimaryStats(record){
+ if(record&&typeof record==="object"&&equipmentPrimaryStatsCache.has(record))return equipmentPrimaryStatsCache.get(record);
  const aliases=[
   {label:"Ataque",keys:["attack","basicattack","basicatk","ataque","ataquebasico"]},
   {label:"Defesa física",keys:["physicaldefense","defensephysical","physicaldefence","defencephysical","physicalarmor","physicalarmour","defesafisica"]},
   {label:"Defesa mágica",keys:["magicdefense","magicaldefense","defensemagic","defensemagical","magicdefence","magicaldefence","defencemagic","defencemagical","magicarmor","magicalarmor","defesamagica"]}
  ];
- const result=[],seen=new Set(),visited=new Set(),pending=[record?.equipmentStats,record];
- while(pending.length){
-  const node=pending.shift();
+ const result=[],seen=new Set(),visited=new Set(),pending=[record?.equipmentStats,record];let cursor=0;
+ while(cursor<pending.length){
+  const node=pending[cursor++];
   if(!node||typeof node!=="object"||visited.has(node))continue;
   visited.add(node);
   if(Array.isArray(node)){node.forEach(value=>pending.push(value));continue}
@@ -563,13 +567,17 @@ function buildEquipmentPrimaryStats(record){
    if(value&&typeof value==="object")pending.push(value);
   }
  }
+ equipmentPrimaryStatsCache.set(record,result);
  return result;
 }
 function buildRecordStats(record){
+ if(record&&typeof record==="object"&&buildRecordStatsCache.has(record))return buildRecordStatsCache.get(record);
  const found=new Map(),add=(key)=>{const identity=normalizeStatIdentity(key),label=humanizeStat(key);if(!label||label==="Atributo")return;if(!found.has(identity))found.set(identity,label)};
  getItemStatEntries(record).forEach(stat=>add(stat.key));
  buildEquipmentPrimaryStats(record).forEach(stat=>add(stat.label));
- return [...found.values()].sort((a,b)=>a.localeCompare(b,"pt-BR"));
+ const result=[...found.values()].sort((a,b)=>a.localeCompare(b,"pt-BR"));
+ if(record&&typeof record==="object")buildRecordStatsCache.set(record,result);
+ return result;
 }
 function buildItemMatches(item,record,selectedStats,mode="any"){
  if(!record)return false;
