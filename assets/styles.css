@@ -481,3 +481,15 @@ footer{border-color:#393528;color:var(--faint)}
 .build-picker-item span,.build-result-icon{border:1px solid color-mix(in srgb,var(--rarity,#514832) 70%,#393629);background:color-mix(in srgb,var(--rarity,#514832) 18%,#090d0b)}
 .build-picker[hidden]{display:none}
 @media(max-width:650px){.build-picker{width:min(340px,calc(100vw - 42px));left:0}.build-picker-list{grid-template-columns:1fr}}
+
+
+/* The equipment dropdown is the only place where build item options appear */
+.build-slot-clickable{position:relative;z-index:1}
+.build-slot-clickable:has(.build-picker){z-index:60}
+.build-picker{position:absolute;top:calc(100% + 7px);left:0;right:auto;width:min(390px,calc(100vw - 56px));max-width:calc(100vw - 56px);margin:0;z-index:100}
+.build-picker-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+.build-picker-item{min-width:0}
+@media(max-width:650px){
+ .build-picker{width:min(340px,calc(100vw - 42px));max-width:calc(100vw - 42px)}
+ .build-picker-list{grid-template-columns:1fr}
+}
