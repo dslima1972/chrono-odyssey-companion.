@@ -247,7 +247,7 @@ function classWeaponIconMarkup(type,className){
 function classDetailMarkup(c){const image="./assets/classes/"+c.name.toLowerCase()+".jpg";return '<div class="class-detail-hero"><img class="class-cover" src="'+image+'" alt="Arte de capa de '+escapeHtml(c.name)+'" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'grid\'"><div class="class-cover-fallback" style="display:none">'+c.icon+'</div><div class="class-hero-copy"><span class="class-index">CAMINHO DE COMBATE</span><h3>'+escapeHtml(c.name)+'</h3><p>'+escapeHtml(c.role)+'</p><div class="class-weapon-tags">'+c.weapons.map(w=>'<span>'+escapeHtml(w)+'</span>').join("")+'</div></div></div><div class="class-detail-content"><section class="class-section"><h4>Identidade e estilo de combate</h4><p>'+escapeHtml(c.overview)+'</p><p>'+escapeHtml(c.style)+'</p></section><section class="class-section"><h4>Armas e especialidades</h4><div class="class-weapon-details">'+c.weaponsInfo.map((w,i)=>'<article class="class-weapon-entry">'+classWeaponIconMarkup(w[0],c.name,i)+'<div class="class-weapon-copy"><h5>'+escapeHtml(w[0])+'</h5><p>'+escapeHtml(w[1])+'</p></div></article>').join("")+'</div></section><div class="class-two-col"><section class="class-section"><h4>Pontos fortes</h4><ul>'+c.strengths.map(x=>'<li>'+escapeHtml(x)+'</li>').join("")+'</ul></section><section class="class-section"><h4>Pontos de atenção</h4><ul>'+c.limits.map(x=>'<li>'+escapeHtml(x)+'</li>').join("")+'</ul></section></div><section class="class-section"><h4>Combinações de armas</h4><p>'+escapeHtml(c.pairs)+'</p></section><section class="class-section"><h4>Progressão e Matrix</h4><p>'+escapeHtml(c.matrix)+'</p></section><div class="class-source-note"><strong>Nota sobre a confiabilidade</strong><p>'+escapeHtml(c.cbt)+' As informações são um guia de referência baseado no conteúdo do Icy Veins e podem mudar com atualizações do jogo.</p><a href="https://www.icy-veins.com/chrono-odyssey/classes" target="_blank" rel="noreferrer">CONSULTAR GUIA DE CLASSES NO ICY VEINS ↗</a></div></div>'}
 function renderClasses(){$("class-grid").innerHTML=CLASS_DATA.map(c=>'<button class="class-filter-btn" type="button" data-class="'+escapeHtml(c.name)+'">'+escapeHtml(c.name)+'</button>').join("");document.querySelectorAll(".class-filter-btn").forEach(b=>b.addEventListener("click",()=>{const c=CLASS_DATA.find(x=>x.name===b.dataset.class);$("class-grid").hidden=true;$("class-detail").hidden=false;$("class-detail").innerHTML='<button class="class-back" id="class-back">← VOLTAR ÀS CLASSES</button>'+classDetailMarkup(c);$("class-back").addEventListener("click",()=>{$("class-detail").hidden=true;$("class-grid").hidden=false})}))}
 async function loadData(){try{let data=null,sourceFile="";for(const file of ["./data/questlog-export.json","./data/weapons.json"]){const res=await fetch(file,{cache:"no-store"});if(res.ok){data=await res.json();sourceFile=file;break}}if(!data)throw new Error("Arquivo do catálogo não encontrado");const candidates=[data.items,data.pageData,data.records,data.registros,data?.result?.data?.json?.pageData,data?.result?.data?.pageData,data?.data?.items,data?.data?.pageData];const rawItems=Array.isArray(data)?data:(candidates.find(Array.isArray)||[]);const testItems=rawItems.filter(w=>/\(Test\)/i.test(String(w.name||"")));weapons=rawItems.filter(w=>!w.isDisabled&&!/\(Test\)/i.test(String(w.name||"")));fillFilters();renderList();const stamp=data.updatedAt?new Date(data.updatedAt).toLocaleString("pt-BR"):"data da exportação: 02/10/2026";$("data-status").textContent=rawItems.length+" registros recebidos; "+weapons.length+" armas exibidas; "+testItems.length+" registros de teste ocultados. Fonte: "+sourceFile+". "+stamp+".";if(!weapons.length)$("data-status").textContent="O arquivo foi encontrado, mas não contém uma lista de itens reconhecida. Verifique o formato do export."}catch(e){$("weapon-list").innerHTML='<div class="empty-state">O catálogo exportado ainda não foi enviado. Quando o arquivo Questlog for adicionado à pasta data, as armas aparecerão aqui.</div>';$("data-status").textContent="Aguardando o arquivo data/questlog-export.json enviado ao repositório."}}
-document.querySelectorAll(".tab").forEach(tab=>tab.addEventListener("click",()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===tab));document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));$(tab.dataset.tab+"-view").classList.add("active")}));
+document.querySelectorAll(".tab").forEach(tab=>tab.addEventListener("click",()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===tab));document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));$(tab.dataset.tab+"-view").classList.add("active");if(tab.dataset.tab==="build")loadBuildData()}));
 $("search").addEventListener("input",renderList);$("class-filter").addEventListener("change",()=>{updateWeaponTypeOptions();renderList()});["type-filter","rarity-filter"].forEach(id=>$(id).addEventListener("change",renderList));
 
 let armors=[],selectedArmor=null,armorMode="pieces",armorDetailsPromise=null;
@@ -608,7 +608,10 @@ function buildPickList(slot,anchor){
  $("build-picker-rarity").value=buildPickerRarity;
  picker.hidden=false;
 }
+let buildDataLoading=false;
 async function loadBuildData(){
+ if(buildReady||buildDataLoading)return;
+ buildDataLoading=true;
  try{
   const [wm,am,xm]=await Promise.all([fetch("./data/weapon-details-manifest.json",{cache:"no-store"}),fetch("./data/armor-details-manifest.json",{cache:"no-store"}),fetch("./data/accessory-details-manifest.json?v=20261123a",{cache:"no-store"})]);
   if(!wm.ok||!am.ok||!xm.ok)throw new Error("Manifestos de atributos não encontrados.");
@@ -618,7 +621,7 @@ async function loadBuildData(){
   buildReady=true;
   $("build-data-status").textContent="Fichas do Questlog carregadas: armas, armaduras e "+Object.keys(buildAccessoryDetails).length+" acessórios. As sugestões consideram somente atributos encontrados nos registros sincronizados.";
   renderBuildScreen();
- }catch(error){$("build-data-status").textContent="Não foi possível carregar as fichas detalhadas do Questlog. As sugestões por atributos ficarão indisponíveis até a sincronização dos arquivos. "+(error.message||"");}
+ }catch(error){buildDataLoading=false;$("build-data-status").textContent="Não foi possível carregar as fichas detalhadas do Questlog. As sugestões por atributos ficarão indisponíveis até a sincronização dos arquivos. "+(error.message||"");}
 }
 function closeBuildPicker(){const picker=$("build-picker");picker.hidden=true;$("build-view").appendChild(picker)}
 function initBuildPlanner(){
@@ -637,7 +640,7 @@ function initBuildPlanner(){
  $("build-picker-stat-mode").addEventListener("change",e=>{const anchor=$("build-picker").parentElement;const slot=anchor?.dataset.buildPick??("weapon"+(anchor?.dataset.buildWeaponPick||"0"));buildState.matchModes[slot]=e.target.value;buildPickList(slot,anchor)});
  $("build-picker-close").addEventListener("click",closeBuildPicker);
  document.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.matches(".build-slot-clickable")){e.preventDefault();const el=e.target;if(el.dataset.buildPick)buildPickList(el.dataset.buildPick,el);else buildPickList("weapon"+el.dataset.buildWeaponPick,el)}});
- renderBuildScreen();loadBuildData();
+ renderBuildScreen();
 }
 
 renderClasses();loadData();loadArmorData();loadAccessoryData();initBuildPlanner()
