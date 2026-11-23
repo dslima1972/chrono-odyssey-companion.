@@ -720,6 +720,8 @@ async function loadBuildLayer(kind){
  if(buildLayerState[kind]==="ready")return true;
  if(buildLayerPromises[kind])return buildLayerPromises[kind];
  const config=BUILD_LAYER_CONFIG[kind];if(!config)return false;
+ if(kind==="armor"&&buildLayerState.weapon!=="ready"){$("build-data-status").textContent="Primeiro selecione a classe e o tipo de arma para carregar as fichas de armas. Depois, os dados de armaduras serão liberados.";return false}
+ if(kind==="accessory"&&buildLayerState.armor!=="ready"){$("build-data-status").textContent="A etapa de acessórios será liberada depois que os dados de armaduras forem carregados.";return false}
  buildLayerState[kind]="loading";updateBuildLayerStatus();buildStatsOptions(kind,0);buildStatsOptions(kind,1);
  buildLayerPromises[kind]=(async()=>{
   try{
