@@ -625,3 +625,5 @@ footer{border-color:#393528;color:var(--faint)}
 
 /* Accessory catalog and build priorities */
 .build-stat-panels{grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
+
+@media(max-width:760px){.tabs{flex-wrap:wrap}}
