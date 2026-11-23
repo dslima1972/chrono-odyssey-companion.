@@ -755,3 +755,112 @@ footer{border-color:#393528;color:var(--faint)}
 @media(prefers-reduced-motion:reduce){
  #class-grid .class-filter-btn{transition:none}
 }
+
+
+/* Protótipos de ficha imersiva para armas e armaduras */
+.detail-prototype{
+  overflow:hidden;
+  padding:0 22px 22px;
+  background:
+    radial-gradient(ellipse at 82% 12%,color-mix(in srgb,var(--rarity) 18%,transparent),transparent 42%),
+    linear-gradient(145deg,#171b1d 0%,#111719 52%,#0c1215 100%);
+  border-color:color-mix(in srgb,var(--rarity) 38%,#354047);
+}
+.detail-prototype .detail-top{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(145px,.82fr);
+  align-items:center;
+  gap:12px;
+  min-height:218px;
+  padding:22px 0 18px;
+  border-bottom:1px solid color-mix(in srgb,var(--rarity) 24%,var(--border));
+  position:relative;
+}
+.detail-prototype .detail-heading-copy{position:relative;z-index:2}
+.detail-prototype .detail-kicker{
+  color:var(--gold2);
+  font-size:8px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  margin-bottom:12px;
+}
+.detail-prototype .detail-top h3{
+  font:500 clamp(19px,2.2vw,27px) Cinzel,Georgia,serif;
+  line-height:1.18;
+  letter-spacing:.2px;
+  margin:0 0 9px;
+  overflow-wrap:anywhere;
+}
+.detail-prototype .detail-top p{font-size:10px;line-height:1.5}
+.detail-prototype .detail-rarity{
+  display:inline-block;
+  margin-top:10px;
+  padding:5px 9px;
+  border:1px solid color-mix(in srgb,var(--rarity) 55%,transparent);
+  background:color-mix(in srgb,var(--rarity) 12%,transparent);
+  letter-spacing:1.5px;
+}
+.detail-prototype .detail-header-meta{margin-top:12px}
+.detail-prototype .detail-icon.detail-hero{
+  width:100%;
+  height:205px;
+  min-width:0;
+  flex:auto;
+  border:0;
+  background:transparent;
+  overflow:visible;
+  isolation:isolate;
+}
+.detail-prototype .detail-icon.detail-hero>span{display:none}
+.detail-prototype .detail-hero-image{
+  position:absolute;
+  z-index:2;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  background:transparent;
+  filter:drop-shadow(0 12px 13px rgba(0,0,0,.55));
+  opacity:0;
+  transition:opacity .25s ease,transform .35s ease;
+}
+.detail-prototype .detail-hero.has-image .detail-hero-image,
+.detail-prototype .detail-icon.detail-hero:has(.detail-hero-image.loaded) .detail-hero-image{opacity:1}
+.detail-prototype .detail-hero-glow{
+  position:absolute;
+  z-index:1;
+  inset:15% 5%;
+  border-radius:50%;
+  background:radial-gradient(ellipse,color-mix(in srgb,var(--rarity) 20%,transparent),transparent 68%);
+  filter:blur(13px);
+}
+.detail-prototype .detail-live{margin-top:17px}
+.detail-prototype .detail-section{border-top-color:color-mix(in srgb,var(--rarity) 22%,var(--border))}
+.detail-prototype .detail-section.stats-primary{
+  margin-top:0;
+  padding-top:17px;
+}
+.detail-prototype .detail-section h4{letter-spacing:.3px}
+.detail-prototype .stat-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.detail-prototype .stat-line{
+  min-width:0;
+  min-height:55px;
+  background:linear-gradient(135deg,rgba(255,255,255,.035),rgba(0,0,0,.13));
+  border-color:rgba(190,190,170,.12);
+}
+.detail-prototype .stat-line strong{font-size:14px}
+.detail-prototype .detail-disclosure{background:rgba(0,0,0,.16);border-color:rgba(190,190,170,.16)}
+.detail-prototype .detail-source{letter-spacing:.5px}
+@media(max-width:760px){
+  .detail-prototype{padding:0 16px 18px}
+  .detail-prototype .detail-top{min-height:180px;grid-template-columns:minmax(0,1fr) minmax(115px,.72fr);gap:8px}
+  .detail-prototype .detail-icon.detail-hero{height:165px}
+}
+@media(max-width:420px){
+  .detail-prototype .detail-top{grid-template-columns:minmax(0,1fr) minmax(95px,.62fr)}
+  .detail-prototype .detail-icon.detail-hero{height:145px}
+  .detail-prototype .stat-list{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  .detail-prototype .detail-hero-image{transition:none}
+}
