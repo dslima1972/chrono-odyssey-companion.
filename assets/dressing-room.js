@@ -49,6 +49,8 @@ function renderOverlays(){
  const host=ensureOverlayHost();
  if(!host)return;
  host.replaceChildren();
+ const avatarFile=$("dressing-avatar-image")?.dataset.avatarFile||"avatar-male-base-3.jpg";
+ if(avatarFile!=="avatar-male-base-3.jpg")return;
  Object.entries(equipped).forEach(([slot,item])=>{
   const config=overlayConfig?.slots?.[slot];
   if(!config)return;
@@ -61,7 +63,7 @@ function renderOverlays(){
   layer.alt="";
   layer.setAttribute("aria-hidden","true");
   layer.src="./"+String(file).replace(/^\//,"");
-  layer.onload=()=>{if(slot==="chest"&&String(equipped.chest?.id||equipped.chest?.compoundId)==="10101")$("dressing-status").textContent="Ragged Clothes aplicado ao Avatar 3.";};
+  layer.onload=()=>{if(slot==="chest"&&$("dressing-avatar-image")?.dataset.avatarFile==="avatar-male-base-3.jpg"&&String(equipped.chest?.id||equipped.chest?.compoundId)==="10101")$("dressing-status").textContent="Ragged Clothes aplicado ao Avatar 3.";};
   layer.onerror=()=>{layer.remove();if(slot==="chest"&&String(equipped.chest?.id||equipped.chest?.compoundId)==="10101")$("dressing-status").textContent="A camada visual de Ragged Clothes ainda não foi encontrada. A seleção permanece no loadout.";};
   host.appendChild(layer);
  });
@@ -87,8 +89,8 @@ document.querySelectorAll(".dressing-avatar-switch [data-avatar]").forEach(butto
  document.querySelectorAll(".dressing-avatar-switch [data-avatar]").forEach(b=>{const active=b===button;b.classList.toggle("active",active);b.setAttribute("aria-pressed",String(active))});
  img.classList.remove("avatar-ready");img.dataset.avatarFile=button.dataset.avatar;
  img.alt=button.dataset.avatar==="avatar-male-base-3.jpg"?"Personagem masculino em perspectiva de três quartos":button.dataset.avatar==="avatar-male-base-2.jpg"?"Personagem masculino principal de corpo inteiro":"Personagem masculino de corpo inteiro";
- img.src="./assets/images/avatars/"+button.dataset.avatar;prepareAvatar();
- $("dressing-status").textContent=button.dataset.avatar==="avatar-male-base-3.jpg"?"Avatar 3 selecionado. As peças selecionadas foram mantidas.":"Avatar alterado. As peças selecionadas foram mantidas.";
+ img.src="./assets/images/avatars/"+button.dataset.avatar;prepareAvatar();renderOverlays();
+ $("dressing-status").textContent=button.dataset.avatar==="avatar-male-base-3.jpg"?"Avatar 3 selecionado. As peças selecionadas foram mantidas.":"Avatar alterado. As peças selecionadas foram mantidas; as camadas calibradas para o Avatar 3 ficam ocultas.";
 }));
 document.querySelectorAll("#dressing-slot-tabs [data-slot]").forEach(b=>b.addEventListener("click",()=>{activeSlot=b.dataset.slot;renderAll()}));
 ["dressing-search","dressing-rarity"].forEach(id=>$(id).addEventListener(id==="dressing-search"?"input":"change",renderItems));
