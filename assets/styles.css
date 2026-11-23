@@ -614,3 +614,6 @@ footer{border-color:#393528;color:var(--faint)}
 .build-slot-pending .build-slot-icon{color:var(--muted);border-style:dashed}
 .build-slot-pending .build-slot-copy strong{color:var(--gold2)}
 .build-slot-pending .build-slot-meta{line-height:1.4}
+
+.build-picker-match-mode{flex:1 1 180px;margin:0;min-width:150px}
+.build-picker-match-mode select{width:100%}
