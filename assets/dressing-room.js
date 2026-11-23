@@ -43,15 +43,14 @@ function renderItems(){
  $("dressing-items").querySelectorAll("[data-id]").forEach(btn=>btn.addEventListener("click",()=>{const item=list.find(x=>String(x.id||x.compoundId)===btn.dataset.id);if(item){equipped[activeSlot]=item;renderAll()}}));
 }
 function renderAll(){
- document.querySelectorAll("#dressing-slot-tabs [data-slot],#dressing-slots [data-slot]").forEach(b=>b.classList.toggle("active",b.dataset.slot===activeSlot));
- document.querySelectorAll("#dressing-slots [data-slot]").forEach(b=>{const item=equipped[b.dataset.slot];const label=b.querySelector("b");if(label)label.textContent=item?.name||"Vazio";});
+ document.querySelectorAll("#dressing-slot-tabs [data-slot]").forEach(b=>b.classList.toggle("active",b.dataset.slot===activeSlot));
  $("dressing-equipped-list").innerHTML=Object.entries(equipped).length?Object.entries(equipped).map(([slot,item])=>'<div class="dressing-equipped-row">'+(image(item)?'<img src="'+esc(image(item))+'" alt="">':'<span>✧</span>')+'<div><strong>'+esc(item.name)+'</strong><small>'+slots[slot]+' · '+rarity(item)+'</small></div><button type="button" data-remove="'+slot+'" aria-label="Remover '+slots[slot]+'">×</button></div>').join(""):'<p class="dressing-empty">Nenhuma peça selecionada.</p>';
  $("dressing-equipped-list").querySelectorAll("[data-remove]").forEach(b=>b.addEventListener("click",()=>{delete equipped[b.dataset.remove];renderAll()}));
  renderItems();renderSaved();
 }
 function readSaved(){try{return JSON.parse(localStorage.getItem("chronoDressingLooks")||"[]")}catch(e){return []}}
 function renderSaved(){const saved=readSaved();$("dressing-saved-list").innerHTML=saved.length?saved.map((x,i)=>'<button type="button" data-load="'+i+'">'+esc(x.name)+' · '+Object.keys(x.items||{}).length+' peças</button>').join(""):'<span class="dressing-empty">Nenhuma combinação salva.</span>';$("dressing-saved-list").querySelectorAll("[data-load]").forEach(b=>b.addEventListener("click",()=>{const x=saved[Number(b.dataset.load)];equipped=x.items||{};renderAll();$("dressing-status").textContent="Combinação carregada: "+x.name}))}
-document.querySelectorAll("#dressing-slot-tabs [data-slot],#dressing-slots [data-slot]").forEach(b=>b.addEventListener("click",()=>{activeSlot=b.dataset.slot;renderAll()}));
+document.querySelectorAll("#dressing-slot-tabs [data-slot]").forEach(b=>b.addEventListener("click",()=>{activeSlot=b.dataset.slot;renderAll()}));
 ["dressing-search","dressing-rarity"].forEach(id=>$(id).addEventListener(id==="dressing-search"?"input":"change",renderItems));
 $("dressing-clear").addEventListener("click",()=>{equipped={};renderAll();$("dressing-status").textContent="Todos os espaços foram limpos."});
 $("dressing-save").addEventListener("click",()=>{if(!Object.keys(equipped).length){$("dressing-status").textContent="Selecione pelo menos uma peça antes de salvar.";return}const name=prompt("Nome desta combinação:","Meu visual");if(!name)return;const saved=readSaved();saved.push({name:name.trim(),items:equipped});try{localStorage.setItem("chronoDressingLooks",JSON.stringify(saved));renderSaved();$("dressing-status").textContent="Combinação salva neste navegador."}catch(e){$("dressing-status").textContent="Não foi possível salvar a combinação neste navegador."}});
