@@ -493,3 +493,28 @@ footer{border-color:#393528;color:var(--faint)}
  .build-picker{width:min(340px,calc(100vw - 42px));max-width:calc(100vw - 42px)}
  .build-picker-list{grid-template-columns:1fr}
 }
+
+/* Build planner: rarity accents on selected equipment and a readable stats summary */
+.build-slot-icon{
+ border-color:color-mix(in srgb,var(--rarity,var(--gold2)) 82%,#393629);
+ background:linear-gradient(145deg,color-mix(in srgb,var(--rarity,var(--gold2)) 25%,#090d0b),#090d0b 82%);
+ color:var(--rarity,var(--gold2));
+ box-shadow:inset 0 0 14px color-mix(in srgb,var(--rarity,var(--gold2)) 12%,transparent);
+}
+.build-slot-icon img{padding:2px}
+.build-selected-stats-section{margin-top:18px;border:1px solid var(--border);background:linear-gradient(145deg,#171811,#10130f);padding:16px}
+.build-selected-stats-section>h3{font:500 16px Cinzel,Georgia,serif;color:var(--gold2);margin:0 0 6px}
+.build-selected-stats-section>p{font-size:10px;color:var(--muted);line-height:1.5;margin:0 0 12px}
+.build-selected-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.build-stat-summary-card{min-width:0;border:1px solid color-mix(in srgb,var(--rarity,var(--gold2)) 58%,#393629);background:linear-gradient(135deg,color-mix(in srgb,var(--rarity,var(--gold2)) 12%,#11140f),#0d100d 75%);padding:11px}
+.build-stat-summary-card>header{display:flex;align-items:center;gap:10px;margin-bottom:10px;min-width:0}
+.build-stat-summary-card>header>span:last-child{display:grid;gap:4px;min-width:0}
+.build-stat-summary-card>header small{font-size:8px;color:var(--rarity,var(--gold2));letter-spacing:.5px;text-transform:uppercase}
+.build-stat-summary-card>header strong{font:500 11px Cinzel,Georgia,serif;overflow-wrap:anywhere}
+.build-stat-summary-icon{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border:1px solid color-mix(in srgb,var(--rarity,var(--gold2)) 72%,#393629);background:#090d0b;overflow:hidden}
+.build-stat-summary-icon img{width:100%;height:100%;object-fit:contain}
+.build-stat-summary-card .stat-list{gap:4px}
+.build-stat-summary-card .stat-line{padding:7px 8px;background:color-mix(in srgb,var(--rarity,var(--gold2)) 7%,#0d100d);border-color:color-mix(in srgb,var(--rarity,var(--gold2)) 25%,#303126)}
+.build-stat-summary-card .stat-line span{font-size:10px;color:var(--text)}
+.build-stat-summary-card .stat-line strong{font-size:12px}
+@media(max-width:650px){.build-selected-stats{grid-template-columns:1fr}}
