@@ -40,8 +40,19 @@ function renderList(){const rows=filtered();$("catalog-count").textContent=weapo
 let itemDetailsDataPromise;
 const STAT_LABELS={increasedamage:"Aumento de dano",addmaximummana:"Mana máxima",damageonstagger:"Dano contra alvo cambaleante",attack:"Ataque",criticalchance:"Chance crítica",criticaldamage:"Dano crítico",defense:"Defesa",health:"Vida",maxhealth:"Vida máxima",stamina:"Vigor",liferegenpersecond:"Regeneração de vida por segundo",criticalhitchance:"Chance de acerto crítico",criticalhitdamage:"Dano crítico",criticalhitdamagereduce:"Redução de dano crítico",healing:"Cura"};
 function humanizeStat(value){const key=String(value||"").toLowerCase();return STAT_LABELS[key]||String(value||"Atributo").replace(/([a-z])([A-Z])/g,"$1 $2").replace(/[_-]/g," ").replace(/^./,x=>x.toUpperCase())}
+const PERCENT_STAT_TYPES=new Set(["increasedamage","damageincrease","damageboost","criticalchance","criticalhitchance","criticaldamage","criticalhitdamage","criticaldamageboost","criticalhitdamagereduce","criticaldamagereduce","damageonstagger","damageovertime","damageovertimeattack","damagereduction","damagereduce"]);
+function formatStatValue(statType,value){
+ if(value===null||value===undefined||value==="")return value;
+ const key=String(statType||"").toLowerCase().replace(/[^a-z0-9]/g,"");
+ if(!PERCENT_STAT_TYPES.has(key))return value;
+ if(typeof value==="string"&&value.trim().endsWith("%"))return value;
+ const numeric=Number(value);
+ if(!Number.isFinite(numeric))return value;
+ const percentage=Math.abs(numeric)>=100?numeric/100:numeric;
+ return percentage.toLocaleString("pt-BR",{minimumFractionDigits:3,maximumFractionDigits:3})+"%";
+}
 function detailField(label,value){if(value===undefined||value===null||value==="")return "";return '<div class="detail-field"><small>'+escapeHtml(label)+'</small><strong>'+escapeHtml(Array.isArray(value)?value.join(", "):String(value))+'</strong></div>'}
-function renderItemStats(item){const raw=item?.itemStats?.stats;let entries=[];if(Array.isArray(raw)){entries=raw.map(s=>[s?.statType??s?.type??s?.key??"Atributo",s])}else if(raw&&typeof raw==="object"){entries=Object.entries(raw)}if(!entries.length)return '<p class="detail-muted">A fonte não retornou atributos básicos para este item.</p>';return '<div class="stat-list">'+entries.map(([key,s])=>{const value=s&&typeof s==="object"?(s.statValue??s.value??s.amount??s.statValue1??"—"):s;const chance=s&&typeof s==="object"&&s.chancePercentage!=null?' · '+Number(s.chancePercentage).toLocaleString("pt-BR",{maximumFractionDigits:2})+'% de chance':'';return '<div class="stat-line"><span>'+escapeHtml(humanizeStat(s&&typeof s==="object"?(s.statType??s.type??key):key))+'</span><strong>'+escapeHtml(value)+'</strong><small>'+escapeHtml(chance)+'</small></div>'}).join("")+'</div>'}
+function renderItemStats(item){const raw=item?.itemStats?.stats;let entries=[];if(Array.isArray(raw)){entries=raw.map(s=>[s?.statType??s?.type??s?.key??"Atributo",s])}else if(raw&&typeof raw==="object"){entries=Object.entries(raw)}if(!entries.length)return '<p class="detail-muted">A fonte não retornou atributos básicos para este item.</p>';return '<div class="stat-list">'+entries.map(([key,s])=>{const statType=s&&typeof s==="object"?(s.statType??s.type??key):key;const value=s&&typeof s==="object"?(s.statValue??s.value??s.amount??s.statValue1??"—"):s;const formatted=formatStatValue(statType,value);const chance=s&&typeof s==="object"&&s.chancePercentage!=null?' · '+Number(s.chancePercentage).toLocaleString("pt-BR",{maximumFractionDigits:2})+'% de chance':'';return '<div class="stat-line"><span>'+escapeHtml(humanizeStat(statType))+'</span><strong>'+escapeHtml(formatted)+'</strong><small>'+escapeHtml(chance)+'</small></div>'}).join("")+'</div>'}
 function findWeaponAttackLevels(item){
  const visited=new Set(),pending=[item];
  while(pending.length){
@@ -91,7 +102,7 @@ function renderSuffixes(item){
  const rows=Object.values(suffixes).filter(s=>s&&typeof s==="object").map(s=>{
   const levels=s.gearScore&&typeof s.gearScore==="object"?Object.entries(s.gearScore).sort((a,b)=>Number(a[0])-Number(b[0])):[];
   const first=levels[0]?.[1],last=levels[levels.length-1]?.[1];
-  const values=[first?.statValue1??first?.value,last?.statValue1??last?.value].filter(v=>v!=null);
+  const values=[first?.statValue1??first?.value,last?.statValue1??last?.value].filter(v=>v!=null).map(v=>formatStatValue(s.statType??s.type,v));
   const chance=Number.isFinite(Number(s.chancePercentage))?' · '+Number(s.chancePercentage).toLocaleString("pt-BR",{maximumFractionDigits:2})+'% de chance':"";
   return '<div class="suffix-row detail-option-row"><strong>'+escapeHtml(s.name||"Sufixo")+'</strong><span>'+escapeHtml((values.length?values.join(" → "):"Valores por nível disponíveis na fonte")+chance)+'</span></div>';
  });
@@ -102,7 +113,8 @@ function perkValueRange(perk){
  if(!levels.length)return "";
  const valueOf=x=>x?.value??x?.statValue1??x?.statValue??x?.amount;
  const first=valueOf(levels[0][1]),last=valueOf(levels[levels.length-1][1]);
- return first==null?"":String(first)+(last!=null&&String(last)!==String(first)?" → "+String(last):"");
+ const formattedFirst=formatStatValue(perk.statType,first),formattedLast=formatStatValue(perk.statType,last);
+  return first==null?"":String(formattedFirst)+(last!=null&&String(last)!==String(first)?" → "+String(formattedLast):"");
 }
 function perkEntries(source){
  if(!source)return [];
