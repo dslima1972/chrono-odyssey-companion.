@@ -58,6 +58,61 @@ function filtered(){const q=$("search").value.trim().toLowerCase(),c=$("class-fi
 function renderList(){const rows=filtered();$("catalog-count").textContent=weapons.length?rows.length+" / "+weapons.length+" REGISTROS":"CATÁLOGO AINDA NÃO SINCRONIZADO";if(!weapons.length){$("weapon-list").innerHTML='<div class="empty-state">O catálogo ainda não foi carregado.<br>Assim que a primeira sincronização do Questlog terminar, as armas aparecerão aqui.</div>';return}if(!rows.length){$("weapon-list").innerHTML='<div class="empty-state">Nenhuma arma corresponde aos filtros selecionados.</div>';return}$("weapon-list").innerHTML=rows.map(w=>{const type=weaponType(w),color=rarityStyle(w);return '<button class="weapon-row '+(selected&&selected.id===w.id?'selected':'')+'" data-id="'+escapeHtml(w.id)+'" style="--rarity:'+color+'"><span class="weapon-symbol"><span>'+iconFor(type)+'</span>'+weaponImageMarkup(w)+'</span><span><span class="weapon-name">'+escapeHtml(w.name||"Item sem nome")+'</span><span class="weapon-meta">'+escapeHtml(weaponClass(w)||"Classe não mapeada")+' · '+escapeHtml(type)+'</span></span><span class="rarity-label">'+escapeHtml(rarity(w))+'</span></button>'}).join("");document.querySelectorAll("#weapon-list .weapon-row").forEach(b=>b.addEventListener("click",()=>selectWeapon(b.dataset.id)))}
 let itemDetailsDataPromise;
 const STAT_LABELS={increasedamage:"Aumento de dano",addmaximummana:"Mana máxima",damageonstagger:"Dano contra alvo cambaleante",attack:"Ataque",basicattack:"Ataque",basicatk:"Ataque",criticalchance:"Chance crítica",criticaldamage:"Dano crítico",defense:"Defesa",physicaldefense:"Defesa física",defensephysical:"Defesa física",physicaldefence:"Defesa física",defencephysical:"Defesa física",physicalarmor:"Defesa física",physicalarmour:"Defesa física",magicdefense:"Defesa mágica",magicaldefense:"Defesa mágica",defensemagic:"Defesa mágica",defensemagical:"Defesa mágica",magicdefence:"Defesa mágica",magicaldefence:"Defesa mágica",defencemagic:"Defesa mágica",defencemagical:"Defesa mágica",magicarmor:"Defesa mágica",magicalarmor:"Defesa mágica",healing:"Cura",health:"Vida",maxhealth:"Vida máxima",maxhp:"HP máximo",maxlife:"Vida máxima",bagweightincrease:"Aumento da capacidade de peso",bagweightcapacityboost:"Aumento da capacidade de peso",stamina:"Vigor",liferegenpersecond:"Regeneração de vida por segundo",criticalhitchance:"Chance de acerto crítico",criticalhitdamage:"Dano crítico",criticalhitdamagereduce:"Redução de dano crítico",criticalhitresistance:"Resistência a acerto crítico",movementspeed:"Velocidade de movimento",reducedamage:"Redução de dano",decreasemanacostfactor:"Redução do custo de mana",staggerenforce:"Potência de cambaleio",movementspeedfactor:"Velocidade de movimento"};
+
+// Rótulos amigáveis para os atributos identificados nas fichas sincronizadas do Questlog.
+Object.assign(STAT_LABELS,{
+  "attack": "Ataque",
+  "addmaximummana": "Mana máxima",
+  "bagweightincrease": "Aumento da capacidade de peso",
+  "butcheryamount": "Quantidade de abate",
+  "collectionamount": "Quantidade de coleta",
+  "criticalhitchance": "Chance de acerto crítico",
+  "criticalhitdamage": "Dano crítico",
+  "criticalhitdamagereduce": "Redução de dano crítico",
+  "criticalhitresistance": "Resistência a acerto crítico",
+  "damageonstagger": "Dano contra alvo cambaleante",
+  "decreasemanacostfactor": "Redução do custo de mana",
+  "decreasestaminacostfactor": "Redução do custo de vigor",
+  "dotattackpower": "Poder de ataque de dano contínuo",
+  "earncraftrewardexpfactor": "Experiência adicional em fabricação",
+  "earnhuntingexpfactor": "Experiência adicional em caça",
+  "fallingdamagefactor": "Redução de dano de queda",
+  "fishingpower": "Poder de pesca",
+  "harvestingamount": "Quantidade de colheita",
+  "healing": "Cura",
+  "increasedamage": "Aumento de dano",
+  "increasedamageboss": "Aumento de dano contra chefes",
+  "increasedamagehero": "Aumento de dano contra heróis",
+  "increasedamagenormalmob": "Aumento de dano contra monstros comuns",
+  "increasepotionliferecovery": "Aumento da recuperação de vida por poções",
+  "jumppowerfactor": "Altura do salto",
+  "liferegenpersecond": "Regeneração de vida por segundo",
+  "loggingamount": "Quantidade de madeira obtida",
+  "luckgatheringfishing": "Sorte na pesca",
+  "luckgatheringskinning": "Sorte na obtenção de couro",
+  "magicaldefense": "Defesa mágica",
+  "maximumlife": "Vida máxima",
+  "maximumlifeincrease": "Aumento de vida máxima",
+  "maximumstamina": "Vigor máximo",
+  "miningamount": "Quantidade de minério obtido",
+  "movementspeed": "Velocidade de movimento",
+  "movementspeedfactor": "Velocidade de movimento",
+  "physicaldefense": "Defesa física",
+  "reduceskillcooldown": "Redução do tempo de recarga de habilidades",
+  "reduceskillcooldownincrease": "Aumento da redução do tempo de recarga",
+  "reducedamage": "Redução de dano",
+  "reducedamageboss": "Redução de dano recebido de chefes",
+  "reducedamagehero": "Redução de dano recebido de heróis",
+  "reducedamagenormalmob": "Redução de dano recebido de monstros comuns",
+  "repaircostfactor": "Redução do custo de reparo",
+  "staggerenforce": "Potência de cambaleio",
+  "staminaregenpersecond": "Regeneração de vigor por segundo",
+  "strength": "Força",
+  "dexterity": "Destreza",
+  "intelligence": "Inteligência",
+  "vitality": "Vitalidade",
+  "wisdom": "Sabedoria"
+});
 function normalizeStatIdentity(value){
  const key=String(value||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"");
  const defenseWord=/(defense|defence|defesa|armor|armour|def)/.test(key);
