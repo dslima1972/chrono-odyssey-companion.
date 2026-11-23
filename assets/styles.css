@@ -896,3 +896,18 @@ footer{border-color:#393528;color:var(--faint)}
 .detail-prototype .detail-source{margin-top:20px}
 @media(max-width:760px){.catalog-layout{display:block}.catalog-detail-host>.detail-panel{padding:18px 16px}.detail-prototype .detail-top{grid-template-columns:minmax(0,1fr) minmax(130px,.75fr);gap:10px}.detail-prototype .detail-top h3{font-size:25px}.detail-prototype .detail-icon.detail-hero{height:210px;min-height:180px}.detail-prototype .stats-primary .stat-list{gap:10px 16px}}
 @media(max-width:460px){.detail-prototype .detail-top{grid-template-columns:1fr}.detail-prototype .detail-icon.detail-hero{grid-row:1;height:190px;min-height:170px}.detail-prototype .detail-heading-copy{grid-row:2}.detail-prototype .stats-primary .stat-line strong{font-size:15px}}
+
+
+/* Corrige a camada de interação da navegação principal */
+.tabs{
+  position:relative;
+  z-index:20;
+  isolation:isolate;
+  pointer-events:auto;
+}
+.tabs .tab{
+  position:relative;
+  z-index:21;
+  pointer-events:auto;
+  touch-action:manipulation;
+}
