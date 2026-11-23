@@ -255,8 +255,8 @@ function defaultGearScore(item,levels){
  const rawTier=item?.itemInfo?.tier??item?.tier??"";
  const tierText=String(typeof rawTier==="object"?(rawTier.name??rawTier.value??rawTier.label??""):rawTier).trim().toUpperCase();
  const romanTiers={I:1,II:2,III:3,IV:4,V:5};
- const numericMatch=tierText.match(/(?:TIER|T)?\\s*([1-5])(?:\\D|$)/);
- const romanMatch=tierText.match(/\\b(I|II|III|IV|V)\\b/);
+ const numericMatch=tierText.match(/(?:TIER|T)?\s*([1-5])(?:\D|$)/);
+ const romanMatch=tierText.match(/\b(I|II|III|IV|V)\b/);
  const tier=Number(numericMatch?.[1]??romanTiers[romanMatch?.[1]]??(Number.isFinite(Number(rawTier))?Number(rawTier):NaN));
  const tierDefaults={1:1,2:5,3:15,4:25,5:40};
  const preferred=tierDefaults[tier];
