@@ -53,7 +53,7 @@ function initCompositionEditor(){
  root.dataset.editorInitialized="true";
  root.addEventListener("click",ev=>{const btn=ev.target.closest("[data-bring-front]");if(!btn)return;const slot=btn.dataset.bringFront;const maxZ=Math.max(0,...Object.values(freeLayout).map(p=>Number(p.z)||0));freeLayout[slot]={...freeLayout[slot],z:maxZ+1};applyFreeLayout();saveLayout();$("dressing-status").textContent=slots[slot]+" trazida para frente."});
  root.addEventListener("pointerdown",ev=>{
-  if(compositionMode!=="free")return;
+  if(compositionMode!=="free"||ev.target.closest("[data-bring-front]"))return;
   const node=ev.target.closest("[data-composition-slot]");if(!node||!equipped[node.dataset.compositionSlot])return;
   const slot=node.dataset.compositionSlot,p=freeLayout[slot]||{...layoutDefaults[slot]},rect=root.getBoundingClientRect();
   const resizing=ev.target.classList.contains("composition-resize");
