@@ -9,9 +9,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./assets/styles.css?v=20261123e12">
+  <link rel="stylesheet" href="./assets/styles.css?v=20261123e13">
   <script src="./assets/app.js?v=20261123al" defer></script>
-  <script src="./assets/dressing-room.js?v=20261123e17" defer></script>
+  <script src="./assets/dressing-room.js?v=20261123e18" defer></script>
 </head>
 <body>
   <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
@@ -119,8 +119,9 @@
         </aside>
         <section class="dressing-preview">
           <div class="dressing-preview-heading"><span>COMPOSIÇÃO</span><strong>Montagem de equipamento</strong></div>
+          <div class="dressing-composition-toolbar"><div class="dressing-mode-switch"><button type="button" id="dressing-mode-fixed" class="active">Encaixe fixo</button><button type="button" id="dressing-mode-free">Montagem livre</button></div><button type="button" id="dressing-layout-reset" class="secondary-action">Restaurar montagem</button></div>
           <div class="dressing-stage dressing-composition-stage">
-            <div class="dressing-composition" id="dressing-composition" aria-label="Composição visual das peças selecionadas">
+            <div class="dressing-composition fixed-layout" id="dressing-composition" aria-label="Composição visual das peças selecionadas">
               <div class="composition-piece composition-back" data-composition-slot="back"><span>Costas</span></div>
               <div class="composition-piece composition-head" data-composition-slot="head"><span>Cabeça</span></div>
               <div class="composition-piece composition-chest" data-composition-slot="chest"><span>Peitoral</span></div>
@@ -129,7 +130,7 @@
               <div class="composition-piece composition-feet" data-composition-slot="feet"><span>Pés</span></div>
             </div>
           </div>
-          <p class="composition-note">As peças se aproximam e se sobrepõem levemente para sugerir um conjunto vestido, sem corpo por trás.</p>
+          <p class="composition-note">No encaixe fixo, as peças ocupam posições de inventário. Na montagem livre, arraste e redimensione cada peça para criar sua própria composição.</p>
           <div class="dressing-actions"><button type="button" id="dressing-clear" class="secondary-action">Limpar equipamentos</button><button type="button" id="dressing-save" class="primary-action">Salvar combinação</button></div>
           <div class="dressing-status" id="dressing-status" aria-live="polite">Selecione as peças para montar seu equipamento.</div>
         </section>
