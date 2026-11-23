@@ -351,7 +351,7 @@ function classButtonWeaponIconMarkup(type,className){
  const classSlug=String(className||"").toLowerCase().replace(/[^a-z]/g,"");
  const weaponSlug=String(type||"").toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
  const localImage="./assets/classes/buttons/weapons/"+classSlug+"-"+weaponSlug+".png";
- const fallbackPath=String(CLASS_WEAPON_ICONS[type]||"").replace(/^\\//,"");
+ const fallbackPath=String(CLASS_WEAPON_ICONS[type]||"").replace("/","");
  const fallbackImage=fallbackPath?"https://cdn.questlog.gg/chrono-odyssey/"+fallbackPath+".webp":"";
  return '<img class="class-weapon-icon-img" src="'+localImage+'" alt="Ícone de '+escapeHtml(type)+'" loading="lazy" decoding="async" onerror="if(this.dataset.fallback){this.onerror=null;this.src=this.dataset.fallback}else{this.remove()}" data-fallback="'+escapeHtml(fallbackImage)+'">';
 }
