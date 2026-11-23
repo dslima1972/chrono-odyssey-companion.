@@ -351,7 +351,9 @@ async function loadItemDetails(w,panelRoot){
   if(current&&selected&&String(selected.id||selected.compoundId)===id)current.innerHTML='<p class="detail-muted detail-error">Não foi possível carregar os atributos locais. '+escapeHtml(error.message||"Verifique se a sincronização foi concluída.")+' Você ainda pode consultar a ficha original pelo link abaixo.</p>';
  }
 }
-function mountInlineDetail(panelId,hostId){const panel=$(panelId),host=$(hostId);if(panel&&host){host.appendChild(panel);host.hidden=false;panel.classList.remove("empty-detail");}}\nfunction selectWeapon(id){selected=weapons.find(w=>String(w.id)===String(id)||String(w.compoundId)===String(id))||null;if(!selected)return;renderList();$("weapon-detail").innerHTML=detailMarkup(selected);mountInlineDetail("weapon-detail","weapon-detail-host");loadItemDetails(selected,$("weapon-detail"));}\nfunction classWeaponIconMarkup(type,className){
+function mountInlineDetail(panelId,hostId){const panel=$(panelId),host=$(hostId);if(panel&&host){host.appendChild(panel);host.hidden=false;panel.classList.remove("empty-detail");}}
+function selectWeapon(id){selected=weapons.find(w=>String(w.id)===String(id)||String(w.compoundId)===String(id))||null;if(!selected)return;renderList();$("weapon-detail").innerHTML=detailMarkup(selected);mountInlineDetail("weapon-detail","weapon-detail-host");loadItemDetails(selected,$("weapon-detail"));}
+function classWeaponIconMarkup(type,className){
  const classSlug=String(className||"").toLowerCase().replace(/[^a-z]/g,"");
  const weaponSlug=String(type||"").toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
  const image="./assets/classes/weapons/"+classSlug+"-"+weaponSlug+".png.png";
@@ -599,7 +601,8 @@ function renderArmorStats(item){
  return (levels?renderGearScoreControl(item,levels,"Defesa"):"")+stats;
 }
 
-function renderOptionalItemOptions(item){const content=renderSuffixes(item)+renderPerks(item);return content?'<details class="detail-disclosure item-options-disclosure"><summary>Exibir sufixos e perks</summary><div class="item-options-content">'+content+'</div></details>':""}\nfunction detailedArmorMarkup(item,catalogItem){
+function renderOptionalItemOptions(item){const content=renderSuffixes(item)+renderPerks(item);return content?'<details class="detail-disclosure item-options-disclosure"><summary>Exibir sufixos e perks</summary><div class="item-options-content">'+content+'</div></details>':""}
+function detailedArmorMarkup(item,catalogItem){
  const info=item?.itemInfo||{},grade=item?.equipmentGradeInfo||{};
  const quick=compactMeta("ID",catalogItem.id||catalogItem.compoundId)+compactMeta("Nível",info.requiredLevel)+compactMeta("Tier",info.tier)+compactMeta("Conjunto",armorSetLabel(catalogItem));
  const fields=[detailField("Peso",info.weight),detailField("Durabilidade máxima",info.maxDurability),detailField("Pode reforçar",info.canReinforce===true?"Sim":info.canReinforce===false?"Não":null),detailField("Sockets de gema",grade.gemSocket===true?"Sim":grade.gemSocket===false?"Não":null),detailField("Quantidade de perks",grade.perkCount??item?.itemStats?.perkCount)].filter(Boolean).join("");
@@ -630,7 +633,8 @@ async function loadArmorDetails(item,panelRoot){
   if(current&&selectedArmor&&String(selectedArmor.id||selectedArmor.compoundId)===id)current.innerHTML='<p class="detail-muted">A ficha detalhada não pôde ser carregada. Verifique se a sincronização do Questlog foi concluída.</p>';
  }
 }
-function selectArmor(id){selectedArmor=armors.find(x=>String(x.id)===String(id)||String(x.compoundId)===String(id));if(!selectedArmor)return;renderArmorList();$("armor-detail").innerHTML=armorDetailMarkup(selectedArmor);mountInlineDetail("armor-detail","armor-detail-host");loadArmorDetails(selectedArmor,$("armor-detail"));}\nfunction renderArmorList(){
+function selectArmor(id){selectedArmor=armors.find(x=>String(x.id)===String(id)||String(x.compoundId)===String(id));if(!selectedArmor)return;renderArmorList();$("armor-detail").innerHTML=armorDetailMarkup(selectedArmor);mountInlineDetail("armor-detail","armor-detail-host");loadArmorDetails(selectedArmor,$("armor-detail"));}
+function renderArmorList(){
  if(!armors.length){$("armor-catalog-count").textContent="AGUARDANDO CATÁLOGO";$("armor-list").innerHTML='<div class="empty-state">A estrutura do catálogo está pronta. Aguardando a exportação de armaduras do Questlog.</div>';return}
  if(armorMode==="sets"){
   const q=$("armor-search").value.trim().toLowerCase(),type=$("armor-type-filter").value,grade=$("armor-rarity-filter").value,set=$("armor-set-filter").value,stat=$("armor-stat-filter")?.value||"";
