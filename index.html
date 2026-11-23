@@ -9,9 +9,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./assets/styles.css?v=20261123e10">
+  <link rel="stylesheet" href="./assets/styles.css?v=20261123e11">
   <script src="./assets/app.js?v=20261123al" defer></script>
-  <script src="./assets/dressing-room.js?v=20261123e14" defer></script>
+  <script src="./assets/dressing-room.js?v=20261123e15" defer></script>
 </head>
 <body>
   <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
@@ -106,7 +106,7 @@
     </section>
     <section id="provador-view" class="view">
       <div class="section-heading"><div><div class="eyebrow left">PERSONALIZAÇÃO DE APARÊNCIA</div><h2>Provador de equipamentos</h2></div><div class="catalog-count" id="dressing-count">CARREGANDO ARMADURAS…</div></div>
-      <p class="intro-copy">Monte uma combinação visual escolhendo as peças do catálogo. No momento, Ragged Clothes (ID 10101) possui uma prévia experimental no Avatar 3; as demais peças ficam registradas no loadout até que suas camadas visuais sejam preparadas e validadas.</p>
+      <p class="intro-copy">Monte seu equipamento combinando as peças do catálogo. As imagens são organizadas e encaixadas para formar uma silhueta de personagem, sem avatar ou manequim ao fundo.</p>
       <div class="dressing-room">
         <aside class="dressing-catalog">
           <div class="dressing-panel-title"><span>CATÁLOGO</span><strong>Armaduras</strong></div>
@@ -118,26 +118,20 @@
           <div class="dressing-items" id="dressing-items"><div class="loading">Carregando catálogo de armaduras…</div></div>
         </aside>
         <section class="dressing-preview">
-          <div class="dressing-preview-heading"><span>PERSONAGEM</span><strong>Prévia de equipamento</strong></div>
-          <div class="dressing-avatar-switch" role="group" aria-label="Escolher avatar"><button type="button" data-avatar="avatar-male-base.jpg" aria-pressed="false">Avatar 1</button><button type="button" data-avatar="avatar-male-base-2.jpg" aria-pressed="false">Avatar 2</button><button type="button" class="active" data-avatar="avatar-male-base-3.jpg" aria-pressed="true">Avatar 3</button></div>
-          <div class="dressing-stage">
-            <div class="dressing-avatar-placeholder" aria-label="Avatar masculino">
-              <img id="dressing-avatar-image" src="./assets/images/avatars/avatar-male-base-3.jpg" alt="Personagem masculino em perspectiva de três quartos" data-avatar-file="avatar-male-base-3.jpg" crossorigin="anonymous">
-              
+          <div class="dressing-preview-heading"><span>COMPOSIÇÃO</span><strong>Montagem de equipamento</strong></div>
+          <div class="dressing-stage dressing-composition-stage">
+            <div class="dressing-composition" id="dressing-composition" aria-label="Composição visual das peças selecionadas">
+              <div class="composition-piece composition-back" data-composition-slot="back"><span>Costas</span></div>
+              <div class="composition-piece composition-head" data-composition-slot="head"><span>Cabeça</span></div>
+              <div class="composition-piece composition-chest" data-composition-slot="chest"><span>Peitoral</span></div>
+              <div class="composition-piece composition-hands" data-composition-slot="hands"><span>Mãos</span></div>
+              <div class="composition-piece composition-legs" data-composition-slot="legs"><span>Pernas</span></div>
+              <div class="composition-piece composition-feet" data-composition-slot="feet"><span>Pés</span></div>
             </div>
           </div>
-          <div class="dressing-overlay-controls" id="dressing-overlay-controls" hidden>
-            <div class="dressing-overlay-controls-heading"><strong>Ajuste da peça · Ragged Clothes</strong><span>Os valores são aplicados em tempo real</span></div>
-            <div class="dressing-overlay-control-grid">
-              <label>Posição horizontal <output id="dressing-overlay-x-value">50%</output><input id="dressing-overlay-x" type="range" min="35" max="65" value="50"></label>
-              <label>Posição vertical <output id="dressing-overlay-y-value">16%</output><input id="dressing-overlay-y" type="range" min="10" max="32" value="16"></label>
-              <label>Largura da peça <output id="dressing-overlay-w-value">50%</output><input id="dressing-overlay-w" type="range" min="25" max="60" value="50"></label>
-              <label class="dressing-overlay-visible"><input id="dressing-overlay-visible" type="checkbox" checked> Mostrar camada</label>
-            </div>
-            <p>Experimente os controles até alinhar a peça ao tronco. Depois, informe os três valores exibidos.</p>
-          </div>
+          <p class="composition-note">As peças se aproximam e se sobrepõem levemente para sugerir um conjunto vestido, sem corpo por trás.</p>
           <div class="dressing-actions"><button type="button" id="dressing-clear" class="secondary-action">Limpar equipamentos</button><button type="button" id="dressing-save" class="primary-action">Salvar combinação</button></div>
-          <div class="dressing-status" id="dressing-status" aria-live="polite">Selecione uma categoria e escolha uma peça no catálogo.</div>
+          <div class="dressing-status" id="dressing-status" aria-live="polite">Selecione as peças para montar seu equipamento.</div>
         </section>
         <aside class="dressing-equipped"><div class="dressing-panel-title"><span>LOADOUT</span><strong>Peças selecionadas</strong></div><div id="dressing-equipped-list" class="dressing-equipped-list"><p>Nenhuma peça selecionada.</p></div><div class="dressing-saved"><strong>Combinações salvas</strong><div id="dressing-saved-list">Nenhuma combinação salva.</div></div></aside>
       </div>
