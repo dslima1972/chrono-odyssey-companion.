@@ -36,6 +36,29 @@
       <button type="button" class="tab" data-tab="build">Criar build <span>06</span></button>
       <button type="button" class="tab" data-tab="about">Sobre os dados <span>07</span></button>
     </nav>
+    <script>
+      // Navegação independente do app.js: mantém os menus funcionais mesmo se o catálogo falhar.
+      (function () {
+        const nav = document.querySelector('.tabs');
+        if (!nav || nav.dataset.navigationReady) return;
+        nav.dataset.navigationReady = 'true';
+        nav.addEventListener('click', function (event) {
+          const button = event.target.closest('[data-tab]');
+          if (!button || !nav.contains(button)) return;
+          const section = document.getElementById(button.dataset.tab + '-view');
+          if (!section) return;
+          event.preventDefault();
+          nav.querySelectorAll('[data-tab]').forEach(function (item) {
+            const active = item === button;
+            item.classList.toggle('active', active);
+            item.setAttribute('aria-pressed', String(active));
+          });
+          document.querySelectorAll('.view').forEach(function (view) {
+            view.classList.toggle('active', view === section);
+          });
+        });
+      }());
+    </script>
     <section id="weapons-view" class="view">
       <div class="section-heading">
         <div><div class="eyebrow left">CATÁLOGO DE EQUIPAMENTOS</div><h2>Armas</h2></div>
