@@ -407,6 +407,7 @@ async function loadBuildData(){
   const loadParts=async manifest=>{const files=await Promise.all(manifest.parts.map(async name=>{const res=await fetch("./data/"+encodeURIComponent(name),{cache:"no-store"});if(!res.ok)throw new Error("Falha ao ler "+name);return res.json()}));const all={};files.forEach(part=>Object.assign(all,part.items||{}));return all};
   [buildWeaponDetails,buildArmorDetails]=await Promise.all([loadParts(wmanifest),loadParts(amanifest)]);
   buildReady=true;
+  $("build-data-status").textContent="Fichas do Questlog carregadas. As sugestões consideram somente atributos encontrados nos registros sincronizados.";
   renderBuildScreen();
  }catch(error){$("build-data-status").textContent="Não foi possível carregar as fichas detalhadas do Questlog. As sugestões por atributos ficarão indisponíveis até a sincronização dos arquivos. "+(error.message||"");}
 }
