@@ -1,9 +1,10 @@
 {
-  "source": "Questlog item detail records — Accessories",
-  "generatedAt": null,
-  "requested": 0,
-  "received": 0,
+  "source": "Questlog database.getItem (browser session)",
+  "generatedAt": "2026-11-23T02:10:25.949Z",
+  "requested": 63,
+  "received": 63,
   "failed": 0,
-  "parts": [],
-  "status": "pending_authorized_source_data"
+  "parts": [
+    "accessory-details-part-01.json"
+  ]
 }
