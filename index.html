@@ -9,9 +9,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./assets/styles.css?v=20261123e2">
+  <link rel="stylesheet" href="./assets/styles.css?v=20261123e3">
   <script src="./assets/app.js?v=20261123al" defer></script>
-  <script src="./assets/dressing-room.js?v=20261123e2" defer></script>
+  <script src="./assets/dressing-room.js?v=20261123e3" defer></script>
 </head>
 <body>
   <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
@@ -106,7 +106,7 @@
     </section>
     <section id="provador-view" class="view">
       <div class="section-heading"><div><div class="eyebrow left">PERSONALIZAÇÃO DE APARÊNCIA</div><h2>Provador de equipamentos</h2></div><div class="catalog-count" id="dressing-count">CARREGANDO ARMADURAS…</div></div>
-      <p class="intro-copy">Monte uma combinação visual escolhendo as peças do catálogo. Nesta primeira etapa, os itens selecionados aparecem nos espaços de equipamento; a aplicação real das texturas sobre o avatar será adicionada na próxima etapa.</p>
+      <p class="intro-copy">Monte uma combinação visual escolhendo as peças do catálogo. Os itens selecionados aparecem no loadout. A aplicação visual das peças sobre o avatar será ativada conforme cada camada transparente for preparada e validada.</p>
       <div class="dressing-room">
         <aside class="dressing-catalog">
           <div class="dressing-panel-title"><span>CATÁLOGO</span><strong>Armaduras</strong></div>
@@ -123,30 +123,7 @@
           <div class="dressing-stage">
             <div class="dressing-avatar-placeholder" aria-label="Avatar masculino">
               <img id="dressing-avatar-image" src="./assets/images/avatars/avatar-male-base-2.jpg" alt="Personagem masculino principal de corpo inteiro" crossorigin="anonymous">
-              <svg id="dressing-chest-prototype" viewBox="0 0 1024 1024" aria-hidden="true" focusable="false">
-                <defs>
-                  <linearGradient id="ragged-cloth" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0" stop-color="#493f35"/><stop offset=".48" stop-color="#75634d"/><stop offset="1" stop-color="#40382f"/>
-                  </linearGradient>
-                  <pattern id="ragged-weave" width="8" height="8" patternUnits="userSpaceOnUse">
-                    <path d="M0 1H8 M0 5H8" stroke="#d0b995" stroke-opacity=".12" stroke-width="1"/>
-                    <path d="M2 0V8 M6 0V8" stroke="#17130f" stroke-opacity=".16" stroke-width="1"/>
-                  </pattern>
-                  <clipPath id="ragged-shape">
-                    <path d="M448 181 C431 184 420 196 414 215 L393 270 C388 284 397 296 410 301 L425 306 L414 473 C462 495 562 495 610 473 L599 306 L614 301 C627 296 636 284 631 270 L610 215 C604 196 593 184 576 181 L548 194 C529 207 495 207 476 194 Z"/>
-                  </clipPath>
-                </defs>
-                <path d="M448 181 C431 184 420 196 414 215 L393 270 C388 284 397 296 410 301 L425 306 L414 473 C462 495 562 495 610 473 L599 306 L614 301 C627 296 636 284 631 270 L610 215 C604 196 593 184 576 181 L548 194 C529 207 495 207 476 194 Z" fill="url(#ragged-cloth)" stroke="#b19a76" stroke-width="5"/>
-                <g clip-path="url(#ragged-shape)">
-                  <rect x="385" y="175" width="255" height="330" fill="url(#ragged-weave)"/>
-                  <path d="M425 210 Q512 244 599 210 M424 306 Q512 326 600 306 M422 465 Q512 486 602 465" fill="none" stroke="#2a241e" stroke-opacity=".45" stroke-width="4"/>
-                  <path d="M438 221 Q428 315 440 448 M586 221 Q596 315 584 448" fill="none" stroke="#c1a77d" stroke-opacity=".22" stroke-width="3"/>
-                </g>
-                <path d="M448 181 Q462 207 512 211 Q562 207 576 181" fill="none" stroke="#b69c75" stroke-width="11" stroke-linecap="round"/>
-                <path d="M477 195 Q512 218 547 195" fill="none" stroke="#2d251d" stroke-width="12"/>
-                <path d="M414 473 l-8 12 13 -4 8 12 8 -9 12 11 9 -8 13 11 9 -8 13 10 10 -8 13 10 10 -9 13 9 10 -10 13 8 10 -10 12 8 9 -10 13 8 10 -12 13 5 -7 -15" fill="#594a39" stroke="#b09a76" stroke-width="3" stroke-linejoin="round"/>
-                <path d="M416 271 Q407 285 424 291 M608 271 Q617 285 600 291" fill="none" stroke="#c1a77d" stroke-width="4" opacity=".7"/>
-              </svg>
+              
             </div>
           </div>
           <div class="dressing-actions"><button type="button" id="dressing-clear" class="secondary-action">Limpar equipamentos</button><button type="button" id="dressing-save" class="primary-action">Salvar combinação</button></div>
