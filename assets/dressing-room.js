@@ -4,6 +4,7 @@ const $=id=>document.getElementById(id);
 const slots={head:"Cabeça",chest:"Peitoral",hands:"Mãos",back:"Costas",legs:"Pernas",feet:"Pés"};
 const slotAliases={head:["head","helmet"],chest:["chest","body"],hands:["hands","gloves"],back:["back","cloak"],legs:["legs","pants"],feet:["feet","boots"]};
 let items=[],activeSlot="head",equipped={};
+const overlaySettings={x:50,y:18,w:42,visible:true};
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const rarity=item=>({0:"Comum",1:"Incomum",2:"Raro",3:"Épico",4:"Lendário"})[Number(item.grade)]||"Não identificada";
 const image=item=>{let p=String(item.icon||"").replace(/^\//,"").replace(/\.(png|jpe?g|webp)$/i,"");return p?"https://cdn.questlog.gg/chrono-odyssey/"+p+".webp":""};
@@ -44,14 +45,31 @@ function renderAvatarOverlay(){
  host.querySelectorAll(".dressing-equipment-overlay").forEach(el=>el.remove());
  const avatar=$("dressing-avatar-image");
  const chest=equipped.chest;
- if(!chest||String(chest.id||chest.compoundId)!=="10101"||!(avatar?.dataset.avatarFile||"").includes("avatar-male-base-3.jpg"))return;
+ const controls=$("dressing-overlay-controls");
+ const enabled=!!chest&&String(chest.id||chest.compoundId)==="10101"&&(avatar?.dataset.avatarFile||"").includes("avatar-male-base-3.jpg");
+ if(controls)controls.hidden=!enabled;
+ if(!enabled)return;
  const layer=document.createElement("img");
  layer.className="dressing-equipment-overlay";
  layer.src="https://cdn.questlog.gg/chrono-odyssey/assets/Game/Data/Icon/HighQuality/001M_U01_01.webp";
  layer.alt="Ragged Clothes equipada";
  layer.draggable=false;
+ applyOverlaySettings(layer);
  layer.onerror=()=>{if(!layer.dataset.fallback){layer.dataset.fallback="1";layer.src="https://cdn.metabattle.com/game-files/chrono-odyssey/Data/Icon/Costume/Small/001M_U01_01.png";}};
  host.appendChild(layer);
+}
+function applyOverlaySettings(layer){
+ if(!layer)return;
+ layer.style.left=overlaySettings.x+"%";
+ layer.style.top=overlaySettings.y+"%";
+ layer.style.width=overlaySettings.w+"%";
+ layer.hidden=!overlaySettings.visible;
+}
+function updateOverlayControls(){
+ const layer=document.querySelector(".dressing-equipment-overlay");
+ applyOverlaySettings(layer);
+ for(const key of ["x","y","w"]){const input=$("dressing-overlay-"+key),value=$("dressing-overlay-"+key+"-value");if(input)input.value=overlaySettings[key];if(value)value.textContent=overlaySettings[key]+"%";}
+ const visible=$("dressing-overlay-visible");if(visible)visible.checked=overlaySettings.visible;
 }
 function renderItems(){
  const q=$("dressing-search").value.trim().toLowerCase(),r=$("dressing-rarity").value;
@@ -82,6 +100,9 @@ document.querySelectorAll("#dressing-slot-tabs [data-slot]").forEach(b=>b.addEve
 ["dressing-search","dressing-rarity"].forEach(id=>$(id).addEventListener(id==="dressing-search"?"input":"change",renderItems));
 $("dressing-clear").addEventListener("click",()=>{equipped={};renderAll();$("dressing-status").textContent="Todos os espaços foram limpos."});
 $("dressing-save").addEventListener("click",()=>{if(!Object.keys(equipped).length){$("dressing-status").textContent="Selecione pelo menos uma peça antes de salvar.";return}const name=prompt("Nome desta combinação:","Meu visual");if(!name)return;const saved=readSaved();saved.push({name:name.trim(),items:equipped});try{localStorage.setItem("chronoDressingLooks",JSON.stringify(saved));renderSaved();$("dressing-status").textContent="Combinação salva neste navegador."}catch(e){$("dressing-status").textContent="Não foi possível salvar a combinação neste navegador."}});
+for(const key of ["x","y","w"]){const input=$("dressing-overlay-"+key);input?.addEventListener("input",()=>{overlaySettings[key]=Number(input.value);updateOverlayControls();});}
+$("dressing-overlay-visible")?.addEventListener("change",e=>{overlaySettings.visible=e.target.checked;updateOverlayControls();});
+updateOverlayControls();
 prepareAvatar();
 fetch("./data/armor-export.json",{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error("Catálogo indisponível");return r.json()}).then(data=>{items=(Array.isArray(data.items)?data.items:data).filter(x=>!x.isDisabled&&!/\(Test\)/i.test(String(x.name||"")));$("dressing-status").textContent="Catálogo carregado. Escolha uma peça para equipar no espaço correspondente.";renderAll()}).catch(()=>{$("dressing-count").textContent="CATÁLOGO INDISPONÍVEL";$("dressing-items").innerHTML='<div class="dressing-empty">Não foi possível carregar data/armor-export.json.</div>'});
 })();
