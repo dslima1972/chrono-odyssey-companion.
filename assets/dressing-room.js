@@ -45,12 +45,12 @@ function renderItems(){
 function updateChestPrototype(){
  const avatar=$("dressing-avatar-image"),chest=$("dressing-chest-prototype");
  const selected=Boolean(equipped.chest&&String(equipped.chest.id||equipped.chest.compoundId)==="10101");
- const avatarOne=avatar&&!avatar.getAttribute("src").includes("avatar-male-base-2.jpg");
- if(chest){const active=selected&&avatarOne;chest.style.display=active?"block":"none";chest.parentElement.classList.toggle("chest-prototype-active",active);}
+ const avatarTwo=avatar&&avatar.getAttribute("src").includes("avatar-male-base-2.jpg");
+ if(chest){const active=selected&&avatarTwo;chest.style.display=active?"block":"none";chest.parentElement.classList.toggle("chest-prototype-active",active);}
 }
 function renderAll(){
  updateChestPrototype();
- document.querySelectorAll(".dressing-avatar-switch [data-avatar]").forEach(button=>button.addEventListener("click",()=>{const img=$("dressing-avatar-image");if(!img)return;document.querySelectorAll(".dressing-avatar-switch [data-avatar]").forEach(b=>{const active=b===button;b.classList.toggle("active",active);b.setAttribute("aria-pressed",String(active))});img.classList.remove("avatar-ready");img.alt=button.dataset.avatar==="avatar-male-base-2.jpg"?"Personagem masculino alternativo de corpo inteiro":"Personagem masculino de corpo inteiro";img.src="./assets/images/avatars/"+button.dataset.avatar;prepareAvatar();updateChestPrototype();$("dressing-status").textContent="Avatar alterado. As peças selecionadas foram mantidas."}));
+ document.querySelectorAll(".dressing-avatar-switch [data-avatar]").forEach(button=>button.addEventListener("click",()=>{const img=$("dressing-avatar-image");if(!img)return;document.querySelectorAll(".dressing-avatar-switch [data-avatar]").forEach(b=>{const active=b===button;b.classList.toggle("active",active);b.setAttribute("aria-pressed",String(active))});img.classList.remove("avatar-ready");img.alt=button.dataset.avatar==="avatar-male-base-2.jpg"?"Personagem masculino principal de corpo inteiro":"Personagem masculino de corpo inteiro";img.src="./assets/images/avatars/"+button.dataset.avatar;prepareAvatar();updateChestPrototype();$("dressing-status").textContent="Avatar alterado. As peças selecionadas foram mantidas."}));
 document.querySelectorAll("#dressing-slot-tabs [data-slot]").forEach(b=>b.classList.toggle("active",b.dataset.slot===activeSlot));
  $("dressing-equipped-list").innerHTML=Object.entries(equipped).length?Object.entries(equipped).map(([slot,item])=>'<div class="dressing-equipped-row">'+(image(item)?'<img src="'+esc(image(item))+'" alt="">':'<span>✧</span>')+'<div><strong>'+esc(item.name)+'</strong><small>'+slots[slot]+' · '+rarity(item)+'</small></div><button type="button" data-remove="'+slot+'" aria-label="Remover '+slots[slot]+'">×</button></div>').join(""):'<p class="dressing-empty">Nenhuma peça selecionada.</p>';
  $("dressing-equipped-list").querySelectorAll("[data-remove]").forEach(b=>b.addEventListener("click",()=>{delete equipped[b.dataset.remove];renderAll()}));
