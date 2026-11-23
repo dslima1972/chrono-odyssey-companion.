@@ -401,6 +401,24 @@ function renderBuildSelectedStats(){
  if(!selected.length){target.innerHTML='<p class="build-empty">Selecione armas ou armaduras para visualizar aqui os atributos registrados nas fichas do Questlog.</p>';return}
  target.innerHTML=selected.map(entry=>'<article class="build-stat-summary-card" style="--rarity:'+rarityStyle(entry.item)+'"><header><span class="build-stat-summary-icon">'+weaponImageMarkup(entry.item)+'</span><span><small>'+escapeHtml(entry.label)+' · '+escapeHtml(rarity(entry.item))+'</small><strong>'+escapeHtml(entry.item.name||"Item")+'</strong></span></header>'+(entry.record?renderItemStats(entry.record):'<p class="build-empty">Ficha detalhada não carregada para este item.</p>')+'</article>').join("");
 }
+function buildPickerStatsMarkup(record){
+ const raw=record?.itemStats?.stats;
+ let entries=[];
+ if(Array.isArray(raw))entries=raw.map(s=>[s?.statType??s?.type??s?.key??"Atributo",s]);
+ else if(raw&&typeof raw==="object")entries=Object.entries(raw);
+ const rows=entries.map(([key,value])=>{
+  const label=humanizeStat(value&&typeof value==="object"?(value.statType??value.type??key):key);
+  const amount=value&&typeof value==="object"?(value.statValue??value.value??value.amount??value.statValue1):value;
+  const chance=value&&typeof value==="object"&&value.chancePercentage!=null?' · '+Number(value.chancePercentage).toLocaleString("pt-BR",{maximumFractionDigits:2})+'%':'';
+  if(!label||label==="Atributo")return "";
+  return '<span class="build-picker-stat"><small>'+escapeHtml(label)+'</small><strong>'+escapeHtml(amount??"Valor não informado")+'</strong>'+ (chance?'<em>'+escapeHtml(chance)+'</em>':"")+'</span>';
+ }).filter(Boolean);
+ if(!rows.length){
+  const names=buildRecordStats(record);
+  return names.length?'<div class="build-picker-stats">'+names.map(name=>'<span class="build-picker-stat"><small>'+escapeHtml(name)+'</small><strong>Valor não informado</strong></span>').join("")+'</div>':'<div class="build-picker-no-stats">Atributos não disponíveis na ficha sincronizada.</div>';
+ }
+ return '<div class="build-picker-stats">'+rows.join("")+'</div>';
+}
 function buildPickList(slot,anchor){
  const isWeapon=slot==="weapon0"||slot==="weapon1";
  let rows=[];
@@ -410,7 +428,7 @@ function buildPickList(slot,anchor){
  if(picker.parentElement!==anchor)anchor.appendChild(picker);
  $("build-picker-title").textContent=isWeapon?"Selecionar arma":"Selecionar armadura";
  const filteredRows=rows.filter(x=>!buildPickerRarity||rarity(x)===buildPickerRarity);
- $("build-picker-list").innerHTML=filteredRows.length?filteredRows.map(x=>'<button type="button" class="build-picker-item" style="--rarity:'+rarityStyle(x)+'" data-build-choose="'+(isWeapon?"weapon":"armor")+'" data-slot="'+slot+'" data-id="'+escapeHtml(x.id||x.compoundId)+'"><span>'+weaponImageMarkup(x)+'</span><strong>'+escapeHtml(x.name)+'</strong><small>'+escapeHtml(rarity(x))+'</small></button>').join(""):'<p class="build-empty">Nenhuma peça disponível com os filtros atuais.</p>';
+ $("build-picker-list").innerHTML=filteredRows.length?filteredRows.map(x=>{const record=(isWeapon?buildWeaponDetails:buildArmorDetails)[String(x.id||x.compoundId)];return '<button type="button" class="build-picker-item" style="--rarity:'+rarityStyle(x)+'" data-build-choose="'+(isWeapon?"weapon":"armor")+'" data-slot="'+slot+'" data-id="'+escapeHtml(x.id||x.compoundId)+'"><span class="build-picker-item-head"><span class="build-picker-item-icon">'+weaponImageMarkup(x)+'</span><span class="build-picker-item-title"><strong>'+escapeHtml(x.name)+'</strong><small>'+escapeHtml(rarity(x))+'</small></span></span>'+buildPickerStatsMarkup(record)+'</button>'}).join(""):'<p class="build-empty">Nenhuma peça disponível com os filtros atuais.</p>';
  $("build-picker-rarity").value=buildPickerRarity;
  picker.hidden=false;
 }
