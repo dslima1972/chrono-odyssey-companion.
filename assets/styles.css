@@ -1246,7 +1246,7 @@ input.gear-score-slider::-moz-range-thumb{width:9px;height:9px;border:1px solid 
 .fixed-layout .composition-feet{left:35%;top:84%;width:30%;height:14%;z-index:4}
 .fixed-layout .composition-hands{left:2%;top:29%;width:28%;height:25%;z-index:3}
 .fixed-layout .composition-back{left:70%;top:29%;width:28%;height:25%;z-index:3}
-.fixed-layout .composition-piece{border:1px solid #48515c;border-radius:8px;background:#151a2030}
+.fixed-layout .composition-piece{border:0;border-radius:8px;background:transparent}.fixed-layout .composition-piece:not(.is-equipped){border:1px dashed #59616c;background:#151a2070}
 .free-layout .composition-piece{border:1px dashed transparent;cursor:grab;touch-action:none}
 .free-layout .composition-piece:active{cursor:grabbing}
 .free-layout .composition-piece.is-equipped{border-color:#a88b5c66}
