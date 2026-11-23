@@ -1,3 +1,24 @@
+// Navegação principal resiliente: delegação em capture, independente da inicialização dos catálogos.
+document.addEventListener("click",function(event){
+ const tab=event.target.closest(".tabs [data-tab]");
+ if(!tab)return;
+ const key=tab.dataset.tab;
+ const target=document.getElementById(key+"-view");
+ if(!target)return;
+ event.preventDefault();
+ document.querySelectorAll(".tabs [data-tab]").forEach(button=>{
+  const selected=button===tab;
+  button.classList.toggle("active",selected);
+  button.setAttribute("aria-current",selected?"page":"false");
+ });
+ document.querySelectorAll(".view").forEach(view=>{
+  const selected=view===target;
+  view.classList.toggle("active",selected);
+  view.hidden=!selected;
+ });
+ if(key==="build"&&typeof updateBuildLayerStatus==="function")updateBuildLayerStatus();
+},true);
+
 const CLASS_MAP={
   "Greatsword":"Swordsman","Sword and Shield":"Swordsman","Dual Blades":"Swordsman",
   "Bow":"Ranger","Crossbow":"Ranger","Rapier":"Ranger",
@@ -378,7 +399,8 @@ function renderClasses(){
  }));
 }
 async function loadData(){try{let data=null,sourceFile="";for(const file of ["./data/questlog-export.json","./data/weapons.json"]){const res=await fetch(file,{cache:"no-store"});if(res.ok){data=await res.json();sourceFile=file;break}}if(!data)throw new Error("Arquivo do catálogo não encontrado");const candidates=[data.items,data.pageData,data.records,data.registros,data?.result?.data?.json?.pageData,data?.result?.data?.pageData,data?.data?.items,data?.data?.pageData];const rawItems=Array.isArray(data)?data:(candidates.find(Array.isArray)||[]);const testItems=rawItems.filter(w=>/\(Test\)/i.test(String(w.name||"")));weapons=rawItems.filter(w=>!w.isDisabled&&!/\(Test\)/i.test(String(w.name||"")));fillFilters();renderList();const stamp=data.updatedAt?new Date(data.updatedAt).toLocaleString("pt-BR"):"data da exportação: 02/10/2026";$("data-status").textContent=rawItems.length+" registros recebidos; "+weapons.length+" armas exibidas; "+testItems.length+" registros de teste ocultados. Fonte: "+sourceFile+". "+stamp+".";if(!weapons.length)$("data-status").textContent="O arquivo foi encontrado, mas não contém uma lista de itens reconhecida. Verifique o formato do export."}catch(e){$("weapon-list").innerHTML='<div class="empty-state">O catálogo exportado ainda não foi enviado. Quando o arquivo Questlog for adicionado à pasta data, as armas aparecerão aqui.</div>';$("data-status").textContent="Aguardando o arquivo data/questlog-export.json enviado ao repositório."}}
-document.querySelectorAll(".tab").forEach(tab=>tab.addEventListener("click",()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===tab));document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));const target=$(tab.dataset.tab+"-view");if(target)target.classList.add("active");if(tab.dataset.tab==="build")updateBuildLayerStatus()}));
+// A navegação é delegada no início do arquivo para continuar funcional mesmo se outro módulo falhar.
+
 $("search").addEventListener("input",renderList);$("class-filter").addEventListener("change",()=>{updateWeaponTypeOptions();renderList()});["type-filter","rarity-filter"].forEach(id=>$(id).addEventListener("change",renderList));
 
 let armors=[],selectedArmor=null,armorMode="pieces",armorDetailsPromise=null;
