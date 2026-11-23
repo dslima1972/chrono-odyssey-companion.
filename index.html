@@ -126,6 +126,16 @@
               
             </div>
           </div>
+          <div class="dressing-overlay-controls" id="dressing-overlay-controls" hidden>
+            <div class="dressing-overlay-controls-heading"><strong>Ajuste da peça · Ragged Clothes</strong><span>Os valores são aplicados em tempo real</span></div>
+            <div class="dressing-overlay-control-grid">
+              <label>Posição horizontal <output id="dressing-overlay-x-value">50%</output><input id="dressing-overlay-x" type="range" min="35" max="65" value="50"></label>
+              <label>Posição vertical <output id="dressing-overlay-y-value">18%</output><input id="dressing-overlay-y" type="range" min="10" max="32" value="18"></label>
+              <label>Largura da peça <output id="dressing-overlay-w-value">42%</output><input id="dressing-overlay-w" type="range" min="25" max="60" value="42"></label>
+              <label class="dressing-overlay-visible"><input id="dressing-overlay-visible" type="checkbox" checked> Mostrar camada</label>
+            </div>
+            <p>Experimente os controles até alinhar a peça ao tronco. Depois, informe os três valores exibidos.</p>
+          </div>
           <div class="dressing-actions"><button type="button" id="dressing-clear" class="secondary-action">Limpar equipamentos</button><button type="button" id="dressing-save" class="primary-action">Salvar combinação</button></div>
           <div class="dressing-status" id="dressing-status" aria-live="polite">Selecione uma categoria e escolha uma peça no catálogo.</div>
         </section>
