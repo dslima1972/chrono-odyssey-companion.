@@ -1212,3 +1212,12 @@ input.gear-score-slider::-moz-range-thumb{width:9px;height:9px;border:1px solid 
 
 
 }
+
+/* Camadas transparentes do Provador: compartilham exatamente a caixa e a escala do avatar */
+.dressing-avatar-placeholder{isolation:isolate}
+.dressing-avatar-placeholder #dressing-avatar-image{position:relative;z-index:1}
+.dressing-equipment-layer-host{position:absolute;inset:0;z-index:2;pointer-events:none;display:flex;align-items:center;justify-content:center;overflow:visible}
+.dressing-equipment-layer{display:block;position:absolute;inset:0;width:100%;height:100%;max-height:620px;object-fit:contain;object-position:center;transform:scale(1.18);transform-origin:center center}
+@media(max-width:700px){
+ .dressing-equipment-layer{max-height:560px;transform:scale(1.06)}
+}
