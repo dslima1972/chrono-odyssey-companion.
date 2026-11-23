@@ -254,8 +254,30 @@ function detailedWeaponMarkup(w,item){const info=item?.itemInfo||{},grade=item?.
 let itemDetailsGeneratedAt="";
 async function getItemDetails(){if(!itemDetailsDataPromise)itemDetailsDataPromise=(async()=>{const manifestResponse=await fetch("./data/weapon-details-manifest.json?v=20261122f",{cache:"no-store"});if(!manifestResponse.ok)throw new Error("Manifesto local de detalhes das armas não encontrado (HTTP "+manifestResponse.status+").");const manifest=await manifestResponse.json();if(!Array.isArray(manifest.parts)||!manifest.parts.length)throw new Error("O manifesto não contém a lista de partes dos detalhes das armas.");const responses=await Promise.all(manifest.parts.map(async name=>{const response=await fetch("./data/"+encodeURIComponent(name)+"?v=20261122f",{cache:"no-store"});if(!response.ok)throw new Error("Não foi possível carregar "+name+" (HTTP "+response.status+").");return response.json()}));const allItems={};for(const part of responses)Object.assign(allItems,part.items||{});itemDetailsGeneratedAt=manifest.generatedAt?new Date(manifest.generatedAt).toLocaleString("pt-BR"):"não informada";return allItems})();return itemDetailsDataPromise}
 function detailMarkup(w){const type=weaponType(w),color=rarityStyle(w),meta=compactMeta("ID",w.id||w.compoundId);return '<div class="detail-panel" style="--rarity:'+color+'"><div class="detail-top"><div class="detail-icon"><span>'+iconFor(type)+'</span>'+weaponImageMarkup(w)+'</div><div class="detail-heading-copy"><h3>'+escapeHtml(w.name||"Item sem nome")+'</h3><p>'+escapeHtml(weaponClass(w)||"Classe não mapeada")+' · '+escapeHtml(type)+'</p><div class="detail-rarity">'+escapeHtml(rarity(w))+'</div><div class="detail-header-meta">'+meta+'</div></div></div><div class="detail-live" id="detail-live"><p class="detail-muted"><span class="spinner"></span>Carregando dados sincronizados…</p></div><a class="detail-source" href="https://questlog.gg/chrono-odyssey/en/db/item/'+encodeURIComponent(w.id||w.compoundId||"")+'" target="_blank" rel="noreferrer">CONSULTAR FICHA NO QUESTLOG ↗</a></div>'}
-async function loadItemDetails(w){const id=String(w.id||w.compoundId||"");if(!id)return;const target=$("detail-live");if(!target)return;try{const all=await getItemDetails();const item=all[id]||all[id.replace(/^item-/,"")];if(!item)throw new Error("Esta arma ainda não consta no arquivo sincronizado. Execute a sincronização do Questlog.");const current=$("detail-live");if(current&&selected&&String(selected.id||selected.compoundId)===id)current.innerHTML=detailedWeaponMarkup(w,item);const meta=current.closest(".detail-panel")?.querySelector(".detail-header-meta");if(meta)meta.insertAdjacentHTML("beforeend",compactMeta("Nível",item?.itemInfo?.requiredLevel)+compactMeta("Tier",item?.itemInfo?.tier))}catch(error){const current=$("detail-live");if(current&&selected&&String(selected.id||selected.compoundId)===id)current.innerHTML='<p class="detail-muted detail-error">Não foi possível carregar os atributos locais. '+escapeHtml(error.message||"Verifique se a sincronização foi concluída.")+' Você ainda pode consultar a ficha original pelo link abaixo.</p>'}}
-function selectWeapon(id){selected=weapons.find(w=>String(w.id)===String(id)||String(w.compoundId)===String(id))||null;if(!selected)return;renderList();$("weapon-detail").innerHTML=detailMarkup(selected);$("weapon-detail").classList.remove("empty-detail");loadItemDetails(selected);if(window.matchMedia("(max-width:760px)").matches){$("mobile-detail").innerHTML='<button class="mobile-back" id="mobile-back">← VOLTAR AO ARSENAL</button>'+detailMarkup(selected);$("mobile-detail").hidden=false;loadItemDetails(selected);$("mobile-back").addEventListener("click",()=>$("mobile-detail").hidden=true)}}
+async function loadItemDetails(w,panelRoot){
+ const id=String(w.id||w.compoundId||"");if(!id||!panelRoot)return;
+ const target=panelRoot.querySelector(".detail-live");if(!target)return;
+ try{
+  const all=await getItemDetails(),item=all[id]||all[id.replace(/^item-/,"")];
+  if(!item)throw new Error("Esta arma ainda não consta no arquivo sincronizado. Execute a sincronização do Questlog.");
+  const current=panelRoot.querySelector(".detail-live");
+  if(current&&selected&&String(selected.id||selected.compoundId)===id)current.innerHTML=detailedWeaponMarkup(w,item);
+  const meta=current?.closest(".detail-panel")?.querySelector(".detail-header-meta");
+  if(meta)meta.insertAdjacentHTML("beforeend",compactMeta("Nível",item?.itemInfo?.requiredLevel)+compactMeta("Tier",item?.itemInfo?.tier));
+ }catch(error){
+  const current=panelRoot.querySelector(".detail-live");
+  if(current&&selected&&String(selected.id||selected.compoundId)===id)current.innerHTML='<p class="detail-muted detail-error">Não foi possível carregar os atributos locais. '+escapeHtml(error.message||"Verifique se a sincronização foi concluída.")+' Você ainda pode consultar a ficha original pelo link abaixo.</p>';
+ }
+}
+function selectWeapon(id){
+ selected=weapons.find(w=>String(w.id)===String(id)||String(w.compoundId)===String(id))||null;if(!selected)return;
+ renderList();$("weapon-detail").innerHTML=detailMarkup(selected);$("weapon-detail").classList.remove("empty-detail");loadItemDetails(selected,$("weapon-detail"));
+ if(window.matchMedia("(max-width:760px)").matches){
+  $("mobile-detail").innerHTML='<button class="mobile-back" id="mobile-back">← VOLTAR AO ARSENAL</button>'+detailMarkup(selected);
+  $("mobile-detail").hidden=false;loadItemDetails(selected,$("mobile-detail"));
+  $("mobile-back").addEventListener("click",()=>$("mobile-detail").hidden=true);
+ }
+}
 function classWeaponIconMarkup(type,className){
  const classSlug=String(className||"").toLowerCase().replace(/[^a-z]/g,"");
  const weaponSlug=String(type||"").toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
@@ -374,19 +396,36 @@ function detailedArmorMarkup(item,catalogItem){
  return '<section class="detail-section stats-primary"><h4>Atributos e efeitos</h4>'+renderArmorStats(item)+'</section>'+renderDefenseProgression(item)+renderSuffixes(item)+renderPerks(item)+(fields?'<details class="detail-disclosure"><summary>Outras informações do equipamento</summary><div class="detail-fields">'+fields+'</div></details>':"")+'<p class="detail-note">Dados da ficha individual do Questlog. Os campos não fornecidos pela fonte não são exibidos.</p>';
 }
 function armorDetailMarkup(item){const type=armorType(item),color=rarityStyle(item),meta=compactMeta("ID",item.id||item.compoundId)+compactMeta("Conjunto",armorSetLabel(item));return '<div class="detail-panel" style="--rarity:'+color+'"><div class="detail-top"><div class="detail-icon"><span>'+armorIcon(item)+'</span>'+weaponImageMarkup(item)+'</div><div class="detail-heading-copy"><h3>'+escapeHtml(item.name||"Armadura")+'</h3><p>'+escapeHtml(type)+' · Equipável por todas as classes</p><div class="detail-rarity">'+escapeHtml(rarity(item))+'</div><div class="detail-header-meta">'+meta+'</div></div></div><div class="detail-live" id="armor-detail-live"><p class="detail-muted">Os atributos serão exibidos após a coleta das fichas individuais.</p></div><a class="detail-source" href="https://questlog.gg/chrono-odyssey/en/db/item/'+encodeURIComponent(item.id||item.compoundId||"")+'" target="_blank" rel="noreferrer">CONSULTAR FICHA NO QUESTLOG ↗</a></div>'}
-async function loadArmorDetails(item){
- const id=String(item.id||item.compoundId||"");const target=$("armor-detail-live");if(!target)return;
+async function loadArmorDetails(item,panelRoot){
+ const id=String(item.id||item.compoundId||"");if(!panelRoot)return;
+ const target=panelRoot.querySelector(".detail-live");if(!target)return;
  try{
-  if(!armorDetailsPromise)armorDetailsPromise=(async()=>{const manifestResponse=await fetch("./data/armor-details-manifest.json?v=20261122a",{cache:"no-store"});if(!manifestResponse.ok)throw new Error("Manifesto local de detalhes das armaduras não encontrado (HTTP "+manifestResponse.status+").");const manifest=await manifestResponse.json();if(!Array.isArray(manifest.parts)||!manifest.parts.length)throw new Error("O manifesto não contém a lista de partes dos detalhes das armaduras.");const responses=await Promise.all(manifest.parts.map(async name=>{const response=await fetch("./data/"+encodeURIComponent(name)+"?v=20261122a",{cache:"no-store"});if(!response.ok)throw new Error("Não foi possível carregar "+name+" (HTTP "+response.status+").");return response.json()}));const allItems={};for(const part of responses)Object.assign(allItems,part.items||{});return allItems})();
-  const all=await armorDetailsPromise,record=all[id]||all[id.replace(/^item-/,"")];
-  const current=$("armor-detail-live");if(!current||!record||!selectedArmor||String(selectedArmor.id||selectedArmor.compoundId)!==id)return;
-  current.innerHTML=detailedArmorMarkup(record,item);const meta=current.closest(".detail-panel")?.querySelector(".detail-header-meta");if(meta)meta.insertAdjacentHTML("beforeend",compactMeta("Nível",record?.itemInfo?.requiredLevel)+compactMeta("Tier",record?.itemInfo?.tier));
- }catch(e){const current=$("armor-detail-live");if(current)current.innerHTML='<p class="detail-muted">A ficha detalhada será habilitada quando a coleta do Questlog for concluída. Os dados ainda não foram importados.</p>'}
+  if(!armorDetailsPromise)armorDetailsPromise=(async()=>{
+   const manifestResponse=await fetch("./data/armor-details-manifest.json?v=20261122a",{cache:"no-store"});
+   if(!manifestResponse.ok)throw new Error("Manifesto local de detalhes das armaduras não encontrado (HTTP "+manifestResponse.status+").");
+   const manifest=await manifestResponse.json();
+   if(!Array.isArray(manifest.parts)||!manifest.parts.length)throw new Error("O manifesto não contém a lista de partes dos detalhes das armaduras.");
+   const responses=await Promise.all(manifest.parts.map(async name=>{const response=await fetch("./data/"+encodeURIComponent(name)+"?v=20261122a",{cache:"no-store"});if(!response.ok)throw new Error("Não foi possível carregar "+name+" (HTTP "+response.status+").");return response.json()}));
+   const allItems={};for(const part of responses)Object.assign(allItems,part.items||{});return allItems;
+  })();
+  const all=await armorDetailsPromise,record=all[id]||all[id.replace(/^item-/,"")],current=panelRoot.querySelector(".detail-live");
+  if(!current||!record||!selectedArmor||String(selectedArmor.id||selectedArmor.compoundId)!==id)return;
+  current.innerHTML=detailedArmorMarkup(record,item);
+  const meta=current.closest(".detail-panel")?.querySelector(".detail-header-meta");
+  if(meta)meta.insertAdjacentHTML("beforeend",compactMeta("Nível",record?.itemInfo?.requiredLevel)+compactMeta("Tier",record?.itemInfo?.tier));
+ }catch(e){
+  const current=panelRoot.querySelector(".detail-live");
+  if(current&&selectedArmor&&String(selectedArmor.id||selectedArmor.compoundId)===id)current.innerHTML='<p class="detail-muted">A ficha detalhada será habilitada quando a coleta do Questlog for concluída. Os dados ainda não foram importados.</p>';
+ }
 }
 function selectArmor(id){
  selectedArmor=armors.find(x=>String(x.id)===String(id)||String(x.compoundId)===String(id));if(!selectedArmor)return;
- renderArmorList();$("armor-detail").innerHTML=armorDetailMarkup(selectedArmor);$("armor-detail").classList.remove("empty-detail");loadArmorDetails(selectedArmor);
- if(window.matchMedia("(max-width:760px)").matches){$("armor-mobile-detail").innerHTML='<button class="mobile-back" id="armor-mobile-back">← VOLTAR ÀS ARMADURAS</button>'+armorDetailMarkup(selectedArmor);$("armor-mobile-detail").hidden=false;loadArmorDetails(selectedArmor);$("armor-mobile-back").addEventListener("click",()=>$("armor-mobile-detail").hidden=true)}
+ renderArmorList();$("armor-detail").innerHTML=armorDetailMarkup(selectedArmor);$("armor-detail").classList.remove("empty-detail");loadArmorDetails(selectedArmor,$("armor-detail"));
+ if(window.matchMedia("(max-width:760px)").matches){
+  $("armor-mobile-detail").innerHTML='<button class="mobile-back" id="armor-mobile-back">← VOLTAR ÀS ARMADURAS</button>'+armorDetailMarkup(selectedArmor);
+  $("armor-mobile-detail").hidden=false;loadArmorDetails(selectedArmor,$("armor-mobile-detail"));
+  $("armor-mobile-back").addEventListener("click",()=>$("armor-mobile-detail").hidden=true);
+ }
 }
 function renderArmorList(){const rows=armorFiltered();$("armor-catalog-count").textContent=armors.length?rows.length+" / "+armors.length+" PEÇAS":"AGUARDANDO CATÁLOGO";if(!armors.length){$("armor-list").innerHTML='<div class="empty-state">A estrutura do catálogo está pronta. Aguardando a exportação de armaduras do Questlog.</div>';return}if(armorMode==="sets"){const groups=new Map();rows.forEach(x=>{const key=armorSetLabel(x);if(key!=="Conjunto não identificado"){if(!groups.has(key))groups.set(key,[]);groups.get(key).push(x)}});const multi=[...groups.entries()].filter(([,items])=>items.length>1);if(!multi.length){$("armor-list").innerHTML='<div class="empty-state">Nenhum conjunto com mais de uma peça corresponde aos filtros selecionados.</div>';return}$("armor-list").innerHTML=multi.sort((a,b)=>a[0].localeCompare(b[0],"pt-BR")).map(([name,items])=>'<section class="armor-set-group"><header><strong>'+escapeHtml(name)+'</strong><span>'+items.length+' peças</span></header><div>'+items.map(x=>'<button class="weapon-row armor-row" data-id="'+escapeHtml(x.id)+'" style="--rarity:'+rarityStyle(x)+'"><span class="weapon-symbol"><span>'+armorIcon(x)+'</span>'+weaponImageMarkup(x)+'</span><span><span class="weapon-name">'+escapeHtml(x.name||"Armadura")+'</span><span class="weapon-meta">'+escapeHtml(armorType(x))+'</span></span><span class="rarity-label">'+escapeHtml(rarity(x))+'</span></button>').join("")+'</div></section>').join("");}else{if(!rows.length){$("armor-list").innerHTML='<div class="empty-state">Nenhuma armadura corresponde aos filtros selecionados.</div>';return}$("armor-list").innerHTML=rows.map(x=>'<button class="weapon-row armor-row '+(selectedArmor&&selectedArmor.id===x.id?"selected":"")+'" data-id="'+escapeHtml(x.id)+'" style="--rarity:'+rarityStyle(x)+'"><span class="weapon-symbol"><span>'+armorIcon(x)+'</span>'+weaponImageMarkup(x)+'</span><span><span class="weapon-name">'+escapeHtml(x.name||"Armadura")+'</span><span class="weapon-meta">'+escapeHtml(armorType(x))+' · '+escapeHtml(armorSetLabel(x))+'</span></span><span class="rarity-label">'+escapeHtml(rarity(x))+'</span></button>').join("");}document.querySelectorAll("#armor-list .armor-row").forEach(b=>b.addEventListener("click",()=>selectArmor(b.dataset.id)))}
 async function loadArmorData(){
@@ -426,8 +465,9 @@ function detailedAccessoryMarkup(record,item){
  return '<section class="detail-section stats-primary"><h4>Atributos e efeitos</h4>'+renderAccessoryStats(record)+'</section>'+renderSuffixes(record)+renderPerks(record)+(fields?'<details class="detail-disclosure"><summary>Outras informações do acessório</summary><div class="detail-fields">'+fields+'</div></details>':"")+'<p class="detail-note">Dados da ficha individual do Questlog. Campos não fornecidos pela fonte não são exibidos.</p>';
 }
 
-async function loadAccessoryDetails(item){
- const id=String(item.id||item.compoundId||""),target=$("accessory-detail-live");if(!target)return;
+async function loadAccessoryDetails(item,panelRoot){
+ const id=String(item.id||item.compoundId||"");if(!panelRoot)return;
+ const target=panelRoot.querySelector(".detail-live");if(!target)return;
  try{
   if(!accessoryDetailsPromise)accessoryDetailsPromise=(async()=>{
    const response=await fetch("./data/accessory-details-manifest.json?v=20261123a",{cache:"no-store"});
@@ -437,19 +477,26 @@ async function loadAccessoryDetails(item){
    const parts=await Promise.all(manifest.parts.map(async name=>{const res=await fetch("./data/"+encodeURIComponent(name)+"?v=20261123a",{cache:"no-store"});if(!res.ok)throw new Error("Falha ao carregar "+name);return res.json()}));
    const all={};parts.forEach(part=>Object.assign(all,part.items||{}));return all;
   })();
-  const all=await accessoryDetailsPromise,record=all[id]||all[id.replace(/^item-/,"")],current=$("accessory-detail-live");
+  const all=await accessoryDetailsPromise,record=all[id]||all[id.replace(/^item-/,"")],current=panelRoot.querySelector(".detail-live");
   if(!record)throw new Error("Ficha individual não encontrada para este acessório.");
   if(current&&selectedAccessory&&String(selectedAccessory.id||selectedAccessory.compoundId)===id){
    current.innerHTML=detailedAccessoryMarkup(record,item);
    const meta=current.closest(".detail-panel")?.querySelector(".detail-header-meta");
    if(meta)meta.insertAdjacentHTML("beforeend",compactMeta("Nível",record?.itemInfo?.requiredLevel)+compactMeta("Tier",record?.itemInfo?.tier));
   }
- }catch(e){const current=$("accessory-detail-live");if(current)current.innerHTML='<p class="detail-muted">Não foi possível carregar a ficha detalhada: '+escapeHtml(e.message||"erro desconhecido")+'</p>'}
+ }catch(e){
+  const current=panelRoot.querySelector(".detail-live");
+  if(current&&selectedAccessory&&String(selectedAccessory.id||selectedAccessory.compoundId)===id)current.innerHTML='<p class="detail-muted">Não foi possível carregar a ficha detalhada: '+escapeHtml(e.message||"erro desconhecido")+'</p>';
+ }
 }
 function selectAccessory(id){
  selectedAccessory=accessories.find(x=>String(x.id)===String(id)||String(x.compoundId)===String(id));if(!selectedAccessory)return;
- renderAccessoryList();$("accessory-detail").innerHTML=accessoryDetailMarkup(selectedAccessory);$("accessory-detail").classList.remove("empty-detail");loadAccessoryDetails(selectedAccessory);
- if(window.matchMedia("(max-width:760px)").matches){$("accessory-mobile-detail").innerHTML='<button class="mobile-back" id="accessory-mobile-back">← VOLTAR AOS ACESSÓRIOS</button>'+accessoryDetailMarkup(selectedAccessory);$("accessory-mobile-detail").hidden=false;loadAccessoryDetails(selectedAccessory);$("accessory-mobile-back").addEventListener("click",()=>$("accessory-mobile-detail").hidden=true)}
+ renderAccessoryList();$("accessory-detail").innerHTML=accessoryDetailMarkup(selectedAccessory);$("accessory-detail").classList.remove("empty-detail");loadAccessoryDetails(selectedAccessory,$("accessory-detail"));
+ if(window.matchMedia("(max-width:760px)").matches){
+  $("accessory-mobile-detail").innerHTML='<button class="mobile-back" id="accessory-mobile-back">← VOLTAR AOS ACESSÓRIOS</button>'+accessoryDetailMarkup(selectedAccessory);
+  $("accessory-mobile-detail").hidden=false;loadAccessoryDetails(selectedAccessory,$("accessory-mobile-detail"));
+  $("accessory-mobile-back").addEventListener("click",()=>$("accessory-mobile-detail").hidden=true);
+ }
 }
 async function loadAccessoryData(){
  try{
