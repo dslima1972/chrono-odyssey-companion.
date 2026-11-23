@@ -518,3 +518,20 @@ footer{border-color:#393528;color:var(--faint)}
 .build-stat-summary-card .stat-line span{font-size:10px;color:var(--text)}
 .build-stat-summary-card .stat-line strong{font-size:12px}
 @media(max-width:650px){.build-selected-stats{grid-template-columns:1fr}}
+
+/* Full attribute preview inside the equipment selection dropdown */
+.build-picker-list{grid-template-columns:1fr;gap:8px;max-height:440px}
+.build-picker-item{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;padding:10px;text-align:left;align-items:stretch}
+.build-picker-item-head{display:flex;align-items:center;gap:9px;min-width:0}
+.build-picker-item-icon{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;overflow:hidden;border:1px solid color-mix(in srgb,var(--rarity,#514832) 72%,#393629);background:color-mix(in srgb,var(--rarity,#514832) 16%,#090d0b)}
+.build-picker-item-icon img{width:100%;height:100%;object-fit:contain}
+.build-picker-item-title{display:grid;gap:4px;min-width:0}
+.build-picker-item-title strong{font:500 10px Cinzel,Georgia,serif;overflow-wrap:anywhere;color:var(--text)}
+.build-picker-item-title small{font-size:8px;color:var(--rarity,var(--muted))}
+.build-picker-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px 7px;padding-top:7px;border-top:1px solid color-mix(in srgb,var(--rarity,#514832) 28%,#343629)}
+.build-picker-stat{display:flex;align-items:baseline;justify-content:space-between;gap:6px;min-width:0;padding:3px 5px;background:rgba(0,0,0,.2)}
+.build-picker-stat small{font-size:8px;line-height:1.35;color:var(--muted);overflow-wrap:anywhere}
+.build-picker-stat strong{font-size:9px;color:var(--gold2);white-space:nowrap}
+.build-picker-stat em{font-size:8px;color:var(--muted);font-style:normal;white-space:nowrap}
+.build-picker-no-stats{font-size:8px;color:var(--muted);padding-top:6px;border-top:1px solid #343629}
+@media(max-width:650px){.build-picker-list{grid-template-columns:1fr}.build-picker-stats{grid-template-columns:1fr 1fr}}
