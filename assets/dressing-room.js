@@ -20,11 +20,13 @@ function applyFreeLayout(){
  root.querySelectorAll("[data-composition-slot]").forEach(node=>{
   const slot=node.dataset.compositionSlot,p=freeLayout[slot]||layoutDefaults[slot];
   if(compositionMode==="free"){
-   Object.assign(node.style,{left:p.x+"%",top:p.y+"%",width:p.w+"%",height:p.h+"%",zIndex:""+(slot==="chest"?4:slot==="head"?5:3)});
+   Object.assign(node.style,{left:p.x+"%",top:p.y+"%",width:p.w+"%",height:p.h+"%",zIndex:""+(p.z??(slot==="chest"?4:slot==="head"?5:3))});
+   if(!node.querySelector(".composition-front"))node.insertAdjacentHTML("beforeend",'<button type="button" class="composition-front" data-bring-front="' + slot + '" aria-label="Trazer peça para frente" title="Trazer para frente">↥</button>');
    if(!node.querySelector(".composition-resize"))node.insertAdjacentHTML("beforeend",'<span class="composition-resize" aria-label="Redimensionar peça"></span>');
   }else{
    ["left","top","width","height","zIndex"].forEach(k=>node.style[k]="");
    node.querySelector(".composition-resize")?.remove();
+   node.querySelector(".composition-front")?.remove();
   }
  });
 }
@@ -47,6 +49,9 @@ function setCompositionMode(mode){
 }
 function initCompositionEditor(){
  const root=$("dressing-composition");
+ if(root.dataset.editorInitialized==="true")return;
+ root.dataset.editorInitialized="true";
+ root.addEventListener("click",ev=>{const btn=ev.target.closest("[data-bring-front]");if(!btn)return;const slot=btn.dataset.bringFront;const maxZ=Math.max(0,...Object.values(freeLayout).map(p=>Number(p.z)||0));freeLayout[slot]={...freeLayout[slot],z:maxZ+1};applyFreeLayout();saveLayout();$("dressing-status").textContent=slots[slot]+" trazida para frente."});
  root.addEventListener("pointerdown",ev=>{
   if(compositionMode!=="free")return;
   const node=ev.target.closest("[data-composition-slot]");if(!node||!equipped[node.dataset.compositionSlot])return;
@@ -56,7 +61,7 @@ function initCompositionEditor(){
   ev.preventDefault();node.setPointerCapture(ev.pointerId);
   const move=e=>{
    const dx=(e.clientX-startX)/rect.width*100,dy=(e.clientY-startY)/rect.height*100;
-   if(resizing){p.w=Math.max(7,Math.min(80,start.w+dx));p.h=Math.max(7,Math.min(80,start.h+dy))}
+   if(resizing){const scale=Math.max(0.15,Math.min(3,1+Math.max(dx/start.w,dy/start.h)));p.w=Math.max(7,Math.min(80,start.w*scale));p.h=Math.max(7,Math.min(80,start.h*scale))}
    else{p.x=Math.max(0,Math.min(100-p.w,start.x+dx));p.y=Math.max(0,Math.min(100-p.h,start.y+dy))}
    freeLayout[slot]={...p};applyFreeLayout();
   };
