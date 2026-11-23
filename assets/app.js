@@ -362,7 +362,7 @@ function renderClasses(){
   const image="./assets/classes/buttons/"+slug+".jpg";
   const fallbackImage="./assets/classes/"+slug+".jpg";
   return '<button class="class-filter-btn" type="button" data-class="'+escapeHtml(c.name)+'" aria-label="Selecionar classe '+escapeHtml(c.name)+'">'+
-   '<span class="class-card-art"><img src="'+image+'" data-fallback="'+fallbackImage+'" alt="" loading="lazy" decoding="async" onerror="if(this.dataset.fallback){this.onerror=null;this.src=this.dataset.fallback}else{this.parentElement.classList.add(\\'class-card-art-fallback\\');this.remove()}"><span class="class-card-number">0'+(i+1)+'</span><span class="class-card-select">VER CLASSE <b>↗</b></span></span>'+
+   '<span class="class-card-art"><img src="'+image+'" data-fallback="'+fallbackImage+'" alt="" loading="lazy" decoding="async" onerror="if(this.dataset.fallback){this.onerror=null;this.src=this.dataset.fallback}else{this.parentElement.classList.add(\'class-card-art-fallback\');this.remove()}"><span class="class-card-number">0'+(i+1)+'</span><span class="class-card-select">VER CLASSE <b>↗</b></span></span>'+
    '<span class="class-card-body"><span class="class-card-name">'+escapeHtml(c.name)+'</span><span class="class-card-role">'+escapeHtml(c.role)+'</span><span class="class-card-weapons-label">ARMAS</span><span class="class-card-weapons">'+c.weapons.map(w=>'<span class="class-card-weapon-icon" title="'+escapeHtml(w)+'" aria-label="'+escapeHtml(w)+'">'+classButtonWeaponIconMarkup(w,c.name)+'</span>').join("")+'</span></span>'+
   '</button>';
  }).join(""); grid.querySelectorAll(".class-filter-btn").forEach(b=>b.addEventListener("click",()=>{
