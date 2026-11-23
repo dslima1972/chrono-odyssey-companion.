@@ -13,7 +13,7 @@ function renderComposition(){
  const labels={head:"Cabeça",chest:"Peitoral",hands:"Mãos",back:"Costas",legs:"Pernas",feet:"Pés"};
  root.querySelectorAll("[data-composition-slot]").forEach(node=>{
   const slot=node.dataset.compositionSlot,item=equipped[slot];
-  node.innerHTML=item?(image(item)?'<img src="'+esc(image(item))+'" alt="'+esc(item.name||labels[slot])+'" loading="lazy"><small>'+esc(item.name||labels[slot])+'</small>':'<small>'+esc(item.name||labels[slot])+'</small>'):'<span>'+labels[slot]+'</span>';
+  node.innerHTML=item?(image(item)?'<img src="'+esc(image(item))+'" alt="'+esc(item.name||labels[slot])+'" loading="lazy">':''):'<span>'+labels[slot]+'</span>';
   node.classList.toggle("is-equipped",!!item);
  });
 }
