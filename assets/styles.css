@@ -627,3 +627,12 @@ footer{border-color:#393528;color:var(--faint)}
 .build-stat-panels{grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
 
 @media(max-width:760px){.tabs{flex-wrap:wrap}}
+
+
+/* Seção de vídeos recolhível para manter a ficha de classe compacta */
+.class-video-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.class-video-heading h4{margin:0}
+.class-video-toggle{border:1px solid #67583b;background:#29271b;color:var(--gold2);padding:8px 12px;font:500 10px Inter,sans-serif;letter-spacing:.35px;cursor:pointer;white-space:nowrap}
+.class-video-toggle:hover,.class-video-toggle:focus-visible{background:#49402b;border-color:var(--gold);outline:none}
+.class-video-content[hidden]{display:none!important}
+.class-video-content{margin-top:16px}
