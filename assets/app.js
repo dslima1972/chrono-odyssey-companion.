@@ -720,7 +720,7 @@ async function loadBuildLayer(kind){
  if(buildLayerState[kind]==="ready")return true;
  if(buildLayerPromises[kind])return buildLayerPromises[kind];
  const config=BUILD_LAYER_CONFIG[kind];if(!config)return false;
- buildLayerState[kind]="loading";updateBuildLayerStatus();renderBuildScreen();
+ buildLayerState[kind]="loading";updateBuildLayerStatus();buildStatsOptions(kind,0);buildStatsOptions(kind,1);
  buildLayerPromises[kind]=(async()=>{
   try{
    const response=await fetch("./data/"+config.manifest+"?v=20261123b",{cache:"force-cache"});
@@ -732,11 +732,11 @@ async function loadBuildLayer(kind){
     return res.json();
    }));
    const all={};parts.forEach(part=>Object.assign(all,part.items||{}));
-   config.assign(all);buildLayerState[kind]="ready";updateBuildLayerStatus();renderBuildScreen();return true;
+   config.assign(all);buildLayerState[kind]="ready";updateBuildLayerStatus();buildStatsOptions(kind,0);buildStatsOptions(kind,1);if(kind==="weapon"){$("build-weapon-stat1").disabled=!buildState.weaponType;$("build-weapon-stat2").disabled=!buildState.weaponType}renderBuildSelectedStats();return true;
   }catch(error){
    buildLayerState[kind]="idle";buildLayerPromises[kind]=null;
    const status=$("build-data-status");if(status)status.textContent="Não foi possível carregar "+config.label+": "+(error.message||"erro desconhecido")+". Tente novamente ao acessar esta categoria.";
-   renderBuildScreen();return false;
+   buildStatsOptions(kind,0);buildStatsOptions(kind,1);return false;
   }
  })();
  return buildLayerPromises[kind];
