@@ -465,3 +465,19 @@ footer{border-color:#393528;color:var(--faint)}
 .build-data-status{margin-top:14px}
 @media(max-width:900px){.build-workspace{grid-template-columns:1fr}.build-character-panel{position:relative;top:auto;display:grid;grid-template-columns:minmax(150px,.7fr) 1fr;gap:12px;align-items:center}.build-character-panel>p{margin:0}.build-character-panel #build-character,.build-character-placeholder,.build-character-panel img{min-height:260px;height:260px}.build-suggestions-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:650px){.build-controls,.build-stat-panels{grid-template-columns:1fr}.build-stat-panel>div{grid-template-columns:1fr 1fr}.build-character-panel{grid-template-columns:1fr}.build-character-panel #build-character,.build-character-placeholder,.build-character-panel img{min-height:300px;height:300px}.build-slot-grid,.build-suggestions-grid{grid-template-columns:1fr}.build-picker-list{grid-template-columns:1fr 1fr}}
+
+
+/* Build picker opens directly from the selected equipment slot */
+.build-slot-clickable{position:relative;cursor:pointer;transition:border-color .16s ease,background .16s ease}
+.build-slot-clickable:hover,.build-slot-clickable:focus-visible{border-color:var(--gold);background:linear-gradient(100deg,#302b1d,#171a13);outline:none}
+.build-slot-chevron{margin-left:auto;color:var(--gold2);font-size:19px;flex:0 0 auto}
+.build-picker{position:absolute;z-index:30;top:calc(100% + 7px);left:0;width:min(390px,calc(100vw - 56px));margin:0;padding:12px;box-shadow:0 14px 32px rgba(0,0,0,.72);border-color:#8b7549}
+.build-picker-head{flex-wrap:wrap}
+.build-picker-head h3{flex:1 1 100%}
+.build-picker-head select{min-width:0;flex:1 1 130px;background:#171811;color:var(--text);border:1px solid #514832;padding:8px;font-size:10px}
+.build-picker-item,.build-result{border-color:color-mix(in srgb,var(--rarity,#514832) 58%,#353629);background:linear-gradient(100deg,color-mix(in srgb,var(--rarity,#514832) 19%,#171a13),#121610 86%)}
+.build-picker-item:hover,.build-result:hover{border-color:var(--rarity,var(--gold));background:linear-gradient(100deg,color-mix(in srgb,var(--rarity,var(--gold)) 34%,#171a13),#171a13 90%)}
+.build-picker-item small,.build-result small{color:var(--rarity,var(--muted))}
+.build-picker-item span,.build-result-icon{border:1px solid color-mix(in srgb,var(--rarity,#514832) 70%,#393629);background:color-mix(in srgb,var(--rarity,#514832) 18%,#090d0b)}
+.build-picker[hidden]{display:none}
+@media(max-width:650px){.build-picker{width:min(340px,calc(100vw - 42px));left:0}.build-picker-list{grid-template-columns:1fr}}
