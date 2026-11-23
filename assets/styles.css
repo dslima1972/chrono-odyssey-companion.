@@ -570,3 +570,15 @@ footer{border-color:#393528;color:var(--faint)}
 @media(max-width:650px){
  .build-picker-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+
+
+/* Remove any decorative outline from the item name in the build picker */
+.build-picker-item-title strong{
+ text-shadow:none!important;
+ -webkit-text-stroke:0 transparent!important;
+ outline:0!important;
+ border:0!important;
+ box-shadow:none!important;
+ background:transparent!important;
+ filter:none!important;
+}
