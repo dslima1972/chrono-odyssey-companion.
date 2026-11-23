@@ -695,7 +695,7 @@ function renderAccessoryList(){
  if(selectedAccessory){const panel=$("accessory-list").querySelector(".inline-item-detail .detail-panel");if(panel)loadAccessoryDetails(selectedAccessory,panel)}
 }
 function accessoryDetailMarkup(item){
- return '<div class="detail-panel detail-prototype detail-prototype-accessory" style="--rarity:'+rarityStyle(item)+'"><div class="detail-top"><div class="detail-heading-copy"><h3>'+escapeHtml(item.name||"Acessório")+'</h3><div class="detail-header-meta"></div></div><div class="detail-icon detail-hero"><span>'+accessoryIcon(item)+'</span>'+accessoryImageMarkup(item)+'<i class="detail-hero-glow"></i></div></div><div class="detail-live"><p class="detail-muted">Carregando ficha individual do Questlog…</p></div><a class="detail-source" href="https://questlog.gg/chrono-odyssey/en/db/item/'+encodeURIComponent(item.id||item.compoundId||"")+'" target="_blank" rel="noreferrer">CONSULTAR FICHA NO QUESTLOG ↗</a></div>';
+ return '<div class="detail-panel detail-prototype detail-prototype-accessory" style="--rarity:'+rarityStyle(item)+'"><div class="detail-top"><div class="detail-heading-copy"><h3>'+escapeHtml(item.name||"Acessório")+'</h3><div class="detail-header-meta"></div></div><div class="detail-icon detail-hero"><span>'+accessoryIcon(item)+'</span>'+accessoryImageMarkup(item,"detail-hero-image")+'<i class="detail-hero-glow"></i></div></div><div class="detail-live"><p class="detail-muted">Carregando ficha individual do Questlog…</p></div><a class="detail-source" href="https://questlog.gg/chrono-odyssey/en/db/item/'+encodeURIComponent(item.id||item.compoundId||"")+'" target="_blank" rel="noreferrer">CONSULTAR FICHA NO QUESTLOG ↗</a></div>';
 }
 function findAccessoryGearScore(item){
  const stats=item?.itemStats?.equipmentStats||{};
@@ -744,6 +744,7 @@ async function loadAccessoryDetails(item,panelRoot){
   if(!record)throw new Error("Ficha individual não encontrada para este acessório.");
   if(current&&selectedAccessory&&String(selectedAccessory.id||selectedAccessory.compoundId)===id){
    current.innerHTML=detailedAccessoryMarkup(record,item);
+   const stats=current.querySelector(".stats-primary"),heading=current.closest(".detail-panel")?.querySelector(".detail-heading-copy");if(stats&&heading)heading.appendChild(stats);
    const meta=current.closest(".detail-panel")?.querySelector(".detail-header-meta");
    if(meta)meta.innerHTML=compactMeta("Tier",record?.itemInfo?.tier)+compactMeta("Raridade",rarity(item))+compactMeta("Nível",record?.itemInfo?.requiredLevel)+compactMeta("Classe","Todas")+compactMeta("Tipo",accessoryType(item));
   }
