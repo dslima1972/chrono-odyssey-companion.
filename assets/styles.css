@@ -605,3 +605,12 @@ footer{border-color:#393528;color:var(--faint)}
  box-shadow:none!important;
  outline:0!important;
 }
+
+
+/* Build planner: match mode control and pending accessory slots */
+.build-match-mode{display:grid;gap:6px;margin-top:10px;font-size:9px;letter-spacing:.35px;color:var(--gold2)}
+.build-match-mode select{width:100%;min-width:0;background:#171811;color:var(--text);border:1px solid #514832;padding:8px;font-size:10px}
+.build-slot-pending{border-style:dashed;border-color:#514832;background:linear-gradient(100deg,#1b1b15,#11140f);opacity:.82}
+.build-slot-pending .build-slot-icon{color:var(--muted);border-style:dashed}
+.build-slot-pending .build-slot-copy strong{color:var(--gold2)}
+.build-slot-pending .build-slot-meta{line-height:1.4}
