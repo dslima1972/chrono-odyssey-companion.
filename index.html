@@ -9,8 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./assets/styles.css?v=20261122zl">
-  <script src="./assets/app.js?v=20261122ak" defer></script>
+  <link rel="stylesheet" href="./assets/styles.css?v=20261123a">
+  <script src="./assets/app.js?v=20261123a" defer></script>
 </head>
 <body>
   <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
@@ -33,6 +33,7 @@
       <button class="tab" data-tab="armor">Armaduras <span>03</span></button>
       <button class="tab" data-tab="build">Criar build <span>04</span></button>
       <button class="tab" data-tab="about">Sobre os dados <span>05</span></button>
+      <button class="tab" data-tab="accessories">Acessórios <span>06</span></button>
     </nav>
     <section id="weapons-view" class="view">
       <div class="section-heading">
@@ -80,6 +81,18 @@
       <p class="intro-copy">As classes abaixo organizam as famílias de armas associadas a cada estilo. Descrições aprofundadas e habilidades serão adicionadas somente após validação nas fontes.</p>
       <div class="class-grid" id="class-grid"></div><div class="class-detail" id="class-detail" hidden></div>
     </section>
+    <section id="accessories-view" class="view">
+      <div class="section-heading"><div><div class="eyebrow left">CATÁLOGO DE EQUIPAMENTOS</div><h2>Acessórios</h2></div><div class="catalog-count" id="accessory-catalog-count">CARREGANDO…</div></div>
+      <p class="intro-copy">Explore colares, anéis e cintos. Atributos, sufixos e efeitos são exibidos conforme as fichas individuais do Questlog.</p>
+      <div class="filters armor-filters">
+        <label class="search-wrap"><span>⌕</span><input id="accessory-search" type="search" placeholder="Buscar acessório pelo nome…" autocomplete="off"></label>
+        <select id="accessory-type-filter" aria-label="Filtrar por tipo"><option value="">Todos os tipos</option><option value="necklace">Colares</option><option value="ring">Anéis</option><option value="belt">Cintos</option></select>
+        <select id="accessory-rarity-filter" aria-label="Filtrar por raridade"><option value="">Todas as raridades</option><option>Comum</option><option>Incomum</option><option>Raro</option><option>Épico</option><option>Lendário</option></select>
+      </div>
+      <div class="catalog-layout armor-layout"><div class="weapon-list" id="accessory-list"><div class="loading"><span class="spinner"></span>Consultando catálogo…</div></div><aside class="detail-panel empty-detail" id="accessory-detail"><div class="detail-ornament">✧</div><h3>Selecione um acessório</h3><p>Escolha uma peça para consultar atributos e sufixos.</p></aside></div>
+      <div class="mobile-detail" id="accessory-mobile-detail" hidden></div>
+      <p class="armor-data-note" id="accessory-data-status">Aguardando o catálogo de acessórios exportado do Questlog.</p>
+    </section>
     <section id="about-view" class="view">
       <div class="section-heading"><div><div class="eyebrow left">TRANSPARÊNCIA E REFERÊNCIAS</div><h2>Sobre os dados</h2></div></div>
       <div class="about-grid">
@@ -101,6 +114,7 @@
       <div class="build-stat-panels">
         <section class="build-stat-panel"><h3>Prioridades das armas</h3><p>Escolha até duas estatísticas. É necessário selecionar o tipo de arma primeiro.</p><div><select id="build-weapon-stat1" disabled><option value="">Estatística principal</option></select><select id="build-weapon-stat2" disabled><option value="">Segunda estatística (opcional)</option></select></div></section>
         <section class="build-stat-panel"><h3>Prioridades das armaduras</h3><p>Escolha até duas estatísticas para filtrar as peças sugeridas.</p><div><select id="build-armor-stat1" disabled><option value="">Estatística principal</option></select><select id="build-armor-stat2" disabled><option value="">Segunda estatística (opcional)</option></select></div></section>
+        <section class="build-stat-panel"><h3>Prioridades dos acessórios</h3><p>Escolha até duas estatísticas para filtrar colares, anéis e cintos.</p><div><select id="build-accessory-stat1" disabled><option value="">Estatística principal</option></select><select id="build-accessory-stat2" disabled><option value="">Segunda estatística (opcional)</option></select></div></section>
       </div>
       <div class="build-workspace">
         <aside class="build-character-panel"><div id="build-character"><div class="build-character-placeholder"><span>✧</span><strong>Seu personagem</strong><small>Selecione uma classe para começar</small></div></div><p id="build-class-summary">Escolha uma classe para liberar as opções de equipamento.</p></aside>
