@@ -839,7 +839,7 @@ async function loadAccessoryDetails(item,panelRoot){
   if(!record)throw new Error("Ficha individual não encontrada para este acessório.");
   if(current&&selectedAccessory&&String(selectedAccessory.id||selectedAccessory.compoundId)===id){
    current.innerHTML=detailedAccessoryMarkup(record,item);
-   const stats=current.querySelector(".stats-primary"),heading=current.closest(".detail-panel")?.querySelector(".detail-heading-copy");if(stats&&heading)heading.appendChild(stats);
+
    const meta=current.closest(".detail-panel")?.querySelector(".detail-header-meta");
    if(meta)meta.innerHTML=compactMeta("Tier",record?.itemInfo?.tier)+compactMeta("Raridade",rarity(item))+compactMeta("Tipo",accessoryType(item));
   }
