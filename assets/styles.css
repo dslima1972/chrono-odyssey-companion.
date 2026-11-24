@@ -1427,7 +1427,7 @@ input.gear-score-slider::-moz-range-thumb{width:9px;height:9px;border:1px solid 
 /* Build planner: compact weapon-type selectors and icon-only equipment slots */
 #build-view .build-controls{grid-template-columns:minmax(155px,.72fr) minmax(0,1fr) minmax(0,1fr);align-items:start;gap:18px;padding:15px 17px}
 #build-view .build-controls .build-class-control{min-width:0}
-#build-view .build-weapon-filter-control{display:flex;flex-direction:column;gap:8px;min-width:0}
+#build-view .build-controls label.build-weapon-filter-control{display:flex;flex-direction:column;gap:8px;min-width:0}
 #build-view .build-weapon-filter-control>label{display:block}
 #build-view .build-optional-label{font-size:8px;letter-spacing:.5px;text-transform:none;color:#78817c}
 #build-view .build-native-select{display:none!important}
