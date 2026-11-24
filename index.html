@@ -9,8 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./assets/styles.css?v=20261124plannerlayout1">
-  <script src="./assets/app.js?v=20261124plannerlayout1" defer></script>
+  <link rel="stylesheet" href="./assets/styles.css?v=20261124plannerpicker2">
+  <script src="./assets/app.js?v=20261124plannerpicker2" defer></script>
   <script src="./assets/dressing-room.js?v=20261123e20" defer></script>
 </head>
 <body>
@@ -164,11 +164,6 @@
           <label class="build-weapon-filter-control">Arma principal<div class="build-weapon-choice-list" data-build-weapon-choices="0" role="group" aria-label="Tipo de arma principal"><span class="build-weapon-choice-empty">Selecione uma classe</span></div><select class="build-native-select" id="build-weapon-type" disabled><option value="">Selecione a classe primeiro</option></select></label>
           <label class="build-weapon-filter-control">Arma secundária<div class="build-weapon-choice-list" data-build-weapon-choices="1" role="group" aria-label="Tipo de arma secundária"><span class="build-weapon-choice-empty">Selecione uma classe</span></div><select class="build-native-select" id="build-weapon-type2" disabled><option value="">Selecione a classe primeiro</option></select></label>
         </div>
-        <div class="build-stat-panels">
-          <section class="build-stat-panel"><h3>Prioridades · Armas</h3><div><select id="build-weapon-stat1" disabled><option value="">Estatística principal</option></select><select id="build-weapon-stat2" disabled><option value="">Segunda estatística</option></select></div></section>
-          <section class="build-stat-panel"><h3>Prioridades · Armaduras</h3><div><select id="build-armor-stat1" disabled><option value="">Estatística principal</option></select><select id="build-armor-stat2" disabled><option value="">Segunda estatística</option></select></div></section>
-          <section class="build-stat-panel"><h3>Prioridades · Acessórios</h3><div><select id="build-accessory-stat1" disabled><option value="">Estatística principal</option></select><select id="build-accessory-stat2" disabled><option value="">Segunda estatística</option></select></div></section>
-        </div>
       </div>
       <div class="build-workspace">
         <section class="build-equipment-panel" aria-label="Equipamentos selecionados">
@@ -178,6 +173,11 @@
           <section><h3>Acessórios</h3><div id="build-accessory-slots" class="build-slot-grid accessory-slot-grid"></div></section>
           <div class="build-picker" id="build-picker" hidden>
             <div class="build-picker-head"><h3 id="build-picker-title">Selecionar peça</h3><div class="co-bp-filters"><select id="build-picker-rarity" aria-label="Filtrar por raridade"><option value="">Todas as raridades</option><option>Comum</option><option>Incomum</option><option>Raro</option><option>Épico</option><option>Lendário</option></select></div><button type="button" id="build-picker-close">Fechar ×</button></div>
+            <div class="build-stat-panels build-picker-stat-panels">
+              <section class="build-stat-panel" data-picker-stat-kind="weapon"><h3>Estatísticas · Armas</h3><div><select id="build-weapon-stat1" disabled><option value="">Estatística principal</option></select><select id="build-weapon-stat2" disabled><option value="">Segunda estatística</option></select></div></section>
+              <section class="build-stat-panel" data-picker-stat-kind="armor"><h3>Estatísticas · Armaduras</h3><div><select id="build-armor-stat1" disabled><option value="">Estatística principal</option></select><select id="build-armor-stat2" disabled><option value="">Segunda estatística</option></select></div></section>
+              <section class="build-stat-panel" data-picker-stat-kind="accessory"><h3>Estatísticas · Acessórios</h3><div><select id="build-accessory-stat1" disabled><option value="">Estatística principal</option></select><select id="build-accessory-stat2" disabled><option value="">Segunda estatística</option></select></div></section>
+            </div>
             <div id="build-picker-list" class="build-picker-list"></div>
           </div>
         </section>
