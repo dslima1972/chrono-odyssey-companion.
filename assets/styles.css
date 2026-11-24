@@ -3246,3 +3246,25 @@ body{font-family:var(--font-ui)}
   color-mix(in srgb,var(--rarity) 38%,#11110e))!important;
  border-color:color-mix(in srgb,var(--rarity) 88%,#494333)!important;
 }
+
+/* === Complemento de contraste e fundo das imagens na lista === */
+/* A área atrás do ícone acompanha a mesma intensidade de raridade dos blocos. */
+#weapons-view .weapon-list .weapon-symbol,
+#armor-view .weapon-list .weapon-symbol,
+#accessories-view .accessory-list .weapon-symbol,
+.catalog-card-image{
+ background:radial-gradient(circle,
+  color-mix(in srgb,var(--rarity) 78%,#29251b),
+  color-mix(in srgb,var(--rarity) 58%,#15140f) 58%,
+  color-mix(in srgb,var(--rarity) 38%,#11110e))!important;
+ border-color:color-mix(in srgb,var(--rarity) 88%,#494333)!important;
+}
+
+/* Texto que identifica classe/tipo do item na lista com contraste reforçado. */
+#weapons-view .weapon-list .weapon-meta,
+#armor-view .weapon-list .weapon-meta,
+#accessories-view .accessory-list .weapon-meta{
+ color:#eee6d2!important;
+ font-weight:500!important;
+ text-shadow:0 1px 2px rgba(0,0,0,.7);
+}
