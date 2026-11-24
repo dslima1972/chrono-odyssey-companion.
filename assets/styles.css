@@ -4082,3 +4082,19 @@ footer{color:#7890a0}
  #build-view.build-planner-v2 #build-picker .co-bp-item{padding:9px!important}
  #build-view.build-planner-v2 #build-picker .co-bp-item-icon{width:54px!important;height:54px!important;min-width:54px!important;max-width:54px!important;flex-basis:54px!important}
 }
+
+
+/* BUILD PLANNER — aligned perk rows and named equipment tiles */
+#build-view.build-planner-v2 .build-config-perk-list{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:0!important;width:100%;min-width:0}
+#build-view.build-planner-v2 .build-config-perk{display:grid!important;grid-template-columns:14px minmax(0,1fr)!important;align-items:start!important;gap:8px!important;width:100%;min-width:0;padding:7px 2px!important;border-bottom:1px solid rgba(120,144,160,.15)}
+#build-view.build-planner-v2 .build-config-perk>input{grid-column:1;grid-row:1;margin:2px 0 0!important;align-self:start}
+#build-view.build-planner-v2 .build-config-perk>span{grid-column:2;grid-row:1;display:grid!important;gap:3px;min-width:0;width:100%}
+#build-view.build-planner-v2 .build-config-perk>span>strong{display:block;min-width:0;white-space:normal;overflow-wrap:anywhere;word-break:normal;font:600 10px/1.35 Inter,sans-serif}
+#build-view.build-planner-v2 .build-config-perk .build-config-option-stats{display:block;min-width:0;line-height:1.4}
+#build-view.build-planner-v2 .build-slot-name{position:absolute;z-index:3;left:3px;right:3px;bottom:2px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;padding:5px 3px 3px;border-radius:0 0 2px 2px;background:linear-gradient(180deg,transparent,rgba(5,10,15,.88) 38%);color:#d5dce0;text-align:center;font:600 8px/1.2 Inter,sans-serif;overflow-wrap:anywhere;pointer-events:none}
+#build-view.build-planner-v2 .build-slot.has-item .build-slot-icon img{width:94%!important;height:94%!important;max-width:94%!important;max-height:94%!important;object-fit:contain;object-position:center}
+#build-view.build-planner-v2 .build-slot.has-item .build-slot-config{z-index:4}
+@media(max-width:760px){
+ #build-view.build-planner-v2 .build-config-perk-list{grid-template-columns:minmax(0,1fr)!important}
+ #build-view.build-planner-v2 .build-slot-name{font-size:7px;left:2px;right:2px}
+}
