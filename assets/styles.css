@@ -2169,3 +2169,12 @@ input.gear-score-slider::-moz-range-thumb{width:9px;height:9px;border:1px solid 
   font-size:10px!important;
  }
 }
+
+
+/* Build picker v7 — largura desktop restrita à área central de conteúdo */
+@media(min-width:651px){
+ #build-picker{
+  width:min(640px,calc(100vw - 64px))!important;
+  max-width:640px!important;
+ }
+}
