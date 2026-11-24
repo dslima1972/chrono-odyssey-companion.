@@ -90,320 +90,23 @@ function updateWeaponTypeOptions(){const className=$("class-filter").value,curre
 function fillFilters(){const classes=[...new Set(weapons.map(weaponClass).filter(Boolean))].sort();$("class-filter").innerHTML='<option value="">Todas as classes</option>'+classes.map(x=>'<option>'+escapeHtml(x)+'</option>').join("");updateWeaponTypeOptions();fillRarityOptions("rarity-filter")}
 function compareItemPriority(a,b){const ga=Number(a.grade),gb=Number(b.grade),va=Number.isFinite(ga)?ga:99,vb=Number.isFinite(gb)?gb:99;return va-vb||String(a.name||"").localeCompare(String(b.name||""),"pt-BR")}
 function filtered(){const q=$("search").value.trim().toLowerCase(),c=$("class-filter").value,t=$("type-filter").value,r=$("rarity-filter").value,s=$("weapon-stat-filter")?.value||"";return weapons.filter(w=>(!q||String(w.name||"").toLowerCase().includes(q)||String(w.id||"").includes(q))&&(!c||weaponClass(w)===c)&&(!t||weaponType(w)===t)&&(!r||rarity(w)===r)&&(!s||itemHasStat(w,"weapon",s))).sort(compareItemPriority)}
+function mountWeaponDetail(){
+ const layout=$("catalog-layout"),list=$("weapon-list"),detail=$("weapon-detail");if(!layout||!list||!detail)return;
+ const mobile=window.matchMedia("(max-width:760px)").matches;
+ if(mobile&&selected){const id=String(selected.id||selected.compoundId),entry=Array.from(list.querySelectorAll(".catalog-item-entry")).find(el=>el.querySelector("[data-id]")?.dataset.id===id);if(entry)entry.appendChild(detail);else layout.appendChild(detail);detail.classList.add("weapon-detail-inline");detail.hidden=false;detail.style.display="block";}
+ else{detail.classList.remove("weapon-detail-inline");detail.hidden=false;detail.style.display="";layout.appendChild(detail);}
+ if(!selected){detail.innerHTML='<div class="detail-ornament">✧</div><h3>Selecione um item</h3><p>Escolha uma arma no catálogo para consultar sua ficha.</p>';detail.classList.add("empty-detail");return;}
+ detail.classList.remove("empty-detail");detail.innerHTML=detailMarkup(selected);const panel=detail.querySelector(".detail-panel");if(panel)loadItemDetails(selected,panel);
+}
 function renderList(){
+ const list=$("weapon-list"),layout=$("catalog-layout"),detail=$("weapon-detail");if(list&&layout&&detail&&list.contains(detail))layout.appendChild(detail);
  const rows=filtered();$("catalog-count").textContent=weapons.length?rows.length+" / "+weapons.length+" REGISTROS":"CATÁLOGO AINDA NÃO SINCRONIZADO";
- if(!weapons.length){$("weapon-list").innerHTML='<div class="empty-state">O catálogo ainda não foi carregado.<br>Assim que a primeira sincronização do Questlog terminar, as armas aparecerão aqui.</div>';return}
- if(!rows.length){$("weapon-list").innerHTML='<div class="empty-state">Nenhuma arma corresponde aos filtros selecionados.</div>';return}
- $("weapon-list").innerHTML=rows.map(w=>{
-  const type=weaponType(w),isSelected=selected&&String(selected.id||selected.compoundId)===String(w.id||w.compoundId);
-  const itemMarkup=catalogView("weapons")==="grid"
-   ?catalogCardMarkup(w,{name:w.name||"Item sem nome",meta:(weaponClass(w)||"Classe não mapeada")+" · "+type,icon:iconFor(type),image:weaponImageMarkup(w),selected:isSelected,dataAttr:'data-id="'+escapeHtml(w.id)+'"'})
-   :'<button class="weapon-row '+(isSelected?'selected':'')+'" data-id="'+escapeHtml(w.id)+'" style="--rarity:'+rarityStyle(w)+'"><span class="weapon-symbol"><span>'+iconFor(type)+'</span>'+weaponImageMarkup(w)+'</span><span><span class="weapon-name">'+escapeHtml(w.name||"Item sem nome")+'</span><span class="weapon-meta">'+escapeHtml(weaponClass(w)||"Classe não mapeada")+' · '+escapeHtml(type)+'</span></span><span class="rarity-label">'+escapeHtml(rarity(w))+'</span></button>';
-  return '<div class="catalog-item-entry">'+itemMarkup+(isSelected?'<div class="inline-item-detail">'+detailMarkup(w)+'</div>':'')+'</div>';
- }).join("");
- applyCatalogView("weapons","weapon-list");
- document.querySelectorAll("#weapon-list [data-id]").forEach(b=>b.addEventListener("click",()=>selectWeapon(b.dataset.id)));
- if(selected){const panel=$("weapon-list").querySelector(".inline-item-detail .detail-panel");if(panel)loadItemDetails(selected,panel)}
+ if(!rows.length){$("weapon-list").innerHTML='<div class="empty-state">'+(weapons.length?"Nenhuma arma corresponde aos filtros selecionados.":"O catálogo ainda não foi carregado.")+'</div>';mountWeaponDetail();return;}
+ $("weapon-list").innerHTML=rows.map(w=>{const type=weaponType(w),isSelected=selected&&String(selected.id||selected.compoundId)===String(w.id||w.compoundId);const itemMarkup=catalogView("weapons")==="grid"?catalogCardMarkup(w,{name:w.name||"Item sem nome",meta:(weaponClass(w)||"Classe não mapeada")+" · "+type,icon:iconFor(type),image:weaponImageMarkup(w),selected:isSelected,dataAttr:'data-id="'+escapeHtml(w.id)+'"'}):'<button class="weapon-row '+(isSelected?'selected':'')+'" data-id="'+escapeHtml(w.id)+'" style="--rarity:'+rarityStyle(w)+'"><span class="weapon-symbol"><span>'+iconFor(type)+'</span>'+weaponImageMarkup(w)+'</span><span><span class="weapon-name">'+escapeHtml(w.name||"Item sem nome")+'</span><span class="weapon-meta">'+escapeHtml(weaponClass(w)||"Classe não mapeada")+' · '+escapeHtml(type)+'</span></span><span class="rarity-label">'+escapeHtml(rarity(w))+'</span></button>';return '<div class="catalog-item-entry">'+itemMarkup+'</div>';}).join("");
+ applyCatalogView("weapons","weapon-list");document.querySelectorAll("#weapon-list [data-id]").forEach(b=>b.addEventListener("click",()=>selectWeapon(b.dataset.id)));mountWeaponDetail();
 }
-let itemDetailsDataPromise;
-const STAT_LABELS={increasedamage:"Aumento de dano",addmaximummana:"Mana máxima",damageonstagger:"Dano contra alvo cambaleante",attack:"Ataque",basicattack:"Ataque",basicatk:"Ataque",criticalchance:"Chance crítica",criticaldamage:"Dano crítico",defense:"Defesa",physicaldefense:"Defesa física",defensephysical:"Defesa física",physicaldefence:"Defesa física",defencephysical:"Defesa física",physicalarmor:"Defesa física",physicalarmour:"Defesa física",magicdefense:"Defesa mágica",magicaldefense:"Defesa mágica",defensemagic:"Defesa mágica",defensemagical:"Defesa mágica",magicdefence:"Defesa mágica",magicaldefence:"Defesa mágica",defencemagic:"Defesa mágica",defencemagical:"Defesa mágica",magicarmor:"Defesa mágica",magicalarmor:"Defesa mágica",healing:"Cura",health:"Vida",maxhealth:"Vida máxima",maxhp:"HP máximo",maxlife:"Vida máxima",bagweightincrease:"Aumento da capacidade de peso",bagweightcapacityboost:"Aumento da capacidade de peso",stamina:"Vigor",liferegenpersecond:"Regeneração de vida por segundo",criticalhitchance:"Chance de acerto crítico",criticalhitdamage:"Dano crítico",criticalhitdamagereduce:"Redução de dano crítico",criticalhitresistance:"Resistência a acerto crítico",movementspeed:"Velocidade de movimento",reducedamage:"Redução de dano",decreasemanacostfactor:"Redução do custo de mana",staggerenforce:"Potência de cambaleio",movementspeedfactor:"Velocidade de movimento"};
-
-// Rótulos amigáveis para os atributos identificados nas fichas sincronizadas do Questlog.
-Object.assign(STAT_LABELS,{
-  "attack": "Ataque",
-  "addmaximummana": "Mana máxima",
-  "bagweightincrease": "Aumento da capacidade de peso",
-  "butcheryamount": "Quantidade de abate",
-  "collectionamount": "Quantidade de coleta",
-  "criticalhitchance": "Chance de acerto crítico",
-  "criticalhitdamage": "Dano crítico",
-  "criticalhitdamagereduce": "Redução de dano crítico",
-  "criticalhitresistance": "Resistência a acerto crítico",
-  "damageonstagger": "Dano contra alvo cambaleante",
-  "decreasemanacostfactor": "Redução do custo de mana",
-  "decreasestaminacostfactor": "Redução do custo de vigor",
-  "dotattackpower": "Poder de ataque de dano contínuo",
-  "earncraftrewardexpfactor": "Experiência adicional em fabricação",
-  "earnhuntingexpfactor": "Experiência adicional em caça",
-  "fallingdamagefactor": "Redução de dano de queda",
-  "fishingpower": "Poder de pesca",
-  "harvestingamount": "Quantidade de colheita",
-  "healing": "Cura",
-  "increasedamage": "Aumento de dano",
-  "increasedamageboss": "Aumento de dano contra chefes",
-  "increasedamagehero": "Aumento de dano contra heróis",
-  "increasedamagenormalmob": "Aumento de dano contra monstros comuns",
-  "increasepotionliferecovery": "Aumento da recuperação de vida por poções",
-  "jumppowerfactor": "Altura do salto",
-  "liferegenpersecond": "Regeneração de vida por segundo",
-  "loggingamount": "Quantidade de madeira obtida",
-  "luckgatheringfishing": "Sorte na pesca",
-  "luckgatheringskinning": "Sorte na obtenção de couro",
-  "magicaldefense": "Defesa mágica",
-  "maximumlife": "Vida máxima",
-  "maximumlifeincrease": "Aumento de vida máxima",
-  "maximumstamina": "Vigor máximo",
-  "miningamount": "Quantidade de minério obtido",
-  "movementspeed": "Velocidade de movimento",
-  "movementspeedfactor": "Velocidade de movimento",
-  "physicaldefense": "Defesa física",
-  "reduceskillcooldown": "Redução do tempo de recarga de habilidades",
-  "reduceskillcooldownincrease": "Aumento da redução do tempo de recarga",
-  "reducedamage": "Redução de dano",
-  "reducedamageboss": "Redução de dano recebido de chefes",
-  "reducedamagehero": "Redução de dano recebido de heróis",
-  "reducedamagenormalmob": "Redução de dano recebido de monstros comuns",
-  "repaircostfactor": "Redução do custo de reparo",
-  "staggerenforce": "Potência de cambaleio",
-  "staminaregenpersecond": "Regeneração de vigor por segundo",
-  "strength": "Força",
-  "dexterity": "Destreza",
-  "intelligence": "Inteligência",
-  "vitality": "Vitalidade",
-  "wisdom": "Sabedoria"
-});
-function normalizeStatIdentity(value){
- const key=String(value||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"");
- const defenseWord=/(defense|defence|defesa|armor|armour|def)/.test(key);
- if((defenseWord&&/(physical|physic|physdef)/.test(key))||key.includes("defesafisica"))return "physicaldefense";
- if((defenseWord&&/(magic|magical|mag|magdef)/.test(key))||key.includes("defesamagica"))return "magicdefense";
- if(key==="attack"||key==="ataque"||key==="ataquebasico"||key==="basicattack"||key==="basicatk"||key==="attackpower"||key==="attackvalue")return "attack";
- return key;
-}
-function statFamily(value){return normalizeStatIdentity(value)}
-function dedupeStatEntries(entries){
- const result=[],seen=new Set();
- for(const entry of entries||[]){
-  const identity=statFamily(entry.identity||entry.key||entry.label);
-  if(seen.has(identity))continue;
-  seen.add(identity);
-  result.push({...entry,identity,label:humanizeStat(identity)});
- }
- return result;
-}
-
-function humanizeStat(value){
- const key=normalizeStatIdentity(value);
- if(STAT_LABELS[key])return STAT_LABELS[key];
- const original=String(value||"Atributo");
- return original.replace(/([a-z])([A-Z])/g,"$1 $2").replace(/[_-]/g," ").replace(/^./,x=>x.toUpperCase());
-}
-const PERCENT_STAT_TYPES=new Set(["increasedamage","damageincrease","damageboost","criticalchance","criticalhitchance","criticaldamage","criticalhitdamage","criticaldamageboost","criticalhitdamagereduce","criticaldamagereduce","criticalhitresistance","movementspeed","reducedamage","decreasemanacostfactor","staggerenforce","movementspeedfactor","damageonstagger","damageovertime","damageovertimeattack","damagereduction","damagereduce"]);
-function formatStatValue(statType,value){
- if(value===null||value===undefined||value==="")return value;
- const key=String(statType||"").toLowerCase().replace(/[^a-z0-9]/g,"");
- if(!PERCENT_STAT_TYPES.has(key))return value;
- if(typeof value==="string"&&value.trim().endsWith("%"))return value;
- const numeric=Number(value);
- if(!Number.isFinite(numeric))return value;
- const percentage=Math.abs(numeric)>=100?numeric/100:numeric;
- return percentage.toLocaleString("pt-BR",{minimumFractionDigits:3,maximumFractionDigits:3})+"%";
-}
-function detailField(label,value){if(value===undefined||value===null||value==="")return "";return '<div class="detail-field"><small>'+escapeHtml(label)+'</small><strong>'+escapeHtml(Array.isArray(value)?value.join(", "):String(value))+'</strong></div>'}
-function resolveItemStatValue(raw,item){
- if(raw===null||raw===undefined)return null;
- let value=raw;
- if(value&&typeof value==="object"){
-  const levels=value.gearScore??value.levels??value.values;
-  if(levels&&typeof levels==="object"){
-   const score=typeof defaultGearScore==="function"?defaultGearScore(item,levels):null;
-   value=levels[String(score)]??Object.values(levels)[0];
-  }
-  if(value&&typeof value==="object")value=value.statValue??value.statValue1??value.value??value.amount??value.maxValue??value.minValue??null;
- }
- return value;
-}
-const itemStatEntriesCache=new WeakMap();
-const equipmentPrimaryStatsCache=new WeakMap();
-const buildRecordStatsCache=new WeakMap();
-function getItemStatEntries(item){
- if(item&&typeof item==="object"&&itemStatEntriesCache.has(item))return itemStatEntriesCache.get(item);
- const entries=[],seen=new Set();
- const add=(key,raw)=>{
-  const statType=raw&&typeof raw==="object"?(raw.statType??raw.type??raw.key??key):key;
-  if(!statType)return;
-  const identity=normalizeStatIdentity(statType),label=humanizeStat(statType),value=resolveItemStatValue(raw,item);
-  if(value===null||value===undefined||value==="")return;
-  if(seen.has(identity))return;
-  seen.add(identity);
-  const chance=raw&&typeof raw==="object"&&raw.chancePercentage!=null?Number(raw.chancePercentage).toLocaleString("pt-BR",{maximumFractionDigits:2})+"% de chance":"";
-  entries.push({key:statType,identity,label,value:formatStatValue(statType,value),chance});
- };
- const raw=item?.itemStats?.stats;
- if(Array.isArray(raw))raw.forEach(s=>add(s?.statType??s?.type??s?.key??"Atributo",s));
- else if(raw&&typeof raw==="object")Object.entries(raw).forEach(([key,value])=>add(key,value));
- const ignored=new Set(["gearscore","chancepercentage","statvalue","statvalue1","value","amount","min","max","minvalue","maxvalue","requiredlevel","tier","weight","maxdurability","candoreinforce"]);
- const walk=(node,keyHint="",depth=0)=>{
-  if(!node||depth>7)return;
-  if(Array.isArray(node)){node.forEach(value=>walk(value,keyHint,depth+1));return}
-  if(typeof node!=="object"){if(keyHint)add(keyHint,node);return}
-  const explicit=node.statType??node.type??node.key;
-  const hasValue=["gearScore","levels","values","statValue","statValue1","value","amount"].some(k=>Object.prototype.hasOwnProperty.call(node,k));
-  if(explicit&&hasValue){add(explicit,node);return}
-  if(keyHint&&hasValue){add(keyHint,node);return}
-  for(const [key,value] of Object.entries(node)){if(ignored.has(key.toLowerCase()))continue;walk(value,key,depth+1)}
- };
- walk(item?.equipmentStats);
- walk(item?.itemStats?.equipmentStats);
- if(typeof buildEquipmentPrimaryStats==="function")buildEquipmentPrimaryStats(item).forEach(stat=>add(stat.label,stat.value));
- itemStatEntriesCache.set(item,entries);
- return entries;
-}
-function renderItemStats(item){
- const entries=getItemStatEntries(item);
- if(!entries.length)return '<p class="detail-muted">A fonte não retornou atributos básicos para este item.</p>';
- return '<div class="stat-list">'+entries.map(entry=>'<div class="stat-line"><span>'+escapeHtml(entry.label)+'</span><strong>'+escapeHtml(formatStatValue(entry.key,entry.value))+'</strong><small>'+escapeHtml(entry.chance)+'</small></div>').join("")+'</div>';
-}
-function findWeaponAttackLevels(item){
- const visited=new Set(),pending=[item];
- while(pending.length){
-  const current=pending.shift();
-  if(!current||typeof current!=="object"||visited.has(current))continue;
-  visited.add(current);
-  const levels=current.equipmentStats?.attack?.gearScore;
-  if(levels&&typeof levels==="object"&&Object.keys(levels).length)return levels;
-  for(const value of Object.values(current))if(value&&typeof value==="object")pending.push(value);
- }
- return null;
-}
-function equipmentTier(item){
- const rawTier=item?.itemInfo?.tier??item?.tier??"";
- const tierText=String(typeof rawTier==="object"?(rawTier.name??rawTier.value??rawTier.label??""):rawTier).trim().toUpperCase();
- const romanTiers={I:1,II:2,III:3,IV:4,V:5};
- const numericMatch=tierText.match(/(?:TIER|T)?\s*([1-5])(?:\D|$)/);
- const romanMatch=tierText.match(/\b(I|II|III|IV|V)\b/);
- const tier=Number(numericMatch?.[1]??romanTiers[romanMatch?.[1]]??(Number.isFinite(Number(rawTier))?Number(rawTier):NaN));
- return Number.isInteger(tier)&&tier>=1&&tier<=5?tier:null;
-}
-function gearScoreRange(item,levels){
- const ranges={1:[1,5],2:[5,15],3:[15,25],4:[25,40],5:[40,50]};
- const tier=equipmentTier(item),range=ranges[tier];
- if(range)return range;
- const entries=Object.entries(levels||{}).filter(([key,value])=>Number.isFinite(Number(key))&&value!==null&&value!==undefined).sort((a,b)=>Number(a[0])-Number(b[0]));
- return entries.length?[Number(entries[0][0]),Number(entries[entries.length-1][0])]:[1,1];
-}
-function defaultGearScore(item,levels){
- const entries=Object.entries(levels||{}).filter(([key,value])=>Number.isFinite(Number(key))&&value!==null&&value!==undefined).sort((a,b)=>Number(a[0])-Number(b[0]));
- if(!entries.length)return 1;
- const tierDefaults={1:1,2:5,3:15,4:25,5:40};
- const preferred=tierDefaults[equipmentTier(item)];
- const preferredEntry=entries.find(([key])=>Number(key)===preferred);
- if(preferredEntry)return Number(preferredEntry[0]);
- const [min,max]=gearScoreRange(item,levels);
- const available=entries.map(([key])=>Number(key)).filter(score=>score>=min&&score<=max);
- return available[0]??Number(entries[0][0]);
-}
-function equipmentRollKey(item){return String(item?.id||item?.compoundId||"");}
-const equipmentRollState=Object.create(null);
-function equipmentRollSelection(item){
- const key=equipmentRollKey(item);
- if(!key)return {};
- return equipmentRollState[key]||(equipmentRollState[key]={suffix:"",perks:[],gearScore:null});
-}
-function renderGearScoreControl(item,levels,label){
- if(!levels||typeof levels!=="object")return "";
- const entries=Object.entries(levels).filter(([key,value])=>Number.isFinite(Number(key))&&value!==null&&value!==undefined).sort((a,b)=>Number(a[0])-Number(b[0]));
- if(!entries.length)return "";
- const [min,max]=gearScoreRange(item,levels),saved=Number(equipmentRollSelection(item).gearScore);
- const initial=Math.min(max,Math.max(min,Number.isFinite(saved)&&saved>0?saved:defaultGearScore(item,levels)));
- return '<div class="gear-score-control"><div class="gear-score-value"><label>Equipment Score</label><strong class="gear-score-current">'+initial+'</strong></div><input class="gear-score-slider" data-item-roll-id="'+escapeHtml(equipmentRollKey(item))+'" type="range" min="'+min+'" max="'+max+'" step="1" value="'+initial+'" aria-label="Selecionar Equipment Score"></div>';
-}
-function renderWeaponStats(item){
- const levels=findWeaponAttackLevels(item);
- let entries=dedupeStatEntries(getItemStatEntries(item)).filter(entry=>statFamily(entry.identity)!=="attack");
- if(levels){
-  const score=defaultGearScore(item,levels),attackValue=levels[String(score)]??Object.values(levels)[0];
-  entries.unshift({key:"attack",identity:"attack",label:"Ataque",value:attackValue,chance:"",gearScoreMap:escapeHtml(JSON.stringify(levels))});
- }
- if(!entries.length)return '<p class="detail-muted">A fonte não retornou atributos básicos para este item.</p>';
- const stats='<div class="stat-list">'+entries.map(entry=>'<div class="stat-line"><span>'+escapeHtml(entry.label)+'</span><strong '+(entry.gearScoreMap?'data-gear-score-map="'+entry.gearScoreMap+'"':'')+'>'+escapeHtml(formatStatValue(entry.key,entry.value))+'</strong><small>'+escapeHtml(entry.chance||"")+'</small></div>').join("")+'</div>';
- return (levels?renderGearScoreControl(item,levels,"Ataque"):"")+stats;
-}
-
-function optionListMarkup(title,rows,kind){
- if(!rows.length)return "";
- const listClass="detail-option-list";
- const expand=rows.length>5?'<button type="button" class="detail-expand-button" data-expand-options aria-expanded="false">Exibir mais ('+(rows.length-5)+')</button>':"";
- return '<section class="detail-section"><h4>'+escapeHtml(title)+' <span class="detail-option-count">'+rows.length+'</span></h4><div class="'+listClass+' '+kind+'">'+rows.join("")+'</div>'+expand+'</section>';
-}
-function itemGradeInfo(item){return item?.itemStats?.equipmentGradeInfo||item?.equipmentGradeInfo||{}}
-function gearScoreRawValue(entry){if(entry===null||entry===undefined)return null;if(typeof entry!=="object")return entry;return entry.statValue1??entry.value??entry.statValue??entry.amount??entry.maxValue??entry.minValue??null}
-function gearScoreValueAt(levels,score){
- const target=Number(score);if(!Number.isFinite(target))return null;
- const entry=Object.entries(levels||{}).find(([key,value])=>Number(key)===target&&value!==null&&value!==undefined);
- return entry?gearScoreRawValue(entry[1]):null;
-}
-function gearScoreValueMarkup(option,score,statType){
- const levels=option?.gearScore&&typeof option.gearScore==="object"?option.gearScore:null;
- if(!levels)return '<span class="roll-value">Valor não informado</span>';
- const value=gearScoreValueAt(levels,score);
- return '<span class="roll-value" data-gear-score-map="'+escapeHtml(JSON.stringify(levels))+'" data-stat-type="'+escapeHtml(statType||option.statType||option.type||"")+'">'+escapeHtml(value===null||value===undefined?"Sem valor cadastrado para este Equipment Score":formatStatValue(statType||option.statType||option.type,value))+'</span>';
-}
-function itemCurrentGearScore(item){
- const saved=Number(equipmentRollSelection(item).gearScore);
- if(Number.isFinite(saved)&&saved>0)return saved;
- const tier=equipmentTier(item),defaults={1:1,2:5,3:15,4:25,5:40};
- return defaults[tier]??1;
-}
-function renderSuffixes(item){
- const stats=item?.itemStats||{},grade=itemGradeInfo(item),source=stats.suffixes;
- const allowed=grade.suffix!==false;
- if(!allowed)return "";
- const suffixes=source&&typeof source==="object"?Object.values(source).filter(s=>s&&typeof s==="object"):[];
- if(!suffixes.length)return grade.suffix===true?'<section class="detail-section roll-empty"><h4>Sufixo</h4><p>Este equipamento permite sufixo, mas a ficha sincronizada não trouxe opções disponíveis.</p></section>':"";
- const score=itemCurrentGearScore(item),group="suffix-"+String(item?.id||item?.compoundId||"equipment").replace(/[^a-z0-9_-]/gi,"");
- const chosenSuffix=String(equipmentRollSelection(item).suffix||"");
- const rows=['<label class="suffix-row detail-option-row roll-choice"><input type="radio" name="'+escapeHtml(group)+'" data-suffix-select data-item-roll-id="'+escapeHtml(equipmentRollKey(item))+'" value="" '+(!chosenSuffix?'checked':'')+'><span class="roll-choice-copy"><strong>Sem sufixo</strong><small>Não selecionar um sufixo</small></span></label>'];
- suffixes.forEach((suffix,index)=>{
-  const value=gearScoreValueMarkup(suffix,score,suffix.statType??suffix.type);
-  const chance=Number.isFinite(Number(suffix.chancePercentage))?' · '+Number(suffix.chancePercentage).toLocaleString("pt-BR",{maximumFractionDigits:2})+'% de chance':"";
-  rows.push('<label class="suffix-row detail-option-row roll-choice"><input type="radio" name="'+escapeHtml(group)+'" data-suffix-select data-item-roll-id="'+escapeHtml(equipmentRollKey(item))+'" value="'+index+'" '+(chosenSuffix===String(index)?'checked':'')+'><span class="roll-choice-copy"><strong>'+escapeHtml(suffix.name||"Sufixo")+'</strong><small>'+value+escapeHtml(chance)+'</small></span></label>');
- });
- return optionListMarkup("Sufixo · escolha 1",rows,"suffix-options");
-}
-function perkValueRange(perk){
- const levels=perk?.gearScore&&typeof perk.gearScore==="object"?Object.entries(perk.gearScore).sort((a,b)=>Number(a[0])-Number(b[0])):[];
- if(!levels.length)return "";
- const valueOf=x=>x?.value??x?.statValue1??x?.statValue??x?.amount;
- const first=valueOf(levels[0][1]),last=valueOf(levels[levels.length-1][1]);
- const formattedFirst=formatStatValue(perk.statType,first),formattedLast=formatStatValue(perk.statType,last);
-  return first==null?"":String(formattedFirst)+(last!=null&&String(last)!==String(first)?" → "+String(formattedLast):"");
-}
-function perkEntries(source){
- if(!source)return [];
- if(Array.isArray(source))return source.filter(x=>x&&typeof x==="object");
- if(typeof source!=="object")return [];
- if(source.perks&&typeof source.perks==="object")return perkEntries(source.perks);
- if(source.name||source.description)return [source];
- return Object.values(source).filter(x=>x&&typeof x==="object"&&(x.name||x.description));
-}
-function renderPerks(item){
- const stats=item?.itemStats||{},info=item?.itemInfo||{},grade=itemGradeInfo(item);
- const rawLimit=grade.perkCount??stats.perkCount,limit=Number(rawLimit);
- const candidates=[...perkEntries(stats.commonPerks),...perkEntries(stats.perks)];
- const seen=new Set(),rows=[],score=itemCurrentGearScore(item);
- for(const perk of candidates){
-  const key=String(perk.id||perk.name||"").toLowerCase();if(!key||seen.has(key))continue;seen.add(key);
-  const stat=perk.statType?humanizeStat(perk.statType):"",value=gearScoreValueMarkup(perk,score,perk.statType);
-  const chance=Number.isFinite(Number(perk.chancePercentage))?' · '+Number(perk.chancePercentage).toLocaleString("pt-BR",{maximumFractionDigits:2})+'% de chance':"";
-  const meta=[stat].filter(Boolean).join(" · ");
-  const selectedPerks=equipmentRollSelection(item).perks||[];
-  rows.push('<label class="perk-row detail-option-row roll-choice"><input type="checkbox" data-perk-select data-item-roll-id="'+escapeHtml(equipmentRollKey(item))+'" data-perk-key="'+escapeHtml(key)+'" data-perk-limit="'+(Number.isFinite(limit)?Math.max(0,limit):0)+'" '+(selectedPerks.includes(key)?'checked ':'')+(!(Number.isFinite(limit)&&limit>0)?'disabled':'')+'><span class="roll-choice-copy"><strong>'+escapeHtml(perk.name||"Perk")+'</strong><small>'+escapeHtml(meta)+(meta?' · ':'')+value+escapeHtml(chance)+'</small></span></label>');
- }
- const unique=info.uniquePerk??stats.uniquePerk;
- for(const perk of perkEntries(unique)){const key=String(perk.id||perk.name||perk.description||"").toLowerCase();if(!key||seen.has("unique:"+key))continue;seen.add("unique:"+key);rows.push('<div class="perk-row detail-option-row unique-perk"><strong>'+escapeHtml(perk.name||"Perk exclusivo")+' <small>Exclusivo</small></strong><span>'+escapeHtml(perk.description||"Efeito descrito na ficha do item")+'</span></div>')}
- for(const perk of perkEntries(info.specialPerks??stats.specialPerks)){const key=String(perk.id||perk.name||perk.description||"").toLowerCase();if(!key||seen.has("special:"+key))continue;seen.add("special:"+key);rows.push('<div class="perk-row detail-option-row unique-perk"><strong>'+escapeHtml(perk.name||"Perk especial")+' <small>Especial</small></strong><span>'+escapeHtml(perk.description||"Efeito descrito na ficha do item")+'</span></div>')}
- if(!rows.length)return "";
- const selectable=rows.filter(row=>row.includes('data-perk-select')).length;
- const selectedCount=equipmentRollSelection(item).perks.length;
- const note=Number.isFinite(limit)?'<p class="roll-limit-note" data-perk-counter>Selecione até '+Math.max(0,limit)+' perk(s). <span>'+selectedCount+'/'+Math.max(0,limit)+'</span></p>':'<p class="roll-limit-note">Limite de perks não informado na ficha; seleção desabilitada.</p>';
- return '<section class="detail-section perk-options"><h4>Perks disponíveis <span class="detail-option-count">'+selectable+'</span></h4>'+note+'<div class="detail-option-list perk-options-list">'+rows.join("")+'</div></section>';
-}
-function compactMeta(label,value){if(value===undefined||value===null||value==="")return "";return '<span class="detail-meta-chip"><small>'+escapeHtml(label)+'</small><strong>'+escapeHtml(Array.isArray(value)?value.join(", "):String(value))+'</strong></span>'}
-function detailedWeaponMarkup(w,item){const info=item?.itemInfo||{},grade=item?.equipmentGradeInfo||{},attack=item?.equipmentStats?.attack;const quick=compactMeta("ID",w.id||w.compoundId)+compactMeta("Nível",info.requiredLevel)+compactMeta("Tier",info.tier);const fields=[detailField("Peso",info.weight),detailField("Durabilidade máxima",info.maxDurability),detailField("Classes compatíveis",info.classes),detailField("Pode reforçar",info.canReinforce===true?"Sim":info.canReinforce===false?"Não":null),detailField("Sockets de gema",grade.gemSocket===true?"Sim":grade.gemSocket===false?"Não":null),detailField("Quantidade de perks",grade.perkCount??item?.itemStats?.perkCount)].filter(Boolean).join("");return '<section class="detail-section stats-primary">'+renderWeaponStats(item)+'</section>'+renderOptionalItemOptions(item)+(fields?'<details class="detail-disclosure"><summary>Outras informações do equipamento</summary><div class="detail-fields">'+fields+'</div></details>':"")+'<p class="detail-note">Dados sincronizados da ficha individual do Questlog. Última sincronização: '+escapeHtml(itemDetailsGeneratedAt||"não informada")+'.</p><div class="detail-id-footer">ID: '+escapeHtml(w.id||w.compoundId||"")+'</div>'}
-let itemDetailsGeneratedAt="";
-async function getItemDetails(){if(!itemDetailsDataPromise)itemDetailsDataPromise=(async()=>{const manifestResponse=await fetch("./data/weapon-details-manifest.json?v=20261122f",{cache:"no-store"});if(!manifestResponse.ok)throw new Error("Manifesto local de detalhes das armas não encontrado (HTTP "+manifestResponse.status+").");const manifest=await manifestResponse.json();if(!Array.isArray(manifest.parts)||!manifest.parts.length)throw new Error("O manifesto não contém a lista de partes dos detalhes das armas.");const responses=await Promise.all(manifest.parts.map(async name=>{const response=await fetch("./data/"+encodeURIComponent(name)+"?v=20261122f",{cache:"no-store"});if(!response.ok)throw new Error("Não foi possível carregar "+name+" (HTTP "+response.status+").");return response.json()}));const allItems={};for(const part of responses)Object.assign(allItems,part.items||{});itemDetailsGeneratedAt=manifest.generatedAt?new Date(manifest.generatedAt).toLocaleString("pt-BR"):"não informada";return allItems})();return itemDetailsDataPromise}
-function detailMarkup(w){const type=weaponType(w),color=rarityStyle(w);return '<div class="detail-panel detail-prototype detail-prototype-weapon" style="--rarity:'+color+'"><div class="detail-top"><div class="detail-heading-copy"><h3>'+escapeHtml(w.name||"Item sem nome")+'</h3><div class="detail-header-meta"></div></div><div class="detail-icon detail-hero"><span>'+iconFor(type)+'</span>'+weaponImageMarkup(w,"detail-hero-image")+'<i class="detail-hero-glow"></i></div></div><div class="detail-live" id="detail-live"><p class="detail-muted"><span class="spinner"></span>Carregando dados sincronizados…</p></div><a class="detail-source" href="https://questlog.gg/chrono-odyssey/en/db/item/'+encodeURIComponent(w.id||w.compoundId||"")+'" target="_blank" rel="noreferrer">CONSULTAR FICHA NO QUESTLOG ↗</a></div>'}
+window.addEventListener("resize",()=>{if($("weapons-view")?.classList.contains("active"))mountWeaponDetail()},{passive:true});
+function detailMarkup(w){return equipmentInspectMarkup(w,"weapon")}
 async function loadItemDetails(w,panelRoot){
  const id=String(w.id||w.compoundId||"");if(!id||!panelRoot)return;
  const target=panelRoot.querySelector(".detail-live");if(!target)return;
@@ -411,9 +114,9 @@ async function loadItemDetails(w,panelRoot){
   const all=await getItemDetails(),item=all[id]||all[id.replace(/^item-/,"")];
   if(!item)throw new Error("Esta arma ainda não consta no arquivo sincronizado. Execute a sincronização do Questlog.");
   const current=panelRoot.querySelector(".detail-live");
-  if(current&&selected&&String(selected.id||selected.compoundId)===id){current.innerHTML=detailedWeaponMarkup(w,item);const scoreControl=current.querySelector(".gear-score-control"),heading=panelRoot.querySelector(".detail-heading-copy");if(scoreControl&&heading)heading.appendChild(scoreControl);}
+  if(current&&selected&&String(selected.id||selected.compoundId)===id){current.innerHTML=detailedWeaponMarkup(w,item);const scoreControl=current.querySelector(".gear-score-control"),heading=panelRoot.querySelector(".accessory-inspect-heading");if(scoreControl&&heading)heading.appendChild(scoreControl);}
   const meta=current?.closest(".detail-panel")?.querySelector(".detail-header-meta");
-  if(meta){meta.innerHTML=compactMeta("Tier",item?.itemInfo?.tier)+compactMeta("Raridade",rarity(w))+compactMeta("Nível",item?.itemInfo?.requiredLevel)+compactMeta("Classe",weaponClass(w)||"Não mapeada")+compactMeta("Tipo",weaponType(w));const title=panelRoot.querySelector(".detail-heading-copy h3");if(title)meta.parentElement.insertBefore(meta,title);}
+  if(meta)meta.innerHTML=[item?.itemInfo?.tier!=null?"Tier "+item.itemInfo.tier:"",rarity(w),weaponClass(w)||"Não mapeada",weaponType(w)].filter(Boolean).map((value,index)=>'<span class="accessory-inspect-meta-value'+(index===1?" rarity-value":"")+'">'+escapeHtml(value)+'</span>').join("");
   const idFooter=current?.querySelector(".detail-id-footer");if(idFooter)idFooter.textContent="ID: "+String(w.id||w.compoundId||"");
  }catch(error){
   const current=panelRoot.querySelector(".detail-live");
@@ -673,11 +376,10 @@ function renderArmorStats(item){
 function renderOptionalItemOptions(item){const content=renderSuffixes(item)+renderPerks(item);return content?'<details class="detail-disclosure item-options-disclosure"><summary>Sufixos e perks</summary><div class="item-options-content">'+content+'</div></details>':""}
 function detailedArmorMarkup(item,catalogItem){
  const info=item?.itemInfo||{},grade=item?.equipmentGradeInfo||{};
- const quick=compactMeta("ID",catalogItem.id||catalogItem.compoundId)+compactMeta("Nível",info.requiredLevel)+compactMeta("Tier",info.tier)+compactMeta("Conjunto",armorSetLabel(catalogItem));
  const fields=[detailField("Peso",info.weight),detailField("Durabilidade máxima",info.maxDurability),detailField("Pode reforçar",info.canReinforce===true?"Sim":info.canReinforce===false?"Não":null),detailField("Sockets de gema",grade.gemSocket===true?"Sim":grade.gemSocket===false?"Não":null),detailField("Quantidade de perks",grade.perkCount??item?.itemStats?.perkCount)].filter(Boolean).join("");
- return '<section class="detail-section stats-primary">'+renderArmorStats(item)+'</section>'+renderDefenseProgression(item)+renderOptionalItemOptions(item)+(fields?'<details class="detail-disclosure"><summary>Outras informações do equipamento</summary><div class="detail-fields">'+fields+'</div></details>':"")+'<p class="detail-note">Dados da ficha individual do Questlog. Os campos não fornecidos pela fonte não são exibidos.</p><div class="detail-id-footer">ID: '+escapeHtml(catalogItem.id||catalogItem.compoundId||"")+'</div>';
+ return renderAccessoryStats(item)+renderAccessoryReadOnlyOptions(item)+(fields?'<details class="detail-disclosure"><summary>Outras informações do equipamento</summary><div class="detail-fields">'+fields+'</div></details>':"")+'<p class="detail-note">Dados da ficha individual do Questlog.</p><div class="detail-id-footer">ID: '+escapeHtml(catalogItem.id||catalogItem.compoundId||"")+'</div>';
 }
-function armorDetailMarkup(item){const type=armorType(item),color=rarityStyle(item);return '<div class="detail-panel detail-prototype detail-prototype-armor" style="--rarity:'+color+'"><div class="detail-top"><div class="detail-heading-copy"><h3>'+escapeHtml(item.name||"Armadura")+'</h3><div class="detail-header-meta"></div></div><div class="detail-icon detail-hero"><span>'+armorIcon(item)+'</span>'+weaponImageMarkup(item,"detail-hero-image")+'<i class="detail-hero-glow"></i></div></div><div class="detail-live" id="armor-detail-live"><p class="detail-muted">Os atributos serão exibidos após a coleta das fichas individuais.</p></div><a class="detail-source" href="https://questlog.gg/chrono-odyssey/en/db/item/'+encodeURIComponent(item.id||item.compoundId||"")+'" target="_blank" rel="noreferrer">CONSULTAR FICHA NO QUESTLOG ↗</a></div>'}
+function armorDetailMarkup(item){return equipmentInspectMarkup(item,"armor")}
 async function getArmorDetailsCatalog(){
  if(!armorDetailsPromise)armorDetailsPromise=(async()=>{
   const response=await fetch("./data/armor-details-manifest.json?v=20261123b",{cache:"no-store"});
@@ -694,9 +396,9 @@ async function loadArmorDetails(item,panelRoot){
  try{
   const all=await getArmorDetailsCatalog(),record=all[id]||all[id.replace(/^item-/,"")],current=panelRoot.querySelector(".detail-live");
   if(!current||!record||!selectedArmor||String(selectedArmor.id||selectedArmor.compoundId)!==id)return;
-  current.innerHTML=detailedArmorMarkup(record,item);const scoreControl=current.querySelector(".gear-score-control"),heading=panelRoot.querySelector(".detail-heading-copy");if(scoreControl&&heading)heading.appendChild(scoreControl);
+  current.innerHTML=detailedArmorMarkup(record,item);const scoreControl=current.querySelector(".gear-score-control"),heading=panelRoot.querySelector(".accessory-inspect-heading");if(scoreControl&&heading)heading.appendChild(scoreControl);
   const meta=current.closest(".detail-panel")?.querySelector(".detail-header-meta");
-  if(meta){meta.innerHTML=compactMeta("Tier",record?.itemInfo?.tier)+compactMeta("Raridade",rarity(item))+compactMeta("Nível",record?.itemInfo?.requiredLevel)+compactMeta("Classe","Todas")+compactMeta("Tipo",armorType(item));const title=panelRoot.querySelector(".detail-heading-copy h3");if(title)meta.parentElement.insertBefore(meta,title);}
+  if(meta)meta.innerHTML=[record?.itemInfo?.tier!=null?"Tier "+record.itemInfo.tier:"",rarity(item),"Todas as classes",armorType(item)].filter(Boolean).map((value,index)=>'<span class="accessory-inspect-meta-value'+(index===1?" rarity-value":"")+'">'+escapeHtml(value)+'</span>').join("");
   const idFooter=current.querySelector(".detail-id-footer");if(idFooter)idFooter.textContent="ID: "+String(item.id||item.compoundId||"");
  }catch(e){
   const current=panelRoot.querySelector(".detail-live");
@@ -704,8 +406,16 @@ async function loadArmorDetails(item,panelRoot){
  }
 }
 function selectArmor(id){const currentId=String(selectedArmor?.id||selectedArmor?.compoundId||"");if(selectedArmor&&currentId===String(id)){selectedArmor=null}else{selectedArmor=armors.find(x=>String(x.id)===String(id)||String(x.compoundId)===String(id))||null}renderArmorList();}
+function mountArmorDetail(){
+ const layout=$("armor-catalog-layout"),list=$("armor-list"),detail=$("armor-detail");if(!layout||!list||!detail)return;
+ const mobile=window.matchMedia("(max-width:760px)").matches;
+ if(mobile&&selectedArmor){const id=String(selectedArmor.id||selectedArmor.compoundId),entry=Array.from(list.querySelectorAll(".catalog-item-entry")).find(el=>el.querySelector("[data-id]")?.dataset.id===id);if(entry)entry.appendChild(detail);else layout.appendChild(detail);detail.classList.add("armor-detail-inline");detail.hidden=false;detail.style.display="block";}
+ else{detail.classList.remove("armor-detail-inline");detail.hidden=false;detail.style.display="";layout.appendChild(detail);}
+ if(!selectedArmor){detail.innerHTML='<div class="detail-ornament">✧</div><h3>Selecione uma peça</h3><p>Escolha uma armadura para consultar sua ficha e os atributos disponíveis.</p>';detail.classList.add("empty-detail");return;}
+ detail.classList.remove("empty-detail");detail.innerHTML=armorDetailMarkup(selectedArmor);const panel=detail.querySelector(".detail-panel");if(panel)loadArmorDetails(selectedArmor,panel);
+}
 function renderArmorList(){
- if(!armors.length){$("armor-catalog-count").textContent="AGUARDANDO CATÁLOGO";$("armor-list").innerHTML='<div class="empty-state">A estrutura do catálogo está pronta. Aguardando a exportação de armaduras do Questlog.</div>';return}
+ if(!armors.length){$("armor-catalog-count").textContent="AGUARDANDO CATÁLOGO";$("armor-list").innerHTML='<div class="empty-state">A estrutura do catálogo está pronta. Aguardando a exportação de armaduras do Questlog.</div>';mountArmorDetail();return}
  const rowMarkup=x=>{
   const isSelected=selectedArmor&&String(selectedArmor.id||selectedArmor.compoundId)===String(x.id||x.compoundId);
   const meta=escapeHtml(armorType(x))+(armorMode==="sets"?"":" · "+escapeHtml(armorSetLabel(x)));
@@ -718,17 +428,19 @@ function renderArmorList(){
   const q=$("armor-search").value.trim().toLowerCase(),type=$("armor-type-filter").value,grade=$("armor-rarity-filter").value,set=$("armor-set-filter").value,stat=$("armor-stat-filter")?.value||"";
   const groups=armorSetGroups.filter(group=>(!set||group.label===set)&&(!q||group.label.toLowerCase().includes(q)||group.items.some(x=>String(x.name||"").toLowerCase().includes(q)||String(x.id||"").includes(q)))&&(!type||group.items.some(x=>armorType(x)===type))&&(!grade||group.items.some(x=>rarity(x)===grade))&&(!stat||group.items.some(x=>itemHasStat(x,"armor",stat))));
   $("armor-catalog-count").textContent=groups.length+" CONJUNTOS / "+armors.length+" PEÇAS";
-  if(!groups.length){$("armor-list").innerHTML='<div class="empty-state">Nenhum conjunto corresponde aos filtros selecionados.</div>';return}
+  if(!groups.length){$("armor-list").innerHTML='<div class="empty-state">Nenhum conjunto corresponde aos filtros selecionados.</div>';mountArmorDetail();return}
   $("armor-list").innerHTML=groups.map(group=>'<section class="armor-set-group '+(group.complete?"complete":"incomplete")+'"><header><strong>'+escapeHtml(group.label)+'</strong><span>'+(group.complete?"5/5 peças · completo":group.items.length+'/5 peças · incompleto')+'</span></header><div>'+group.items.map(rowMarkup).join("")+'</div></section>').join("");
  }else{
   const rows=armorFiltered();$("armor-catalog-count").textContent=rows.length+" / "+armors.length+" PEÇAS";
-  if(!rows.length){$("armor-list").innerHTML='<div class="empty-state">Nenhuma armadura corresponde aos filtros selecionados.</div>';return}
+  if(!rows.length){$("armor-list").innerHTML='<div class="empty-state">Nenhuma armadura corresponde aos filtros selecionados.</div>';mountArmorDetail();return}
   $("armor-list").innerHTML=rows.map(rowMarkup).join("");
  }
  applyCatalogView("armor","armor-list");
  document.querySelectorAll("#armor-list [data-id]").forEach(b=>b.addEventListener("click",()=>selectArmor(b.dataset.id)));
- if(selectedArmor){const panel=$("armor-list").querySelector(".inline-item-detail .detail-panel");if(panel)loadArmorDetails(selectedArmor,panel)}
+ mountArmorDetail();
 }
+
+window.addEventListener("resize",()=>{if($("armor-view")?.classList.contains("active"))mountArmorDetail()},{passive:true});
 async function loadArmorData(){
  try{
   const response=await fetch("./data/armor-export.json",{cache:"no-store"});if(!response.ok)throw new Error("Catálogo ainda não enviado.");
