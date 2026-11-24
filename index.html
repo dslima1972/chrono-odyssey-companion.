@@ -9,8 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./assets/styles.css?v=20261124inspectfix1">
-  <script src="./assets/app.js?v=20261124inspectfix1" defer></script>
+  <link rel="stylesheet" href="./assets/styles.css?v=20261124catalogsync2">
+  <script src="./assets/app.js?v=20261124catalogsync2" defer></script>
   <script src="./assets/dressing-room.js?v=20261123e20" defer></script>
 </head>
 <body>
@@ -66,7 +66,7 @@
         <div><div class="eyebrow left">CATÁLOGO DE EQUIPAMENTOS</div><h2>Armas</h2></div>
         <div class="catalog-count" id="catalog-count">CARREGANDO…</div>
       </div>
-      <div class="filters">
+      <div class="filters catalog-filters">
         <label class="search-wrap"><span>⌕</span><input id="search" type="search" placeholder="Buscar arma pelo nome…" autocomplete="off"></label>
         <select id="class-filter" aria-label="Filtrar por classe"><option value="">Todas as classes</option></select>
         <select id="type-filter" aria-label="Filtrar por tipo"><option value="">Todos os tipos</option></select>
@@ -86,7 +86,7 @@
         <div class="catalog-count" id="armor-catalog-count">AGUARDANDO CATÁLOGO</div>
       </div>
       <p class="intro-copy">Todas as classes podem utilizar qualquer armadura. Explore as peças individualmente ou reúna os equipamentos que pertencem ao mesmo conjunto.</p>
-      <div class="filters armor-filters">
+      <div class="filters armor-filters catalog-filters">
         <label class="search-wrap"><span>⌕</span><input id="armor-search" type="search" placeholder="Buscar armadura pelo nome…" autocomplete="off"></label>
         <select id="armor-type-filter" aria-label="Filtrar por tipo de armadura"><option value="">Todos os tipos</option></select>
         <select id="armor-rarity-filter" aria-label="Filtrar por raridade"><option value="">Todas as raridades</option><option>Comum</option><option>Incomum</option><option>Raro</option><option>Épico</option><option>Lendário</option></select>
@@ -140,7 +140,7 @@
     <section id="accessories-view" class="view">
       <div class="section-heading"><div><div class="eyebrow left">CATÁLOGO DE EQUIPAMENTOS</div><h2>Acessórios</h2></div><div class="catalog-count" id="accessory-catalog-count">CARREGANDO…</div></div>
       <p class="intro-copy">Explore colares, anéis e cintos. Atributos, sufixos e efeitos são exibidos conforme as fichas individuais do Questlog.</p>
-      <div class="filters armor-filters">
+      <div class="filters armor-filters catalog-filters">
         <label class="search-wrap"><span>⌕</span><input id="accessory-search" type="search" placeholder="Buscar acessório pelo nome…" autocomplete="off"></label>
         <select id="accessory-type-filter" aria-label="Filtrar por tipo"><option value="">Todos os tipos</option><option value="necklace">Colares</option><option value="ring">Anéis</option><option value="belt">Cintos</option></select>
         <select id="accessory-rarity-filter" aria-label="Filtrar por raridade"><option value="">Todas as raridades</option><option>Comum</option><option>Incomum</option><option>Raro</option><option>Épico</option><option>Lendário</option></select>
