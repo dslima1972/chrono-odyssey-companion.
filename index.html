@@ -19,7 +19,7 @@
     <a class="brand" href="./" aria-label="Chrono Odyssey Companion - início">
       <span class="brand-mark">✦</span><span><strong>CHRONO ODYSSEY</strong><small>COMPANION · FIELD COMPENDIUM</small></span>
     </a>
-    <a class="source-link" href="https://questlog.gg/chrono-odyssey/en/db/items/weapon" target="_blank" rel="noreferrer">FONTE DE DADOS <span>↗</span></a>
+    <span class="source-link">PROJETO INDEPENDENTE</span>
   </header>
   <main class="shell">
     <section class="hero">
@@ -36,7 +36,7 @@
       <button type="button" class="tab" data-tab="accessories">Acessórios <span>05</span></button>
       <button type="button" class="tab" data-tab="build">Criar build <span>06</span></button>
       <button type="button" class="tab" data-tab="provador">Provador <span>07</span></button>
-      <button type="button" class="tab" data-tab="about">Sobre os dados <span>08</span></button>
+      <button type="button" class="tab" data-tab="about">Sobre o projeto <span>08</span></button>
     </nav>
     <script>
       // Navegação independente do app.js: mantém os menus funcionais mesmo se o catálogo falhar.
@@ -98,7 +98,7 @@
         <div class="catalog-viewbar" aria-label="Forma de exibição das armaduras"><button type="button" class="catalog-view-button active" data-catalog-view="list" data-catalog-target="armor">Lista</button><button type="button" class="catalog-view-button" data-catalog-view="grid" data-catalog-target="armor">Blocos</button></div>
       </div>
       <div class="catalog-layout armor-layout" id="armor-catalog-layout">
-        <div class="weapon-list" id="armor-list"><div class="empty-state">A estrutura do catálogo está pronta. Aguardando a exportação de armaduras do Questlog.</div></div>
+        <div class="weapon-list" id="armor-list"><div class="empty-state">A estrutura do catálogo está pronta. Aguardando os dados locais de armaduras.</div></div>
         <aside class="detail-panel empty-detail" id="armor-detail"><div class="detail-ornament">✧</div><h3>Selecione uma peça</h3><p>Escolha uma armadura para consultar sua ficha e os atributos disponíveis.</p></aside>
       </div>
       <div class="catalog-detail-host" id="armor-detail-host" hidden></div>
@@ -137,7 +137,7 @@
     </section>
     <section id="accessories-view" class="view">
       <div class="section-heading"><div><div class="eyebrow left">CATÁLOGO DE EQUIPAMENTOS</div><h2>Acessórios</h2></div><div class="catalog-count" id="accessory-catalog-count">CARREGANDO…</div></div>
-      <p class="intro-copy">Explore colares, anéis e cintos. Atributos, sufixos e efeitos são exibidos conforme as fichas individuais do Questlog.</p>
+      <p class="intro-copy">Explore colares, anéis e cintos. Atributos, sufixos e efeitos são exibidos conforme os registros disponíveis no catálogo local do Companion.</p>
       <div class="filters armor-filters catalog-filters">
         <label class="search-wrap"><span>⌕</span><input id="accessory-search" type="search" placeholder="Buscar acessório pelo nome…" autocomplete="off"></label>
         <select id="accessory-type-filter" aria-label="Filtrar por tipo"><option value="">Todos os tipos</option><option value="necklace">Colares</option><option value="ring">Anéis</option><option value="belt">Cintos</option></select>
@@ -146,15 +146,17 @@
       </div>
       <div class="catalog-controls-row"><div class="catalog-viewbar" aria-label="Forma de exibição dos acessórios"><button type="button" class="catalog-view-button active" data-catalog-view="list" data-catalog-target="accessories">Lista</button><button type="button" class="catalog-view-button" data-catalog-view="grid" data-catalog-target="accessories">Blocos</button></div></div>
       <div class="catalog-layout accessory-catalog-layout" id="accessory-catalog-layout"><div class="weapon-list accessory-list" id="accessory-list"><div class="loading"><span class="spinner"></span>Consultando catálogo…</div></div><aside class="accessory-detail empty-detail" id="accessory-detail"><div class="detail-ornament">✧</div><h3>Selecione um acessório</h3><p>Escolha um colar, anel ou cinto para consultar sua ficha.</p></aside></div>
-      <p class="armor-data-note" id="accessory-data-status">Aguardando o catálogo de acessórios exportado do Questlog.</p>
+      <p class="armor-data-note" id="accessory-data-status">Aguardando os dados locais do catálogo de acessórios.</p>
     </section>
     <section id="about-view" class="view">
-      <div class="section-heading"><div><div class="eyebrow left">TRANSPARÊNCIA E REFERÊNCIAS</div><h2>Sobre os dados</h2></div></div>
+      <div class="section-heading"><div><div class="eyebrow left">INDEPENDÊNCIA E TRANSPARÊNCIA</div><h2>Sobre o projeto</h2></div></div>
+      <p class="intro-copy">O Chrono Odyssey Companion é um compêndio comunitário independente, mantido para reunir informações e ferramentas de consulta sobre o jogo em um só lugar.</p>
       <div class="about-grid">
-        <article class="info-card"><span class="info-symbol">⌘</span><h3>Fonte principal</h3><p>Questlog é a referência prioritária para o catálogo de itens. Os registros são obtidos da listagem pública de armas e mantidos em um arquivo JSON próprio do Companion.</p><a href="https://questlog.gg/chrono-odyssey/en/db/items/weapon" target="_blank" rel="noreferrer">Abrir Questlog ↗</a></article>
-        <article class="info-card"><span class="info-symbol">◈</span><h3>Dados verificados</h3><p>Nome, categoria, raridade e identificadores são exibidos quando fornecidos pela fonte. Atributos, efeitos e requisitos não serão estimados nem preenchidos por suposição.</p></article>
-        <article class="info-card"><span class="info-symbol">⟳</span><h3>Atualização</h3><p>O catálogo é atualizado por meio de um arquivo JSON exportado do Questlog e enviado ao repositório. O site lê esse arquivo publicado, sem consultar a API diretamente.</p><a href="https://github.com/dslima1972/chrono-odyssey-companion./actions" target="_blank" rel="noreferrer">Ver execuções ↗</a></article>
-        <article class="info-card"><span class="info-symbol">⚑</span><h3>Estado do projeto</h3><p id="data-status">Aguardando o envio do arquivo exportado do Questlog.</p><p class="fine-print">Projeto comunitário, sem vínculo oficial com Chrono Studio ou Kakao Games.</p></article>
+        <article class="info-card"><span class="info-symbol">⌘</span><h3>Base de dados própria</h3><p>Os catálogos e fichas consultados pelo site são armazenados em arquivos locais do próprio projeto. O Companion busca manter os registros organizados, revisar informações e sinalizar dados ausentes, sem depender de links externos para consulta.</p></article>
+        <article class="info-card"><span class="info-symbol">◈</span><h3>Precisão e transparência</h3><p>Nomes, categorias, raridades e atributos são apresentados conforme os registros disponíveis e as informações que puderam ser verificadas. Dados ausentes não são estimados nem preenchidos por suposição.</p></article>
+        <article class="info-card"><span class="info-symbol">⟳</span><h3>Manutenção</h3><p>Os dados do catálogo são mantidos e publicados junto ao repositório do Companion. Atualizações podem incluir revisão de registros, correções e novos equipamentos.</p><a href="https://github.com/dslima1972/chrono-odyssey-companion./commits" target="_blank" rel="noreferrer">Acompanhar atualizações ↗</a></article>
+        <article class="info-card"><span class="info-symbol">⚑</span><h3>Projeto não oficial e não comercial</h3><p>Este é um projeto comunitário independente, gratuito e sem finalidade comercial, desenvolvido por fãs. Não é oficial e não possui vínculo, parceria, patrocínio ou aprovação da Chrono Studio, Kakao Games ou de quaisquer empresas responsáveis pelo jogo.</p><p class="fine-print">Chrono Odyssey, seus nomes, marcas, personagens, imagens e demais propriedades intelectuais pertencem aos respectivos titulares. O Companion não reivindica a propriedade desses elementos e é mantido para fins informativos e comunitários.</p></article>
+        <article class="info-card"><span class="info-symbol">✧</span><h3>Estado do catálogo</h3><p id="data-status">Os dados locais do catálogo serão carregados nesta seção.</p></article>
       </div>
     </section>
 
@@ -180,7 +182,7 @@
         </div>
       <section class="build-selected-stats-section">
         <h3>Resumo dos atributos equipados</h3>
-        <p>Os valores abaixo são apresentados conforme constam nas fichas detalhadas do Questlog.</p>
+        <p>Os valores abaixo são apresentados conforme constam nas fichas detalhadas armazenadas no Companion.</p>
         <div id="build-selected-stats" class="build-selected-stats"><p class="build-empty">Selecione armas ou armaduras para visualizar os atributos registrados.</p></div>
       </section>
 
@@ -222,7 +224,7 @@
         <aside class="dressing-equipped"><div class="dressing-panel-title"><span>LOADOUT</span><strong>Peças selecionadas</strong></div><div id="dressing-equipped-list" class="dressing-equipped-list"><p>Nenhuma peça selecionada.</p></div><div class="dressing-saved"><strong>Combinações salvas</strong><div id="dressing-saved-list">Nenhuma combinação salva.</div></div></aside>
       </div>
     </section>
-    <footer><span>CHRONO ODYSSEY COMPANION</span><span>UNOFFICIAL COMMUNITY PROJECT · 2026</span></footer>
+    <footer><span>CHRONO ODYSSEY COMPANION</span><span>PROJETO COMUNITÁRIO INDEPENDENTE · NÃO OFICIAL · NÃO COMERCIAL · 2026</span></footer>
   </main>
 </body>
 </html>
