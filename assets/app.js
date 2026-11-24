@@ -411,9 +411,9 @@ async function loadItemDetails(w,panelRoot){
   const all=await getItemDetails(),item=all[id]||all[id.replace(/^item-/,"")];
   if(!item)throw new Error("Esta arma ainda não consta no arquivo sincronizado. Execute a sincronização do Questlog.");
   const current=panelRoot.querySelector(".detail-live");
-  if(current&&selected&&String(selected.id||selected.compoundId)===id){current.innerHTML=detailedWeaponMarkup(w,item);const stats=current.querySelector(".stats-primary"),heading=panelRoot.querySelector(".detail-heading-copy");if(stats&&heading)heading.appendChild(stats);}
+  if(current&&selected&&String(selected.id||selected.compoundId)===id){current.innerHTML=detailedWeaponMarkup(w,item);const scoreControl=current.querySelector(".gear-score-control"),heading=panelRoot.querySelector(".detail-heading-copy");if(scoreControl&&heading)heading.appendChild(scoreControl);}
   const meta=current?.closest(".detail-panel")?.querySelector(".detail-header-meta");
-  if(meta)meta.innerHTML=compactMeta("Tier",item?.itemInfo?.tier)+compactMeta("Raridade",rarity(w))+compactMeta("Nível",item?.itemInfo?.requiredLevel)+compactMeta("Classe",weaponClass(w)||"Não mapeada")+compactMeta("Tipo",weaponType(w));
+  if(meta){meta.innerHTML=compactMeta("Tier",item?.itemInfo?.tier)+compactMeta("Raridade",rarity(w))+compactMeta("Nível",item?.itemInfo?.requiredLevel)+compactMeta("Classe",weaponClass(w)||"Não mapeada")+compactMeta("Tipo",weaponType(w));const title=panelRoot.querySelector(".detail-heading-copy h3");if(title)meta.parentElement.insertBefore(meta,title);}
   const idFooter=current?.querySelector(".detail-id-footer");if(idFooter)idFooter.textContent="ID: "+String(w.id||w.compoundId||"");
  }catch(error){
   const current=panelRoot.querySelector(".detail-live");
@@ -694,9 +694,9 @@ async function loadArmorDetails(item,panelRoot){
  try{
   const all=await getArmorDetailsCatalog(),record=all[id]||all[id.replace(/^item-/,"")],current=panelRoot.querySelector(".detail-live");
   if(!current||!record||!selectedArmor||String(selectedArmor.id||selectedArmor.compoundId)!==id)return;
-  current.innerHTML=detailedArmorMarkup(record,item);const stats=current.querySelector(".stats-primary"),heading=panelRoot.querySelector(".detail-heading-copy");if(stats&&heading)heading.appendChild(stats);
+  current.innerHTML=detailedArmorMarkup(record,item);const scoreControl=current.querySelector(".gear-score-control"),heading=panelRoot.querySelector(".detail-heading-copy");if(scoreControl&&heading)heading.appendChild(scoreControl);
   const meta=current.closest(".detail-panel")?.querySelector(".detail-header-meta");
-  if(meta)meta.innerHTML=compactMeta("Tier",record?.itemInfo?.tier)+compactMeta("Raridade",rarity(item))+compactMeta("Nível",record?.itemInfo?.requiredLevel)+compactMeta("Classe","Todas")+compactMeta("Tipo",armorType(item));
+  if(meta){meta.innerHTML=compactMeta("Tier",record?.itemInfo?.tier)+compactMeta("Raridade",rarity(item))+compactMeta("Nível",record?.itemInfo?.requiredLevel)+compactMeta("Classe","Todas")+compactMeta("Tipo",armorType(item));const title=panelRoot.querySelector(".detail-heading-copy h3");if(title)meta.parentElement.insertBefore(meta,title);}
   const idFooter=current.querySelector(".detail-id-footer");if(idFooter)idFooter.textContent="ID: "+String(item.id||item.compoundId||"");
  }catch(e){
   const current=panelRoot.querySelector(".detail-live");
