@@ -940,7 +940,6 @@ document.addEventListener("input",event=>{
  if(rollId){const state=equipmentRollState[rollId]||(equipmentRollState[rollId]={suffix:"",perks:[],gearScore:null});state.gearScore=Number(score)}
  const current=panel.querySelector(".gear-score-current");
  if(current)current.textContent=score;
-  if(panel.classList.contains("build-item-config"))renderBuildSelectedStats();
  panel.querySelectorAll("[data-gear-score-map]").forEach(node=>{
   try{const levels=JSON.parse(node.getAttribute("data-gear-score-map"));const value=gearScoreValueAt(levels,score);node.textContent=value===undefined||value===null?"Sem valor cadastrado para este Equipment Score":String(formatStatValue(node.dataset.statType,value))}catch(error){}
  });
@@ -956,11 +955,14 @@ document.addEventListener("change",event=>{
    const counter=list.querySelector("[data-perk-counter] span");if(counter)counter.textContent=checked.length+"/"+limit;
    list.querySelectorAll("[data-perk-select]").forEach(box=>{box.disabled=limit<=0||(!box.checked&&checked.length>=limit)});
   }
+   if(input.closest(".build-item-config"))renderBuildSelectedStats();
  }
  if(input.matches("[data-suffix-select]")){
   const rollId=input.dataset.itemRollId;
   if(rollId){const state=equipmentRollState[rollId]||(equipmentRollState[rollId]={suffix:"",perks:[],gearScore:null});state.suffix=input.value}
+   if(input.closest(".build-item-config"))renderBuildSelectedStats();
  }
+  if(input.matches(".gear-score-slider")&&input.closest(".build-item-config"))renderBuildSelectedStats();
 });
 /* Build planner */
 let buildWeaponDetails={},buildArmorDetails={},buildAccessoryDetails={};
