@@ -1149,7 +1149,7 @@ async function buildPickList(slot,anchor){
  const isWeapon=slot==="weapon0"||slot==="weapon1",isAccessory=BUILD_ACCESSORY_SLOTS.some(([key])=>key===slot),kind=isWeapon?"weapon":isAccessory?"accessory":"armor";
  let rows=[];
  if(kind==="armor"&&buildArmorSlotState[slot]!=="ready"||kind!=="armor"&&buildLayerState[kind]!=="ready"){
-  const picker=$( "build-picker");buildPickerAnchor=anchor;if(picker.parentElement!==document.querySelector(".build-equipment-panel"))document.querySelector(".build-equipment-panel").appendChild(picker);
+  const picker=$( "build-picker");buildPickerAnchor=anchor;const equipmentPanel=document.querySelector(".bp2-equipment");equipmentPanel.classList.add("is-picking");if(picker.parentElement!==equipmentPanel)equipmentPanel.appendChild(picker);
   const label=kind==="armor"?(BUILD_ARMOR_SLOTS.find(x=>x[0]===slot)?.[1]||"armaduras"):BUILD_LAYER_CONFIG[kind].label;
   $("build-picker-title").textContent="Carregando "+label+"…";$("build-picker-list").innerHTML='<p class="build-empty">Carregando os dados deste grupo…</p>';picker.hidden=false;
   const loaded=kind==="armor"?await loadBuildArmorSlot(slot):await loadBuildLayer(kind);if(!loaded)return;
@@ -1158,7 +1158,7 @@ async function buildPickList(slot,anchor){
  else if(isAccessory){const type=slot==="ring1"||slot==="ring2"?"ring":slot;rows=accessories.filter(x=>String(x.subCategory||"").toLowerCase()===type).filter(x=>buildItemMatches(x,buildAccessoryDetails[String(x.id||x.compoundId)],buildState.accessoryStats.filter(Boolean),"all"));}
  else rows=armors.filter(x=>String(x.subCategory||"").toLowerCase()===slot).filter(x=>buildItemMatches(x,buildArmorDetails[String(x.id||x.compoundId)],buildState.armorStats.filter(Boolean),"all"));
  const picker=$("build-picker");
- buildPickerAnchor=anchor;if(picker.parentElement!==document.querySelector(".build-equipment-panel"))document.querySelector(".build-equipment-panel").appendChild(picker);
+ buildPickerAnchor=anchor;const equipmentPanel=document.querySelector(".bp2-equipment");equipmentPanel.classList.add("is-picking");if(picker.parentElement!==equipmentPanel)equipmentPanel.appendChild(picker);
  $("build-picker-title").textContent=isWeapon?"Selecionar arma":isAccessory?"Selecionar acessório":"Selecionar armadura";
  const activeKind=isWeapon?"weapon":isAccessory?"accessory":"armor";document.querySelectorAll("#build-picker [data-picker-stat-kind]").forEach(panel=>{panel.hidden=panel.dataset.pickerStatKind!==activeKind});
  const filteredRows=rows.filter(x=>!buildPickerRarity||rarity(x)===buildPickerRarity);
@@ -1234,7 +1234,7 @@ async function loadBuildLayer(kind){
  })();
  return buildLayerPromises[kind];
 }
-function closeBuildPicker(){const picker=$("build-picker");picker.hidden=true;document.querySelector(".build-equipment-panel").appendChild(picker);buildPickerAnchor=null}
+function closeBuildPicker(){const picker=$("build-picker");picker.hidden=true;document.querySelector(".bp2-equipment")?.classList.remove("is-picking");buildPickerAnchor=null}
 function initBuildPlanner(){
  document.addEventListener("click",e=>{
   const choice=e.target.closest("[data-build-weapon-choice]");
