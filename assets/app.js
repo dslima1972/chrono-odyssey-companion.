@@ -487,7 +487,7 @@ $("search").addEventListener("input",renderList);$("class-filter").addEventListe
 
 let armors=[],selectedArmor=null,armorMode="pieces",armorDetailsPromise=null;
 let accessories=[],selectedAccessory=null,accessoryDetailsPromise=null;
-const ARMOR_TYPES={head:"Cabeça",helmet:"Cabeça",shoulder:"Ombros",shoulders:"Ombros",chest:"Peito",body:"Peito",hands:"Mãos",gloves:"Mãos",waist:"Cintura",legs:"Pernas",pants:"Pernas",feet:"Pés",boots:"Pés",back:"Costas",cloak:"Costas"};
+const ARMOR_TYPES={head:"Elmo",helmet:"Elmo",shoulder:"Ombros",shoulders:"Ombros",chest:"Peitoral",body:"Peitoral",hands:"Luvas",gloves:"Luvas",waist:"Cintura",legs:"Calça",pants:"Calça",feet:"Botas",boots:"Botas",back:"Capa",cloak:"Capa"};
 const ARMOR_TYPE_ICONS={head:"♜",helmet:"♜",shoulder:"♢",shoulders:"♢",chest:"⬡",body:"⬡",hands:"✥",gloves:"✥",waist:"⌁",legs:"♧",pants:"♧",feet:"⌑",boots:"⌑",back:"✧",cloak:"✧"};
 const statIndexData={weapon:null,armor:null,accessory:null};
 const statIndexPromises={weapon:null,armor:null,accessory:null};
@@ -972,7 +972,7 @@ let buildPickerRarity="";
 let buildPickerAnchor=null;
 let buildPickerLimit=30;
 const buildState={className:"",weaponType:"",weaponType2:"",weaponStats:["",""],armorStats:["",""],accessoryStats:["",""],accessories:{},matchModes:{weapon0:"any",weapon1:"any",head:"any",chest:"any",hands:"any",legs:"any",feet:"any",back:"any",necklace:"any",ring1:"any",ring2:"any",belt:"any"},weapons:["",""],armor:{}};
-const BUILD_ARMOR_SLOTS=[["head","Cabeça"],["chest","Peito"],["hands","Mãos"],["legs","Pernas"],["feet","Pés"],["back","Costas"]];
+const BUILD_ARMOR_SLOTS=[["head","Elmo"],["chest","Peitoral"],["hands","Luvas"],["legs","Calça"],["feet","Botas"],["back","Capa"]];
 const BUILD_ACCESSORY_SLOTS=[["necklace","Colar"],["ring1","Anel 1"],["ring2","Anel 2"],["belt","Cinto"]];
 function buildEquipmentPrimaryStats(record){
  if(record&&typeof record==="object"&&equipmentPrimaryStatsCache.has(record))return equipmentPrimaryStatsCache.get(record);
