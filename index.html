@@ -165,9 +165,9 @@
       <div class="section-heading"><div><div class="eyebrow left">PERSONAGEM E EQUIPAMENTOS</div><h2>Criação de Build</h2></div><div class="catalog-count">BUILD PLANNER</div></div>
       <p class="intro-copy">Monte seu personagem, escolha as armas e encontre equipamentos com os atributos desejados.</p>
       <div class="build-controls">
-        <label>Classe<select id="build-class"><option value="">Selecione uma classe</option></select></label>
-        <label>Arma principal<select id="build-weapon-type" disabled><option value="">Selecione a classe primeiro</option></select></label>
-        <label>Arma secundária (opcional)<select id="build-weapon-type2" disabled><option value="">Selecione a classe primeiro</option></select></label>
+        <label class="build-class-control">Classe<select id="build-class"><option value="">Selecione uma classe</option></select></label>
+        <label class="build-weapon-filter-control">Arma principal<div class="build-weapon-choice-list" data-build-weapon-choices="0" role="group" aria-label="Tipo de arma principal"><span class="build-weapon-choice-empty">Selecione uma classe</span></div><select class="build-native-select" id="build-weapon-type" disabled><option value="">Selecione a classe primeiro</option></select></label>
+        <label class="build-weapon-filter-control">Arma secundária <span class="build-optional-label">opcional</span><div class="build-weapon-choice-list" data-build-weapon-choices="1" role="group" aria-label="Tipo de arma secundária"><span class="build-weapon-choice-empty">Selecione uma classe</span></div><select class="build-native-select" id="build-weapon-type2" disabled><option value="">Selecione a classe primeiro</option></select></label>
       </div>
       <div class="build-stat-panels">
         <section class="build-stat-panel"><h3>Prioridades das armas</h3><p>Escolha até duas estatísticas. É necessário selecionar o tipo de arma primeiro.</p><div><select id="build-weapon-stat1" disabled><option value="">Estatística principal</option></select><select id="build-weapon-stat2" disabled><option value="">Segunda estatística (opcional)</option></select></div></section>
