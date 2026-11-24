@@ -3432,3 +3432,42 @@ footer{color:#7890a0}
   color-mix(in srgb,var(--rarity) 8%,#080d13))!important;
  border-color:color-mix(in srgb,var(--rarity) 58%,#344858)!important;
 }
+
+
+/* Refinamento da navegação e da identidade das páginas de classe */
+.ambient-one{background:#7890a0!important;opacity:.055!important}
+.class-card,.class-detail,.class-detail-hero,.class-cover-frame,.class-cover-fallback,
+.class-weapon-details article,.class-video-card,.class-source-note{
+ background-color:#111923!important;border-color:#344858!important;
+}
+.class-card,.class-detail{background:linear-gradient(145deg,#1a2632,#111923)!important}
+.class-detail-hero{background:linear-gradient(110deg,#1a2632,#0d151e)!important}
+.class-cover-frame,.class-cover-fallback{
+ background:radial-gradient(ellipse at 50% 42%,#344858 0%,#1a2632 48%,#111923 100%)!important;
+}
+.class-weapon-details article,.class-video-card,.class-source-note{background:#0d151e!important}
+.class-weapon-tags span{background:#0d151e!important;border-color:#344858!important;color:#d2c7ae!important}
+.class-section{border-color:rgba(120,144,160,.22)!important}
+.class-section h4,.class-source-note strong{color:#d2c7ae!important}
+.tabs{
+ justify-content:center;align-items:center;gap:clamp(8px,2vw,26px);
+ border:0!important;border-bottom:1px solid rgba(120,144,160,.2)!important;
+ margin:0 auto 30px;padding:0 0 1px;
+}
+.tab{
+ position:relative;border:0!important;background:transparent!important;
+ padding:14px 5px 13px;color:#a6a18f;font-size:10px;letter-spacing:1px;
+}
+.tab span{display:none!important}
+.tab::after{
+ content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;
+ background:#c1a66d;transform:scaleX(0);transform-origin:center;
+ transition:transform .18s ease;
+}
+.tab:hover,.tab.active{color:#d2c7ae}
+.tab.active::after{transform:scaleX(1)}
+@media(max-width:760px){
+ .tabs{justify-content:flex-start;gap:17px;overflow-x:auto;scrollbar-width:none;white-space:nowrap;margin-bottom:24px}
+ .tabs::-webkit-scrollbar{display:none}
+ .tab{flex:0 0 auto;padding:13px 1px 12px;font-size:9px}
+}
