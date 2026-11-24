@@ -2688,3 +2688,24 @@ input.gear-score-slider::-moz-range-thumb{width:9px;height:9px;border:1px solid 
  #accessories-view .accessory-game-card .detail-top h3{font-size:14px}
  #accessories-view .accessory-game-card .stat-line{grid-template-columns:47px minmax(0,1fr) auto;gap:6px}
 }
+
+
+/* Accessory detail — final alignment and readable information rows */
+#accessories-view .accessory-game-card .detail-heading-copy{transform:translateY(-5px)}
+#accessories-view .accessory-game-card .detail-icon.detail-hero{transform:translateY(9px)}
+#accessories-view .accessory-game-card .stat-line{grid-template-columns:64px minmax(0,1fr) auto;column-gap:9px}
+#accessories-view .accessory-game-card .stat-line strong{text-align:right;font-variant-numeric:tabular-nums}
+#accessories-view .accessory-game-card .stat-line span{text-align:left}
+#accessories-view .accessory-game-card .accessory-info-option strong,
+#accessories-view .accessory-game-card .accessory-info-option>span{font-size:10.5px;line-height:1.4}
+#accessories-view .accessory-game-card .accessory-info-option small{font-size:9px}
+#accessories-view .accessory-game-card .accessory-other-info{margin-top:4px}
+#accessories-view .accessory-game-card .accessory-other-fields{display:grid;grid-template-columns:1fr;gap:0;padding:0 0 7px}
+#accessories-view .accessory-game-card .accessory-other-fields .detail-field{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:baseline;gap:12px;padding:4px 0;border:0}
+#accessories-view .accessory-game-card .accessory-other-fields .detail-field small{color:rgba(255,248,229,.78);font:400 10.5px/1.4 Inter,sans-serif}
+#accessories-view .accessory-game-card .accessory-other-fields .detail-field strong{color:#fff2d8;font:500 10.5px/1.4 Inter,sans-serif;text-align:right}
+@media(max-width:390px){
+ #accessories-view .accessory-game-card .stat-line{grid-template-columns:55px minmax(0,1fr) auto;column-gap:7px}
+ #accessories-view .accessory-game-card .detail-heading-copy{transform:translateY(-3px)}
+ #accessories-view .accessory-game-card .detail-icon.detail-hero{transform:translateY(7px)}
+}
