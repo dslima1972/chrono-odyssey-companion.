@@ -9,8 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./assets/styles.css?v=20261124plannerpicker2">
-  <script src="./assets/app.js?v=20261124plannerpicker2" defer></script>
+  <link rel="stylesheet" href="./assets/styles.css?v=20261124plannerrebuild1">
+  <script src="./assets/app.js?v=20261124plannerrebuild1" defer></script>
   <script src="./assets/dressing-room.js?v=20261123e20" defer></script>
 </head>
 <body>
@@ -155,45 +155,45 @@
       </div>
     </section>
 
-    <section id="build-view" class="view">
-      <div class="section-heading"><div><div class="eyebrow left">PERSONAGEM E EQUIPAMENTOS</div><h2>Build Planner</h2></div><div class="catalog-count">BUILD PLANNER</div></div>
-      <p class="intro-copy">Monte sua build selecionando equipamentos, definindo prioridades e acompanhando os atributos reunidos.</p>
-      <div class="build-config">
-        <div class="build-controls">
-          <label class="build-class-control">Classe<select id="build-class"><option value="">Selecione uma classe</option></select></label>
-          <label class="build-weapon-filter-control">Arma principal<div class="build-weapon-choice-list" data-build-weapon-choices="0" role="group" aria-label="Tipo de arma principal"><span class="build-weapon-choice-empty">Selecione uma classe</span></div><select class="build-native-select" id="build-weapon-type" disabled><option value="">Selecione a classe primeiro</option></select></label>
-          <label class="build-weapon-filter-control">Arma secundária<div class="build-weapon-choice-list" data-build-weapon-choices="1" role="group" aria-label="Tipo de arma secundária"><span class="build-weapon-choice-empty">Selecione uma classe</span></div><select class="build-native-select" id="build-weapon-type2" disabled><option value="">Selecione a classe primeiro</option></select></label>
+    <section id="build-view" class="view build-planner-v2">
+  <header class="bp2-heading">
+    <div><span class="bp2-eyebrow">PERSONAGEM · EQUIPAMENTOS · ATRIBUTOS</span><h2>Build Planner</h2></div>
+    <span class="bp2-status">PLANEJADOR DE BUILD</span>
+  </header>
+  <div class="bp2-config" aria-label="Configuração da build">
+    <label>Classe<select id="build-class"><option value="">Selecione uma classe</option></select></label>
+    <label>Arma principal<div class="build-weapon-choice-list" data-build-weapon-choices="0" role="group" aria-label="Tipo de arma principal"><span class="build-weapon-choice-empty">Selecione uma classe</span></div><select class="build-native-select" id="build-weapon-type" disabled><option value="">Selecione a classe primeiro</option></select></label>
+    <label>Arma secundária<div class="build-weapon-choice-list" data-build-weapon-choices="1" role="group" aria-label="Tipo de arma secundária"><span class="build-weapon-choice-empty">Selecione uma classe</span></div><select class="build-native-select" id="build-weapon-type2" disabled><option value="">Selecione a classe primeiro</option></select></label>
+  </div>
+  <div class="bp2-workspace">
+    <section class="bp2-equipment" aria-label="Equipamentos da build">
+      <header class="bp2-panel-heading"><span>EQUIPAMENTO</span><strong>Peças equipadas</strong></header>
+      <section class="bp2-slot-group"><h3>Armas</h3><div id="build-weapon-slots" class="build-slot-grid bp2-weapon-slots"></div></section>
+      <section class="bp2-slot-group"><h3>Armaduras</h3><div id="build-armor-slots" class="build-slot-grid armor-slot-grid bp2-armor-slots"></div></section>
+      <section class="bp2-slot-group"><h3>Acessórios</h3><div id="build-accessory-slots" class="build-slot-grid accessory-slot-grid bp2-accessory-slots"></div></section>
+      <div class="build-picker" id="build-picker" hidden>
+        <div class="build-picker-head"><h3 id="build-picker-title">Selecionar peça</h3><div class="co-bp-filters"><select id="build-picker-rarity" aria-label="Filtrar por raridade"><option value="">Todas as raridades</option><option>Comum</option><option>Incomum</option><option>Raro</option><option>Épico</option><option>Lendário</option></select></div><button type="button" id="build-picker-close">Fechar ×</button></div>
+        <div class="build-stat-panels build-picker-stat-panels">
+          <section class="build-stat-panel" data-picker-stat-kind="weapon"><h3>Estatísticas</h3><div><select id="build-weapon-stat1" disabled><option value="">Estatística principal</option></select><select id="build-weapon-stat2" disabled><option value="">Segunda estatística</option></select></div></section>
+          <section class="build-stat-panel" data-picker-stat-kind="armor" hidden><h3>Estatísticas</h3><div><select id="build-armor-stat1" disabled><option value="">Estatística principal</option></select><select id="build-armor-stat2" disabled><option value="">Segunda estatística</option></select></div></section>
+          <section class="build-stat-panel" data-picker-stat-kind="accessory" hidden><h3>Estatísticas</h3><div><select id="build-accessory-stat1" disabled><option value="">Estatística principal</option></select><select id="build-accessory-stat2" disabled><option value="">Segunda estatística</option></select></div></section>
         </div>
+        <div id="build-picker-list" class="build-picker-list"></div>
       </div>
-      <div class="build-workspace">
-        <section class="build-equipment-panel" aria-label="Equipamentos selecionados">
-          <div class="build-panel-heading"><span>EQUIPAMENTO</span><strong>Peças selecionadas</strong></div>
-          <section><h3>Armas</h3><div id="build-weapon-slots" class="build-slot-grid"></div></section>
-          <section><h3>Armaduras</h3><div id="build-armor-slots" class="build-slot-grid armor-slot-grid"></div></section>
-          <section><h3>Acessórios</h3><div id="build-accessory-slots" class="build-slot-grid accessory-slot-grid"></div></section>
-          <div class="build-picker" id="build-picker" hidden>
-            <div class="build-picker-head"><h3 id="build-picker-title">Selecionar peça</h3><div class="co-bp-filters"><select id="build-picker-rarity" aria-label="Filtrar por raridade"><option value="">Todas as raridades</option><option>Comum</option><option>Incomum</option><option>Raro</option><option>Épico</option><option>Lendário</option></select></div><button type="button" id="build-picker-close">Fechar ×</button></div>
-            <div class="build-stat-panels build-picker-stat-panels">
-              <section class="build-stat-panel" data-picker-stat-kind="weapon"><h3>Estatísticas · Armas</h3><div><select id="build-weapon-stat1" disabled><option value="">Estatística principal</option></select><select id="build-weapon-stat2" disabled><option value="">Segunda estatística</option></select></div></section>
-              <section class="build-stat-panel" data-picker-stat-kind="armor"><h3>Estatísticas · Armaduras</h3><div><select id="build-armor-stat1" disabled><option value="">Estatística principal</option></select><select id="build-armor-stat2" disabled><option value="">Segunda estatística</option></select></div></section>
-              <section class="build-stat-panel" data-picker-stat-kind="accessory"><h3>Estatísticas · Acessórios</h3><div><select id="build-accessory-stat1" disabled><option value="">Estatística principal</option></select><select id="build-accessory-stat2" disabled><option value="">Segunda estatística</option></select></div></section>
-            </div>
-            <div id="build-picker-list" class="build-picker-list"></div>
-          </div>
-        </section>
-        <aside class="build-character-panel">
-          <div class="build-panel-heading"><span>PERSONAGEM</span><strong>Sua classe</strong></div>
-          <div id="build-character"><div class="build-character-placeholder"><span>✧</span><strong>Seu personagem</strong><small>Selecione uma classe para começar</small></div></div>
-          <p id="build-class-summary">Escolha uma classe para liberar as opções de equipamento.</p>
-        </aside>
-        <section class="build-selected-stats-section">
-          <div class="build-panel-heading"><span>ATRIBUTOS</span><strong>Resumo da build</strong></div>
-          <div id="build-selected-stats" class="build-selected-stats"><p class="build-empty">Selecione equipamentos para visualizar os atributos registrados nas fichas locais.</p></div>
-        </section>
-      </div>
-      <p class="build-data-status" id="build-data-status">Carregando fichas detalhadas para montar as sugestões por atributos…</p>
     </section>
-    <section id="provador-view" class="view">
+    <aside class="bp2-character">
+      <header class="bp2-panel-heading"><span>PERSONAGEM</span><strong>Sua classe</strong></header>
+      <div id="build-character"><div class="build-character-placeholder"><span>✧</span><strong>Seu personagem</strong><small>Selecione uma classe para começar</small></div></div>
+      <p id="build-class-summary">Escolha uma classe para liberar as opções de equipamento.</p>
+    </aside>
+    <section class="bp2-summary">
+      <header class="bp2-panel-heading"><span>ATRIBUTOS</span><strong>Resumo da build</strong></header>
+      <div id="build-selected-stats" class="build-selected-stats"><p class="build-empty">Selecione equipamentos para visualizar os atributos registrados nas fichas locais.</p></div>
+    </section>
+  </div>
+  <p class="bp2-data-status" id="build-data-status">Carregando fichas detalhadas para montar as sugestões por atributos…</p>
+</section>
+<section id="provador-view" class="view">
       <div class="section-heading"><div><div class="eyebrow left">PERSONALIZAÇÃO DE APARÊNCIA</div><h2>Provador de equipamentos</h2></div><div class="catalog-count" id="dressing-count">CARREGANDO ARMADURAS…</div></div>
       <p class="intro-copy">Monte seu equipamento combinando as peças do catálogo. As imagens são organizadas e encaixadas para formar uma silhueta de personagem, sem avatar ou manequim ao fundo.</p>
       <div class="dressing-room">
