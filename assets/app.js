@@ -1335,7 +1335,7 @@ async function loadBuildLayer(kind){
     return res.json();
    }));
    const all={};parts.forEach(part=>Object.assign(all,part.items||{}));
-   config.assign(all);buildLayerState[kind]="ready";updateBuildLayerStatus();buildStatsOptions(kind,0);buildStatsOptions(kind,1);if(kind==="weapon"){$("build-weapon-stat1").disabled=!buildState.weaponType;$("build-weapon-stat2").disabled=!buildState.weaponType}renderBuildSelectedStats();return true;
+   config.assign(all);buildLayerState[kind]="ready";updateBuildLayerStatus();buildStatsOptions(kind,0);buildStatsOptions(kind,1);if(kind==="weapon"){$("build-weapon-stat1").disabled=!buildState.weaponType&&!buildState.weaponType2;$("build-weapon-stat2").disabled=!buildState.weaponType&&!buildState.weaponType2}renderBuildSelectedStats();return true;
   }catch(error){
    buildLayerState[kind]="idle";buildLayerPromises[kind]=null;
    const status=$("build-data-status");if(status)status.textContent="Não foi possível carregar "+config.label+": "+(error.message||"erro desconhecido")+". Tente novamente ao acessar esta categoria.";
@@ -1386,6 +1386,4 @@ document.addEventListener("click",event=>{
  if(kind==="weapons")renderList();else if(kind==="armor")renderArmorList();else renderAccessoryList();
  applyCatalogView(kind,listId);
 });
-renderClasses();loadData();loadArmorData();loadAccessoryData();initBuildPlanner()
- $("build-picker-rarity").addEventListener("change",e=>{buildPickerRarity=e.target.value;const anchor=buildPickerAnchor;const slot=anchor?.dataset.buildPick??("weapon"+(anchor?.dataset.buildWeaponPick||"0"));buildPickList(slot,anchor)});
- $("build-picker-close").addEventListener("click",closeBuildPicker);;
+renderClasses();loadData();loadArmorData();loadAccessoryData();initBuildPlanner();
