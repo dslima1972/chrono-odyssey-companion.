@@ -978,7 +978,7 @@ document.addEventListener("change",event=>{
  if(input.matches("[data-suffix-select]")){
   const rollId=input.dataset.itemRollId;
   if(rollId){const state=equipmentRollState[rollId]||(equipmentRollState[rollId]={suffix:"",perks:[],gearScore:null});state.suffix=input.value}
-   if(input.closest(".build-item-config"))renderBuildItemConfig();
+   if(input.closest(".build-item-config")){renderBuildItemConfig();renderBuildTotals();}
  }
   if(input.matches(".gear-score-slider")&&input.closest(".build-item-config"))renderBuildTotals();
 });
