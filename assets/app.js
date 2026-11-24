@@ -790,7 +790,7 @@ window.addEventListener("resize",()=>{
  if($("accessories-view")?.classList.contains("active"))mountAccessoryDetail();
 },{passive:true});
 function accessoryDetailMarkup(item){
- return '<div class="detail-panel detail-prototype detail-prototype-accessory accessory-game-card" style="--rarity:'+rarityStyle(item)+'"><div class="detail-top"><div class="detail-heading-copy"><div class="detail-header-meta"></div><h3>'+escapeHtml(item.name||"Acessório")+'</h3></div><div class="detail-icon detail-hero"><span>'+accessoryIcon(item)+'</span>'+accessoryImageMarkup(item,"detail-hero-image")+'<i class="detail-hero-glow"></i></div></div><div class="detail-live"><p class="detail-muted">Carregando ficha individual do Questlog…</p></div><a class="detail-source" href="https://questlog.gg/chrono-odyssey/en/db/item/'+encodeURIComponent(item.id||item.compoundId||"") + '" target="_blank" rel="noreferrer">CONSULTAR FICHA NO QUESTLOG ↗</a></div>';
+ return '<article class="detail-panel accessory-inspect-card" style="--rarity:'+rarityStyle(item)+'"><header class="accessory-inspect-header"><div class="accessory-inspect-heading"><div class="accessory-inspect-meta detail-header-meta"></div><h3>'+escapeHtml(item.name||"Acessório")+'</h3></div><div class="accessory-inspect-art">'+accessoryImageMarkup(item,"accessory-inspect-image")+'</div></header><div class="detail-live"><p class="detail-muted">Carregando ficha individual do Questlog…</p></div><a class="accessory-inspect-source" href="https://questlog.gg/chrono-odyssey/en/db/item/'+encodeURIComponent(item.id||item.compoundId||"")+'" target="_blank" rel="noreferrer">VER FICHA NO QUESTLOG ↗</a></article>';
 }
 function findAccessoryGearScore(item){
  const stats=item?.itemStats?.equipmentStats||{};
@@ -810,11 +810,10 @@ function renderAccessoryStats(item){
  if(progression){
   const value=progression.levels[String(score)]??Object.values(progression.levels)[0];
   const label=humanizeStat(progression.statType);
-  rows+='<div class="stat-line"><span>'+escapeHtml(label)+'</span><strong data-gear-score-map="'+escapeHtml(JSON.stringify(progression.levels))+'" data-stat-type="'+escapeHtml(progression.statType)+'">'+escapeHtml(formatStatValue(progression.statType,value))+'</strong><small></small></div>';
+  rows+='<div class="accessory-inspect-stat"><strong data-gear-score-map="'+escapeHtml(JSON.stringify(progression.levels))+'" data-stat-type="'+escapeHtml(progression.statType)+'">'+escapeHtml(formatStatValue(progression.statType,value))+'</strong><span>'+escapeHtml(label)+'</span></div>';
  }
- rows+=entries.map(entry=>'<div class="stat-line"><span>'+escapeHtml(entry.label)+'</span><strong>'+escapeHtml(formatStatValue(entry.key,entry.value))+'</strong><small>'+escapeHtml(entry.chance||"")+'</small></div>').join("");
- if(!rows)return '<p class="detail-muted">A fonte não retornou atributos básicos para este item.</p>';
- return (progression?renderGearScoreControl(item,progression.levels,"Atributo"):"")+'<div class="stat-list">'+rows+'</div>';
+ rows+=entries.map(entry=>'<div class="accessory-inspect-stat"><strong>'+escapeHtml(formatStatValue(entry.key,entry.value))+'</strong><span>'+escapeHtml(entry.label)+'</span>'+(entry.chance?'<small>'+escapeHtml(entry.chance)+'</small>':"")+'</div>').join("");
+ return '<section class="accessory-inspect-stats">'+(progression?renderGearScoreControl(item,progression.levels,"Atributo"):"")+'<div class="accessory-inspect-stat-list">'+(rows||'<p class="detail-muted">A fonte não retornou atributos básicos para este item.</p>')+'</div></section>';
 }
 function renderAccessoryReadOnlyOptions(item){
  const stats=item?.itemStats||{},info=item?.itemInfo||{},grade=itemGradeInfo(item),score=itemCurrentGearScore(item);
@@ -823,10 +822,10 @@ function renderAccessoryReadOnlyOptions(item){
  const suffixRows=suffixes.map(suffix=>{
   const value=gearScoreValueMarkup(suffix,score,suffix.statType??suffix.type);
   const chance=Number.isFinite(Number(suffix.chancePercentage))?'<small>'+Number(suffix.chancePercentage).toLocaleString("pt-BR",{maximumFractionDigits:2})+'%</small>':"";
-  return '<div class="accessory-info-option"><strong>'+escapeHtml(suffix.name||"Sufixo")+'</strong><span>'+value+'</span>'+chance+'</div>';
+  return '<div class="accessory-inspect-option"><strong>'+escapeHtml(suffix.name||"Sufixo")+'</strong><span>'+value+'</span>'+chance+'</div>';
  }).join("");
  const suffixSection=suffixAllowed&&(suffixRows||grade.suffix===true)
-  ?'<details class="accessory-info-disclosure"><summary>Possible Suffixes <span>'+(suffixes.length||"—")+'</span></summary><div class="accessory-info-options">'+(suffixRows||'<p class="detail-muted">Nenhuma opção retornada pela ficha.</p>')+'</div></details>':"";
+  ?'<details class="accessory-inspect-accordion"><summary><span>Possible Suffixes</span><em>'+(suffixes.length||"—")+'</em></summary><div class="accessory-inspect-options">'+(suffixRows||'<p class="detail-muted">Nenhuma opção retornada pela ficha.</p>')+'</div></details>':"";
  const limit=Number(grade.perkCount??stats.perkCount),candidates=[...perkEntries(stats.commonPerks),...perkEntries(stats.perks)];
  const seen=new Set(),perkRows=[];
  for(const perk of candidates){
@@ -834,20 +833,20 @@ function renderAccessoryReadOnlyOptions(item){
   const value=gearScoreValueMarkup(perk,score,perk.statType);
   const chance=Number.isFinite(Number(perk.chancePercentage))?'<small>'+Number(perk.chancePercentage).toLocaleString("pt-BR",{maximumFractionDigits:2})+'%</small>':"";
   const stat=perk.statType?humanizeStat(perk.statType):"";
-  perkRows.push('<div class="accessory-info-option"><strong>'+escapeHtml(perk.name||"Perk")+'</strong><span>'+escapeHtml(stat)+(stat?' · ':'')+value+'</span>'+chance+'</div>');
+  perkRows.push('<div class="accessory-inspect-option"><strong>'+escapeHtml(perk.name||"Perk")+'</strong><span>'+escapeHtml(stat)+(stat?' · ':'')+value+'</span>'+chance+'</div>');
  }
  const unique=[...perkEntries(info.uniquePerk??stats.uniquePerk),...perkEntries(info.specialPerks??stats.specialPerks)];
  for(const perk of unique){
   const key=String(perk.id||perk.name||perk.description||"").toLowerCase();if(!key||seen.has("unique:"+key))continue;seen.add("unique:"+key);
-  perkRows.push('<div class="accessory-info-option accessory-info-unique"><strong>'+escapeHtml(perk.name||"Perk especial")+'</strong><span>'+escapeHtml(perk.description||"")+'</span></div>');
+  perkRows.push('<div class="accessory-inspect-option accessory-inspect-unique"><strong>'+escapeHtml(perk.name||"Perk especial")+'</strong><span>'+escapeHtml(perk.description||"")+'</span></div>');
  }
- const perkSection=perkRows.length?'<details class="accessory-info-disclosure"><summary>Possible Perks <span>'+perkRows.length+(Number.isFinite(limit)?' · até '+Math.max(0,limit):"")+'</span></summary><div class="accessory-info-options">'+perkRows.join("")+'</div></details>':"";
- return suffixSection+perkSection;
+ const perkSection=perkRows.length?'<details class="accessory-inspect-accordion"><summary><span>Possible Perks</span><em>'+perkRows.length+(Number.isFinite(limit)?' · até '+Math.max(0,limit):"")+'</em></summary><div class="accessory-inspect-options">'+perkRows.join("")+'</div></details>':"";
+ return '<section class="accessory-inspect-rolls">'+suffixSection+perkSection+'</section>';
 }
 function detailedAccessoryMarkup(record,item){
  const info=record?.itemInfo||{},fields=[detailField("Nível requerido",info.requiredLevel),detailField("Peso",info.weight),detailField("Durabilidade máxima",info.maxDurability),detailField("Pode reforçar",info.canReinforce===true?"Sim":info.canReinforce===false?"Não":null)].filter(Boolean).join("");
- const otherInfo=fields?'<details class="accessory-info-disclosure accessory-other-info"><summary>Outras informações do acessório <span>'+(fields.match(/class="detail-field"/g)||[]).length+'</span></summary><div class="accessory-info-options accessory-other-fields">'+fields+'</div></details>':"";
- return '<section class="detail-section stats-primary">'+renderAccessoryStats(record)+'</section>'+renderAccessoryReadOnlyOptions(record)+otherInfo+'<p class="detail-note">Dados da ficha individual do Questlog. Campos não fornecidos pela fonte não são exibidos.</p><div class="detail-id-footer">ID: '+escapeHtml(item.id||item.compoundId||"")+'</div>';
+ const extras=fields?'<section class="accessory-inspect-extra">'+fields+'</section>':"";
+ return renderAccessoryStats(record)+renderAccessoryReadOnlyOptions(record)+extras+'<p class="accessory-inspect-note">Dados da ficha individual do Questlog. Campos não fornecidos pela fonte não são exibidos.</p>';
 }
 
 async function getAccessoryDetailsCatalog(){
