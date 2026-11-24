@@ -1288,7 +1288,7 @@ input.gear-score-slider::-moz-range-thumb{width:9px;height:9px;border:1px solid 
 .catalog-viewbar{display:flex;align-items:center;gap:7px;margin:0 0 14px;color:var(--muted);font-size:9px;letter-spacing:1.2px}
 .catalog-view-button{border:1px solid var(--border);background:#101c26;color:var(--muted);padding:8px 13px;font:500 10px Inter,sans-serif;cursor:pointer;transition:background .18s,border-color .18s,color .18s}
 .catalog-view-button:hover,.catalog-view-button.active{border-color:var(--gold);color:var(--gold2);background:#1b2b37}
-.catalog-grid-view{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:10px;padding:10px;border:1px solid var(--border);background:#0d1821a8}
+.catalog-grid-view{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:10px;border:1px solid var(--border);background:#0d1821a8}
 .catalog-grid-view .catalog-item-entry{min-width:0;display:flex;flex-direction:column;gap:8px;border:0}
 .catalog-card{width:100%;min-width:0;display:flex;flex-direction:column;gap:8px;padding:9px;text-align:left;border:1px solid color-mix(in srgb,var(--rarity) 88%,#494333);background:linear-gradient(145deg,color-mix(in srgb,var(--rarity) 78%,#211f18),color-mix(in srgb,var(--rarity) 58%,#15140f) 58%,color-mix(in srgb,var(--rarity) 38%,#11110e));color:var(--text);cursor:pointer;transition:transform .16s,border-color .16s,background .16s}
 .catalog-card:hover{transform:translateY(-2px);border-color:var(--rarity);background:linear-gradient(145deg,color-mix(in srgb,var(--rarity) 88%,#211f18),color-mix(in srgb,var(--rarity) 68%,#15140f) 58%,color-mix(in srgb,var(--rarity) 48%,#11110e))}
@@ -1303,7 +1303,7 @@ input.gear-score-slider::-moz-range-thumb{width:9px;height:9px;border:1px solid 
 .catalog-card-copy em{font-style:normal;font-size:9px;letter-spacing:.7px;text-transform:uppercase;color:var(--rarity)}
 .catalog-grid-view .inline-item-detail{grid-column:1/-1;width:100%}
 .catalog-grid-view .armor-set-group{grid-column:1/-1}
-.catalog-grid-view .armor-set-group>div{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:10px;padding:10px}
+.catalog-grid-view .armor-set-group>div{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:10px}
 .catalog-grid-view .armor-set-group .catalog-item-entry{min-width:0;display:flex;flex-direction:column;gap:8px;border:0}
 @media(max-width:760px){.catalog-grid-view{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:8px}.catalog-card{padding:7px}.catalog-card-copy strong{font-size:11px}.catalog-grid-view .armor-set-group>div{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:8px}.catalog-viewbar{flex-wrap:wrap}}
 
@@ -3109,4 +3109,55 @@ body{font-family:var(--font-ui)}
  #weapons-view .equipment-inspect-card .accessory-inspect-art,
  #armor-view .equipment-inspect-card .accessory-inspect-art,
  #accessories-view .equipment-inspect-card .accessory-inspect-art{height:102px;min-height:102px}
+}
+
+
+/* === Padronização final dos catálogos e fichas === */
+.weapon-row[style*="--rarity"]{border-left:3px solid var(--rarity);background:linear-gradient(90deg,color-mix(in srgb,var(--rarity) 19%,transparent),transparent 62%)}
+.weapon-row[style*="--rarity"]:hover,.weapon-row[style*="--rarity"].selected{background:linear-gradient(90deg,color-mix(in srgb,var(--rarity) 31%,#14212a),rgba(27,43,55,.9) 72%)}
+.weapon-row .rarity-label{color:var(--rarity);font-size:10px;font-weight:800;letter-spacing:1px;text-shadow:0 0 9px color-mix(in srgb,var(--rarity) 55%,transparent)}
+.catalog-card{border-width:1.5px;border-color:color-mix(in srgb,var(--rarity) 100%,#fff 8%)}
+.catalog-card-copy em{font-size:10px;font-weight:800;text-shadow:0 0 9px color-mix(in srgb,var(--rarity) 55%,transparent)}
+.catalog-grid-view{grid-template-columns:repeat(4,minmax(0,1fr))}
+.catalog-grid-view .armor-set-group>div{grid-template-columns:repeat(4,minmax(0,1fr))}
+.equipment-inspect-card{box-sizing:border-box;width:100%;max-width:none;padding:22px 22px 18px!important;border:1px solid color-mix(in srgb,var(--rarity) 40%,#52606a)!important;background:radial-gradient(ellipse at 82% 12%,color-mix(in srgb,var(--rarity) 13%,transparent),transparent 45%),linear-gradient(145deg,#172633,#0f1b25)!important}
+.equipment-inspect-card .accessory-inspect-header{position:relative;display:block!important;min-height:126px;padding:0!important;margin:0 0 14px!important;border:0!important}
+.equipment-inspect-card .accessory-inspect-heading{width:calc(100% - 154px);min-width:0;min-height:126px;padding:0!important;overflow:visible}
+.equipment-inspect-card .accessory-inspect-heading h3{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;max-height:3.12em;min-height:0;margin:0!important;color:#f4f0df!important;font:600 var(--item-name-size,38px)/1.04 Inter,system-ui,sans-serif!important;letter-spacing:-.8px;text-align:left;overflow-wrap:anywhere;word-break:normal}
+.equipment-inspect-card .accessory-inspect-art{position:absolute!important;top:0;right:0;width:140px!important;height:126px!important;min-height:126px!important;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.equipment-inspect-card .accessory-inspect-image{display:block;width:100%;height:100%;object-fit:contain;image-rendering:auto;filter:contrast(1.08) brightness(1.06) drop-shadow(0 7px 10px rgba(0,0,0,.48))}
+.equipment-inspect-card .accessory-inspect-meta{display:flex;flex-wrap:wrap;gap:4px 8px;margin:0 0 7px!important}
+.equipment-inspect-card .accessory-inspect-meta-value{color:#e8e2cc;font:500 10px/1.35 Inter,system-ui,sans-serif;white-space:nowrap}
+.equipment-inspect-card .accessory-inspect-meta-value.rarity-value{color:var(--rarity);font-weight:800;text-shadow:0 0 10px color-mix(in srgb,var(--rarity) 35%,transparent)}
+.equipment-inspect-card .accessory-inspect-heading .gear-score-control{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto auto!important;align-items:start;justify-items:start;gap:3px;width:100%!important;max-width:190px!important;margin:8px 0 0!important;padding:0!important;border:0!important;background:none!important}
+.equipment-inspect-card .gear-score-value{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+.equipment-inspect-card .gear-score-value label{font:500 10px/1.3 Inter,sans-serif;color:rgba(224,222,198,.68);text-transform:none}
+.equipment-inspect-card .gear-score-value strong{font:600 38px/.98 Inter,sans-serif;color:#f5f0dc;font-variant-numeric:tabular-nums}
+.equipment-inspect-card input.gear-score-slider{display:block;width:100%;max-width:150px;margin:2px 0 0;accent-color:#d2b477;cursor:pointer}
+#accessories-view .equipment-inspect-card .accessory-inspect-stat-list,#weapons-view .equipment-inspect-card .accessory-inspect-stat-list,#armor-view .equipment-inspect-card .accessory-inspect-stat-list{display:grid;gap:3px;padding:0 0 9px}
+#accessories-view .equipment-inspect-card .accessory-inspect-stat,#weapons-view .equipment-inspect-card .accessory-inspect-stat,#armor-view .equipment-inspect-card .accessory-inspect-stat{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:9px;align-items:baseline;min-height:17px}
+#accessories-view .equipment-inspect-card .accessory-inspect-stat strong,#weapons-view .equipment-inspect-card .accessory-inspect-stat strong,#armor-view .equipment-inspect-card .accessory-inspect-stat strong{font:500 12px/1.35 Inter,sans-serif;color:#f1ecd9;text-align:left;font-variant-numeric:tabular-nums}
+#accessories-view .equipment-inspect-card .accessory-inspect-stat span,#weapons-view .equipment-inspect-card .accessory-inspect-stat span,#armor-view .equipment-inspect-card .accessory-inspect-stat span{font:400 12px/1.35 Inter,sans-serif;color:rgba(231,229,209,.9)}
+#accessories-view .equipment-inspect-card .accessory-inspect-stat small,#weapons-view .equipment-inspect-card .accessory-inspect-stat small,#armor-view .equipment-inspect-card .accessory-inspect-stat small{font:400 10px/1.35 Inter,sans-serif;color:rgba(224,222,198,.58);text-align:right}
+#accessories-view .equipment-inspect-card .accessory-inspect-footer,#weapons-view .equipment-inspect-card .accessory-inspect-footer,#armor-view .equipment-inspect-card .accessory-inspect-footer{display:flex;flex-wrap:wrap;align-items:center;gap:5px 8px;margin-top:10px;padding-top:8px;border-top:1px solid rgba(220,218,190,.17);color:rgba(224,222,198,.7);font:400 9px/1.4 Inter,sans-serif}
+#accessories-view .equipment-inspect-card .accessory-inspect-source,#weapons-view .equipment-inspect-card .accessory-inspect-source,#armor-view .equipment-inspect-card .accessory-inspect-source{display:inline-block;margin-top:9px;color:rgba(218,205,169,.75);font:500 9px/1.3 Inter,sans-serif;letter-spacing:.45px;text-decoration:none}
+@media(max-width:760px){
+ .catalog-grid-view{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .catalog-grid-view .armor-set-group>div{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #weapons-view #weapon-detail.weapon-detail-inline .equipment-inspect-card,#armor-view #armor-detail.armor-detail-inline .equipment-inspect-card,#accessories-view #accessory-detail.accessory-detail-inline .equipment-inspect-card{display:block!important;visibility:visible!important;opacity:1!important;position:relative!important;width:100%!important;max-width:none!important;min-height:0!important;height:auto!important}
+ .equipment-inspect-card{padding:18px 15px 16px!important}
+ .equipment-inspect-card .accessory-inspect-heading{width:calc(100% - 134px);min-height:116px}
+ .equipment-inspect-card .accessory-inspect-art{width:126px!important;height:116px!important;min-height:116px!important}
+ .equipment-inspect-card .accessory-inspect-heading h3{font-size:clamp(20px,var(--item-name-size,34px),34px)!important}
+ .equipment-inspect-card .accessory-inspect-heading .gear-score-control{max-width:175px!important;margin-top:7px!important}
+ .equipment-inspect-card .gear-score-value strong{font-size:35px!important}
+ .equipment-inspect-card input.gear-score-slider{max-width:135px}
+}
+@media(max-width:390px){
+ .equipment-inspect-card .accessory-inspect-heading{width:calc(100% - 104px);min-height:102px}
+ .equipment-inspect-card .accessory-inspect-art{width:98px!important;height:102px!important;min-height:102px!important}
+ .equipment-inspect-card .accessory-inspect-heading h3{font-size:clamp(19px,var(--item-name-size,28px),28px)!important}
+ .equipment-inspect-card .accessory-inspect-heading .gear-score-control{max-width:155px!important;margin-top:6px!important}
+ .equipment-inspect-card .gear-score-value strong{font-size:28px!important}
+ .equipment-inspect-card input.gear-score-slider{max-width:120px}
 }
