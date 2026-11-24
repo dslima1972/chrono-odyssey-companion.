@@ -637,19 +637,17 @@ function renderArmorDefenseAttributes(item,score){
   const basePath=descriptor!==undefined&&descriptor!==null?path.concat(String(descriptor)):path;
   for(const [key,value] of Object.entries(node)){
    const next=[...basePath,key],joined=normalize(next.join(""));
-   const identity=normalizeStatIdentity(joined);
-   const physical=identity==="physicaldefense";
-   const magical=identity==="magicdefense";
+   const identity=normalizeStatIdentity(joined),physical=identity==="physicaldefense",magical=identity==="magicdefense";
    if((physical||magical)&&value!==null&&value!==undefined){
-    let amount=value,map=null;
+    let amount=value,map=null,statType=descriptor||next.join("");
     if(typeof value==="object"){
      map=value.gearScore&&typeof value.gearScore==="object"?value.gearScore:null;
-     if(map){const sorted=Object.entries(map).sort((a,b)=>Number(a[0])-Number(b[0]));amount=map[String(score)]??map["1"]??sorted[0]?.[1]}
+     if(map){const sorted=Object.entries(map).sort((a,b)=>Number(a[0])-Number(b[0]));amount=map[String(score)]??map["1"]??sorted[0]?.[1];statType=value.statType||statType}
      else amount=value.statValue??value.value??value.amount??value.statValue1??value.baseValue;
     }
     if(amount!==undefined&&amount!==null&&(typeof amount!=="object"||Array.isArray(amount))){
      const target=physical?"physical":"magical";
-     if(found[target]===null)found[target]={value:amount,map};
+     if(found[target]===null)found[target]={value:amount,map,statType};
     }
    }
    if(value&&typeof value==="object"&&!Array.isArray(value))walk(value,next,depth+1);
@@ -657,55 +655,20 @@ function renderArmorDefenseAttributes(item,score){
  }
  walk(item?.equipmentStats||{},["equipmentStats"]);
  walk(item?.itemStats||{},["itemStats"]);
- const rows=[];
- if(found.physical!==null)rows.push(["Defesa física",found.physical]);
- if(found.magical!==null)rows.push(["Defesa mágica",found.magical]);
- if(!rows.length)return "";
- return '<div class="stat-list armor-defense-stats">'+rows.map(([label,data])=>'<div class="stat-line"><span>'+label+'</span><strong '+(data.map?'data-gear-score-map="'+escapeHtml(JSON.stringify(data.map))+'"':'')+'>'+escapeHtml(data.value)+'</strong><small></small></div>').join("")+'</div>';
+ return ["physical","magical"].filter(key=>found[key]!==null).map(key=>{
+  const data=found[key],label=key==="physical"?"Defesa física":"Defesa mágica";
+  return '<div class="accessory-inspect-stat"><strong '+(data.map?'data-gear-score-map="'+escapeHtml(JSON.stringify(data.map))+'" data-stat-type="'+escapeHtml(data.statType||key)+'"':'')+'>'+escapeHtml(formatStatValue(data.statType||key,data.value))+'</strong><span>'+label+'</span></div>';
+ }).join("");
 }
 function renderArmorStats(item){
  const levels=findArmorDefenseLevels(item),score=levels?defaultGearScore(item,levels):1;
  const entries=dedupeStatEntries(getItemStatEntries(item)).filter(entry=>!["physicaldefense","magicdefense"].includes(statFamily(entry.identity)));
- const baseRows=entries.map(entry=>'<div class="stat-line"><span>'+escapeHtml(entry.label)+'</span><strong>'+escapeHtml(formatStatValue(entry.key,entry.value))+'</strong><small>'+escapeHtml(entry.chance||"")+'</small></div>').join("");
+ const baseRows=entries.map(entry=>'<div class="accessory-inspect-stat"><strong>'+escapeHtml(formatStatValue(entry.key,entry.value))+'</strong><span>'+escapeHtml(humanizeStat(entry.identity||entry.key))+'</span>'+(entry.chance?'<small>'+escapeHtml(entry.chance)+'</small>':"")+'</div>').join("");
  const defenses=renderArmorDefenseAttributes(item,score);
- const defenseRows=defenses.replace(/^<div class="stat-list armor-defense-stats">/,"").replace(/<\/div>$/,"");
- const rows=baseRows+defenseRows;
- const stats=rows?'<div class="stat-list">'+rows+'</div>':'<p class="detail-muted">A fonte não retornou atributos básicos para este item.</p>';
- return (levels?renderGearScoreControl(item,levels,"Defesa"):"")+stats;
+ const rows=baseRows+defenses;
+ return '<section class="accessory-inspect-stats">'+(levels?renderGearScoreControl(item,levels,"Defesa"):"")+'<div class="accessory-inspect-stat-list">'+(rows||'<p class="detail-muted">A fonte não retornou atributos básicos para esta armadura.</p>')+'</div></section>';
 }
-
 function renderOptionalItemOptions(item){const content=renderSuffixes(item)+renderPerks(item);return content?'<details class="detail-disclosure item-options-disclosure"><summary>Sufixos e perks</summary><div class="item-options-content">'+content+'</div></details>':""}
-function findArmorGearScoreMaps(item){
- const maps=new Map(),visited=new Set(),pending=[item?.equipmentStats,item?.itemStats?.equipmentStats];
- while(pending.length){
-  const node=pending.shift();
-  if(!node||typeof node!=="object"||visited.has(node))continue;
-  visited.add(node);
-  if(Array.isArray(node)){node.forEach(value=>pending.push(value));continue}
-  for(const [key,value] of Object.entries(node)){
-   const family=statFamily(key);
-   if((family==="physicaldefense"||family==="magicdefense")&&value&&typeof value==="object"){
-    const levels=value.gearScore??value.levels??value.values;
-    if(levels&&typeof levels==="object"&&Object.keys(levels).length&&!maps.has(family))maps.set(family,{statType:value.statType||key,levels});
-   }
-   if(value&&typeof value==="object")pending.push(value);
-  }
- }
- return maps;
-}
-function renderArmorStats(item){
- const maps=findArmorGearScoreMaps(item),entries=dedupeStatEntries(getItemStatEntries(item));
- const dynamicFamilies=new Set(maps.keys()),rows=[];
- for(const [family,progression] of maps){
-  const score=defaultGearScore(item,progression.levels),value=gearScoreValueAt(progression.levels,score);
-  rows.push('<div class="accessory-inspect-stat"><strong data-gear-score-map="'+escapeHtml(JSON.stringify(progression.levels))+'" data-stat-type="'+escapeHtml(progression.statType)+'">'+escapeHtml(formatStatValue(progression.statType,value))+'</strong><span>'+escapeHtml(humanizeStat(family))+'</span></div>');
- }
- entries.filter(entry=>!dynamicFamilies.has(statFamily(entry.identity||entry.key))).forEach(entry=>{
-  rows.push('<div class="accessory-inspect-stat"><strong>'+escapeHtml(formatStatValue(entry.key,entry.value))+'</strong><span>'+escapeHtml(humanizeStat(entry.identity||entry.key))+'</span>'+(entry.chance?'<small>'+escapeHtml(entry.chance)+'</small>':"")+'</div>');
- });
- const controlLevels=maps.get("physicaldefense")?.levels||maps.get("magicdefense")?.levels;
- return '<section class="accessory-inspect-stats">'+(controlLevels?renderGearScoreControl(item,controlLevels,"Defesa"):"")+'<div class="accessory-inspect-stat-list">'+(rows.length?rows.join(""):'<p class="detail-muted">A fonte não retornou atributos básicos para esta armadura.</p>')+'</div></section>';
-}
 function detailedArmorMarkup(item,catalogItem){
  return renderArmorStats(item)+renderAccessoryReadOnlyOptions(item)+renderEquipmentFooter(item,true)+'<p class="detail-note">Dados da ficha individual do Questlog.</p><div class="detail-id-footer">ID: '+escapeHtml(catalogItem.id||catalogItem.compoundId||"")+'</div>';
 }
