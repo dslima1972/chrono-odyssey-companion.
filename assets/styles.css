@@ -3193,3 +3193,25 @@ body{font-family:var(--font-ui)}
  .catalog-controls-row{justify-content:flex-start;gap:7px;flex-wrap:nowrap;overflow-x:auto;max-width:100%;padding-bottom:2px}
  .catalog-controls-row .catalog-viewbar,.catalog-controls-row .armor-modebar{flex:0 0 auto}
 }
+
+
+/* A ficha de acessórios usa a mesma altura livre das fichas de armas e armaduras. */
+#accessories-view #accessory-detail{
+ position:sticky!important;top:18px!important;
+ width:100%!important;min-width:0!important;min-height:360px!important;
+ max-height:none!important;height:auto!important;overflow:visible!important;
+ padding:0!important;border:0!important;background:transparent!important;
+}
+#accessories-view #accessory-detail .equipment-inspect-card{
+ width:100%!important;max-width:none!important;min-height:360px!important;
+ max-height:none!important;height:auto!important;overflow:visible!important;
+}
+@media(max-width:760px){
+ #accessories-view #accessory-detail.accessory-detail-inline{
+  position:relative!important;top:auto!important;min-height:0!important;
+  max-height:none!important;height:auto!important;overflow:visible!important;
+ }
+ #accessories-view #accessory-detail.accessory-detail-inline .equipment-inspect-card{
+  min-height:340px!important;max-height:none!important;height:auto!important;overflow:visible!important;
+ }
+}
