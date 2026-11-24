@@ -334,12 +334,29 @@ function gearScoreValueAt(levels,score){
  const entry=Object.entries(levels||{}).find(([key,value])=>Number(key)===target&&value!==null&&value!==undefined);
  return entry?gearScoreRawValue(entry[1]):null;
 }
-function gearScoreValueMarkup(option,score,statType){
+function optionStatEntries(option,score){
  const levels=option?.gearScore&&typeof option.gearScore==="object"?option.gearScore:null;
- if(!levels)return '<span class="roll-value">Valor não informado</span>';
- const value=gearScoreValueAt(levels,score);
- return '<span class="roll-value" data-gear-score-map="'+escapeHtml(JSON.stringify(levels))+'" data-stat-type="'+escapeHtml(statType||option.statType||option.type||"")+'">'+escapeHtml(value===null||value===undefined?"Sem valor cadastrado para este Equipment Score":formatStatValue(statType||option.statType||option.type,value))+'</span>';
+ const level=levels?(levels[String(score)]??null):null,entries=[];
+ const types=[option?.statType1??level?.statType1,option?.statType2??level?.statType2];
+ if(types.some(Boolean)){
+  types.forEach((type,index)=>{
+   if(!type)return;
+   const field=index===0?"statValue1":"statValue2",value=level?.[field]??option?.[field]??null;
+   if(value!==null&&value!==undefined&&value!=="")entries.push({key:type,label:humanizeStat(type),value,levels,field});
+  });
+ }else{
+  const type=option?.statType??option?.type??level?.statType??level?.type;
+  const value=level?gearScoreRawValue(level):(option?.statValue1??option?.statValue??option?.value??option?.amount);
+  if(value!==null&&value!==undefined&&value!=="")entries.push({key:type||"attribute",label:type?humanizeStat(type):"Atributo",value,levels,field:null});
+ }
+ return entries;
 }
+function optionStatsMarkup(option,score){
+ const entries=optionStatEntries(option,score);
+ if(!entries.length)return '<span class="roll-value">Valor não informado</span>';
+ return '<span class="roll-stat-values">'+entries.map(entry=>'<span class="roll-stat-value"><small>'+escapeHtml(entry.label)+'</small><strong '+(entry.levels?'data-gear-score-map="'+escapeHtml(JSON.stringify(entry.levels))+'" data-stat-type="'+escapeHtml(entry.key)+'" data-stat-field="'+escapeHtml(entry.field||"")+'"':'')+'>'+escapeHtml(formatStatValue(entry.key,entry.value))+'</strong></span>').join("")+'</span>';
+}
+function gearScoreValueMarkup(option,score,statType){return optionStatsMarkup(option,score)}
 function itemCurrentGearScore(item){
  const saved=Number(equipmentRollSelection(item).gearScore);
  if(Number.isFinite(saved)&&saved>0)return saved;
@@ -385,9 +402,9 @@ function renderPerks(item){
  const seen=new Set(),rows=[],score=itemCurrentGearScore(item);
  for(const perk of candidates){
   const key=String(perk.id||perk.name||"").toLowerCase();if(!key||seen.has(key))continue;seen.add(key);
-  const stat=perk.statType?humanizeStat(perk.statType):"",value=gearScoreValueMarkup(perk,score,perk.statType);
+  const value=gearScoreValueMarkup(perk,score,perk.statType);
   const chance=Number.isFinite(Number(perk.chancePercentage))?' · '+Number(perk.chancePercentage).toLocaleString("pt-BR",{maximumFractionDigits:2})+'% de chance':"";
-  const meta=[stat].filter(Boolean).join(" · ");
+  const meta="";
   const selectedPerks=equipmentRollSelection(item).perks||[];
   rows.push('<label class="perk-row detail-option-row roll-choice"><input type="checkbox" data-perk-select data-item-roll-id="'+escapeHtml(equipmentRollKey(item))+'" data-perk-key="'+escapeHtml(key)+'" data-perk-limit="'+(Number.isFinite(limit)?Math.max(0,limit):0)+'" '+(selectedPerks.includes(key)?'checked ':'')+(!(Number.isFinite(limit)&&limit>0)?'disabled':'')+'><span class="roll-choice-copy"><strong>'+escapeHtml(perk.name||"Perk")+'</strong><small>'+escapeHtml(meta)+(meta?' · ':'')+value+escapeHtml(chance)+'</small></span></label>');
  }
@@ -1135,9 +1152,9 @@ function renderBuildCompactOptions(item){
   const gear=levels?renderGearScoreControl(item,levels,"Equipment Score"):"";
   const source=stats.suffixes,suffixes=source&&typeof source==="object"?Object.values(source).filter(x=>x&&typeof x==="object"):[];
   const suffixAllowed=grade.suffix!==false&&(grade.suffix===true||suffixes.length>0),currentSuffix=String(equipmentRollSelection(item).suffix||"");
-  const suffix=suffixAllowed?'<label class="build-config-field"><span>Sufixo</span><select data-suffix-select data-item-roll-id="'+escapeHtml(equipmentRollKey(item))+'"><option value="">Sem sufixo</option>'+suffixes.map((option,index)=>'<option value="'+index+'" '+(currentSuffix===String(index)?"selected":"")+'>'+escapeHtml(option.name||("Sufixo "+(index+1)))+'</option>').join("")+'</select></label>':"";
+  const suffix=suffixAllowed?'<label class="build-config-field"><span>Sufixo</span><select data-suffix-select data-item-roll-id="'+escapeHtml(equipmentRollKey(item))+'"><option value="">Sem sufixo</option>'+suffixes.map((option,index)=>'<option value="'+index+'" '+(currentSuffix===String(index)?"selected":"")+'>'+escapeHtml(option.name||("Sufixo "+(index+1)))+'</option>').join("")+'</select>'+(currentSuffix!==""&&suffixes[Number(currentSuffix)]?'<small class="build-config-option-stats">'+optionStatsMarkup(suffixes[Number(currentSuffix)],score)+'</small>':"")+'</label>':"";
   const limit=Number(grade.perkCount??stats.perkCount),candidates=[...perkEntries(stats.commonPerks),...perkEntries(stats.perks)],seen=new Set(),selected=equipmentRollSelection(item).perks||[],perks=[];
-  if(Number.isFinite(limit)&&limit>0)candidates.forEach(perk=>{const key=String(perk.id||perk.name||"").toLowerCase();if(!key||seen.has(key))return;seen.add(key);perks.push('<label class="build-config-perk"><input type="checkbox" data-perk-select data-item-roll-id="'+escapeHtml(equipmentRollKey(item))+'" data-perk-key="'+escapeHtml(key)+'" data-perk-limit="'+limit+'" '+(selected.includes(key)?"checked":"")+'><span>'+escapeHtml(perk.name||"Perk")+'</span></label>')});
+  if(Number.isFinite(limit)&&limit>0)candidates.forEach(perk=>{const key=String(perk.id||perk.name||"").toLowerCase();if(!key||seen.has(key))return;seen.add(key);perks.push('<label class="build-config-perk"><input type="checkbox" data-perk-select data-item-roll-id="'+escapeHtml(equipmentRollKey(item))+'" data-perk-key="'+escapeHtml(key)+'" data-perk-limit="'+limit+'" '+(selected.includes(key)?"checked":"")+'><span><strong>'+escapeHtml(perk.name||"Perk")+'</strong><small class="build-config-option-stats">'+optionStatsMarkup(perk,score)+'</small></span></label>')});
   const perkBlock=perks.length?'<div class="build-config-perks"><div class="build-config-label">Perks <small data-perk-counter><span>'+selected.length+'/'+limit+'</span></small></div><div class="build-config-perk-list">'+perks.join("")+'</div></div>':"";
   const controls=gear+suffix+perkBlock;
   return controls||'<p class="build-config-empty">Este equipamento não possui opções de Equipment Score, sufixos ou perks configuráveis na ficha disponível.</p>';
@@ -1158,21 +1175,31 @@ async function openBuildItemConfig(slot){
 }
 function renderBuildTotals(){
  const selected=buildSelectedEquipment(),target=$("build-selected-stats");if(!target)return;
- if(!selected.length){target.innerHTML='<p class="build-empty">Selecione equipamentos para visualizar a soma dos atributos da build.</p>';return}
+ const scores=selected.map(entry=>itemCurrentGearScore(entry.item)).filter(value=>Number.isFinite(value)&&value>0);
+ const average=scores.length?scores.reduce((sum,value)=>sum+value,0)/scores.length:null;
+ const averageMarkup='<div class="build-summary-average"><span>Média do Equip Score</span><strong>'+(average===null?"—":average.toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1}))+'</strong><small>'+scores.length+' equipamento(s) considerado(s)</small></div>';
+ if(!selected.length){target.innerHTML=averageMarkup+'<p class="build-empty">Selecione equipamentos para visualizar a soma dos atributos da build.</p>';return}
  const totals=new Map();
+ const add=(key,label,raw)=>{
+  if(raw===null||raw===undefined||raw==="")return;
+  const source=String(raw).replace(/,/g,"."),match=source.match(/-?\d+(?:\.\d+)?/);if(!match)return;
+  const value=Number(match[0]);if(!Number.isFinite(value))return;
+  const suffix=source.slice(match[0].length).trim(),identity=normalizeStatIdentity(key||label);
+  const current=totals.get(identity)||{label:label||humanizeStat(key),value:0,suffix};
+  current.value+=value;if(!current.suffix&&suffix)current.suffix=suffix;totals.set(identity,current);
+ };
  selected.forEach(entry=>{
-  if(!entry.record)return;
-  getItemStatEntries({...entry.item,...entry.record}).forEach(stat=>{
-   const raw=String(stat.value??"").replace(/,/g,".");
-   const match=raw.match(/-?\d+(?:\.\d+)?/);if(!match)return;
-   const value=Number(match[0]);if(!Number.isFinite(value))return;
-   const suffix=raw.slice(match[0].length).trim(),key=stat.identity||normalizeStatIdentity(stat.key);
-   const current=totals.get(key)||{label:stat.label||humanizeStat(stat.key),value:0,suffix};
-   current.value+=value;totals.set(key,current);
-  });
+  const item=entry.record?{...entry.item,...entry.record}:entry.item;
+  getItemStatEntries(item).forEach(stat=>add(stat.key,stat.label,stat.value));
+  const selection=equipmentRollSelection(entry.item),score=itemCurrentGearScore(entry.item),stats=item?.itemStats||{};
+  const suffixes=stats.suffixes&&typeof stats.suffixes==="object"?Object.values(stats.suffixes).filter(x=>x&&typeof x==="object"):[];
+  const chosen=suffixes[Number(selection.suffix)];
+  if(chosen)optionStatEntries(chosen,score).forEach(stat=>add(stat.key,stat.label,stat.value));
+  const candidates=[...perkEntries(stats.commonPerks),...perkEntries(stats.perks)],selectedPerks=selection.perks||[],seen=new Set();
+  candidates.forEach(perk=>{const key=String(perk.id||perk.name||"").toLowerCase();if(!key||seen.has(key)||!selectedPerks.includes(key))return;seen.add(key);optionStatEntries(perk,score).forEach(stat=>add(stat.key,stat.label,stat.value))});
  });
  const rows=[...totals.values()].sort((a,b)=>a.label.localeCompare(b.label,"pt-BR"));
- target.innerHTML=rows.length?'<div class="build-total-stats">'+rows.map(stat=>'<div class="build-total-stat"><span>'+escapeHtml(stat.label)+'</span><strong>'+escapeHtml(stat.value.toLocaleString("pt-BR",{maximumFractionDigits:2}))+(stat.suffix||"")+'</strong></div>').join("")+'</div>':'<p class="build-empty">As fichas selecionadas ainda não disponibilizaram atributos numéricos somáveis.</p>';
+ target.innerHTML=averageMarkup+(rows.length?'<div class="build-total-stats">'+rows.map(stat=>'<div class="build-total-stat"><span>'+escapeHtml(stat.label)+'</span><strong>'+escapeHtml(stat.value.toLocaleString("pt-BR",{maximumFractionDigits:2}))+(stat.suffix||"")+'</strong></div>').join("")+'</div>':'<p class="build-empty">As fichas selecionadas ainda não disponibilizaram atributos numéricos somáveis.</p>');
 }
 function renderBuildSelectedStats(){renderBuildTotals();renderBuildItemConfig()}
 function buildPickerStatsMarkup(record){
