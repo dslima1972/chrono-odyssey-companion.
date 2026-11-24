@@ -923,7 +923,7 @@ footer{border-color:#393528;color:var(--faint)}
  width:100%;min-height:0;margin:0;padding:22px 20px 18px;border:0;border-top:1px solid rgba(190,170,125,.16);
  background:radial-gradient(ellipse at 82% 16%,color-mix(in srgb,var(--rarity) 12%,transparent),transparent 44%),linear-gradient(120deg,rgba(23,27,29,.92),rgba(13,18,20,.88));
 }
-#accessories-view .catalog-layout>.detail-panel{display:none!important}
+/* A ficha de acessórios agora ocupa a coluna lateral do catálogo. */
 .inline-item-detail .detail-prototype .detail-top{grid-template-columns:minmax(0,1.15fr) minmax(210px,.85fr);gap:22px;padding:4px 0 16px}
 .inline-item-detail .detail-prototype .detail-icon.detail-hero{height:230px;min-height:190px}
 .inline-item-detail .detail-prototype .detail-top h3{font-size:clamp(25px,2.8vw,36px)}
