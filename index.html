@@ -9,8 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./assets/styles.css?v=20261123e16">
-  <script src="./assets/app.js?v=20261123al" defer></script>
+  <link rel="stylesheet" href="./assets/styles.css?v=20261123e17">
+  <script src="./assets/app.js?v=20261123am1" defer></script>
   <script src="./assets/dressing-room.js?v=20261123e20" defer></script>
 </head>
 <body>
@@ -73,6 +73,7 @@
         <select id="rarity-filter" aria-label="Filtrar por raridade"><option value="">Todas as raridades</option><option>Comum</option><option>Incomum</option><option>Raro</option><option>Épico</option><option>Lendário</option></select>
         <select id="weapon-stat-filter" aria-label="Filtrar por estatística"><option value="">Todas as estatísticas · abrir para carregar</option></select>
       </div>
+      <div class="catalog-viewbar" aria-label="Forma de exibição dos itens"><span>VISUALIZAÇÃO</span><button type="button" class="catalog-view-button active" data-catalog-view="list" data-catalog-target="weapons">Lista</button><button type="button" class="catalog-view-button" data-catalog-view="grid" data-catalog-target="weapons">Blocos</button></div>
       <div class="catalog-layout" id="catalog-layout">
         <div class="weapon-list" id="weapon-list"><div class="loading"><span class="spinner"></span>Consultando catálogo…</div></div>
         <aside class="detail-panel empty-detail" id="weapon-detail"><div class="detail-ornament">✧</div><h3>Selecione um item</h3><p>Escolha uma arma no catálogo para consultar sua ficha.</p></aside>
@@ -97,6 +98,7 @@
         <button type="button" class="armor-mode active" data-armor-mode="pieces">Peças</button>
         <button type="button" class="armor-mode" data-armor-mode="sets">Conjuntos</button>
       </div>
+      <div class="catalog-viewbar" aria-label="Forma de exibição das armaduras"><span>ITENS</span><button type="button" class="catalog-view-button active" data-catalog-view="list" data-catalog-target="armor">Lista</button><button type="button" class="catalog-view-button" data-catalog-view="grid" data-catalog-target="armor">Blocos</button></div>
       <div class="catalog-layout armor-layout" id="armor-catalog-layout">
         <div class="weapon-list" id="armor-list"><div class="empty-state">A estrutura do catálogo está pronta. Aguardando a exportação de armaduras do Questlog.</div></div>
         <aside class="detail-panel empty-detail" id="armor-detail"><div class="detail-ornament">✧</div><h3>Selecione uma peça</h3><p>Escolha uma armadura para consultar sua ficha e os atributos disponíveis.</p></aside>
@@ -177,6 +179,7 @@
         <select id="accessory-rarity-filter" aria-label="Filtrar por raridade"><option value="">Todas as raridades</option><option>Comum</option><option>Incomum</option><option>Raro</option><option>Épico</option><option>Lendário</option></select>
         <select id="accessory-stat-filter" aria-label="Filtrar por estatística"><option value="">Todas as estatísticas · abrir para carregar</option></select>
       </div>
+      <div class="catalog-viewbar" aria-label="Forma de exibição dos acessórios"><span>ITENS</span><button type="button" class="catalog-view-button active" data-catalog-view="list" data-catalog-target="accessories">Lista</button><button type="button" class="catalog-view-button" data-catalog-view="grid" data-catalog-target="accessories">Blocos</button></div>
       <div class="catalog-layout armor-layout"><div class="weapon-list" id="accessory-list"><div class="loading"><span class="spinner"></span>Consultando catálogo…</div></div><aside class="detail-panel empty-detail" id="accessory-detail"><div class="detail-ornament">✧</div><h3>Selecione um acessório</h3><p>Escolha uma peça para consultar atributos e sufixos.</p></aside></div>
       <div class="mobile-detail" id="accessory-mobile-detail" hidden></div>
       <p class="armor-data-note" id="accessory-data-status">Aguardando o catálogo de acessórios exportado do Questlog.</p>
