@@ -753,24 +753,20 @@ function renderAccessoryList(){
  if(selectedAccessory&&!rows.some(x=>String(x.id||x.compoundId)===String(selectedAccessory.id||selectedAccessory.compoundId)))selectedAccessory=null;
  if(!rows.length){
   $("accessory-list").innerHTML='<div class="empty-state">'+(accessories.length?"Nenhum acessório corresponde aos filtros selecionados.":"Aguardando a exportação do Questlog.")+'</div>';
- }else{
-  $("accessory-list").innerHTML=rows.map(x=>{
-   const isSelected=selectedAccessory&&String(selectedAccessory.id||selectedAccessory.compoundId)===String(x.id||x.compoundId);
-   return catalogView("accessories")==="grid"
-    ?catalogCardMarkup(x,{name:x.name||"Acessório",meta:accessoryType(x),icon:accessoryIcon(x),image:accessoryImageMarkup(x),selected:isSelected,dataAttr:'data-accessory-id="'+escapeHtml(x.id)+'"'})
-    :'<button type="button" class="weapon-row armor-row '+(isSelected?"selected":"")+'" data-accessory-id="'+escapeHtml(x.id)+'" style="--rarity:'+rarityStyle(x)+'"><span class="weapon-symbol"><span>'+accessoryIcon(x)+'</span>'+accessoryImageMarkup(x)+'</span><span><span class="weapon-name">'+escapeHtml(x.name||"Acessório")+'</span><span class="weapon-meta">'+escapeHtml(accessoryType(x))+'</span></span><span class="rarity-label">'+escapeHtml(rarity(x))+'</span></button>';
-  }).join("");
+  return;
  }
+ $("accessory-list").innerHTML=rows.map(x=>{
+  const isSelected=selectedAccessory&&String(selectedAccessory.id||selectedAccessory.compoundId)===String(x.id||x.compoundId);
+  const itemMarkup=catalogView("accessories")==="grid"
+   ?catalogCardMarkup(x,{name:x.name||"Acessório",meta:accessoryType(x),icon:accessoryIcon(x),image:accessoryImageMarkup(x),selected:isSelected,dataAttr:'data-accessory-id="'+escapeHtml(x.id)+'"'})
+   :'<button type="button" class="weapon-row armor-row '+(isSelected?"selected":"")+'" data-accessory-id="'+escapeHtml(x.id)+'" style="--rarity:'+rarityStyle(x)+'"><span class="weapon-symbol"><span>'+accessoryIcon(x)+'</span>'+accessoryImageMarkup(x)+'</span><span><span class="weapon-name">'+escapeHtml(x.name||"Acessório")+'</span><span class="weapon-meta">'+escapeHtml(accessoryType(x))+'</span></span><span class="rarity-label">'+escapeHtml(rarity(x))+'</span></button>';
+  return '<div class="catalog-item-entry">'+itemMarkup+(isSelected?'<div class="inline-item-detail">'+accessoryDetailMarkup(x)+'</div>':'')+'</div>';
+ }).join("");
  applyCatalogView("accessories","accessory-list");
  document.querySelectorAll("#accessory-list [data-accessory-id]").forEach(b=>b.addEventListener("click",()=>selectAccessory(b.dataset.accessoryId)));
- const detail=$("accessory-detail");
  if(selectedAccessory){
-  detail.classList.remove("empty-detail");
-  detail.innerHTML=accessoryDetailMarkup(selectedAccessory);
-  loadAccessoryDetails(selectedAccessory,detail);
- }else{
-  detail.classList.add("empty-detail");
-  detail.innerHTML='<div class="detail-ornament">✧</div><h3>Selecione um acessório</h3><p>Escolha uma peça no catálogo para consultar atributos, sufixos e perks disponíveis.</p>';
+  const panel=$("accessory-list").querySelector(".inline-item-detail .detail-panel");
+  if(panel)loadAccessoryDetails(selectedAccessory,panel);
  }
 }
 function accessoryDetailMarkup(item){
