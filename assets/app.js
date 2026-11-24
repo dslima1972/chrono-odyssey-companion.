@@ -407,8 +407,8 @@ function detailedWeaponMarkup(w,item){
 }
 async function getItemDetails(){if(!itemDetailsDataPromise)itemDetailsDataPromise=(async()=>{const manifestResponse=await fetch("./data/weapon-details-manifest.json?v=20261122f",{cache:"no-store"});if(!manifestResponse.ok)throw new Error("Manifesto local de detalhes das armas não encontrado (HTTP "+manifestResponse.status+").");const manifest=await manifestResponse.json();if(!Array.isArray(manifest.parts)||!manifest.parts.length)throw new Error("O manifesto não contém a lista de partes dos detalhes das armas.");const responses=await Promise.all(manifest.parts.map(async name=>{const response=await fetch("./data/"+encodeURIComponent(name)+"?v=20261122f",{cache:"no-store"});if(!response.ok)throw new Error("Não foi possível carregar "+name+" (HTTP "+response.status+").");return response.json()}));const allItems={};for(const part of responses)Object.assign(allItems,part.items||{});itemDetailsGeneratedAt=manifest.generatedAt?new Date(manifest.generatedAt).toLocaleString("pt-BR"):"não informada";return allItems})();return itemDetailsDataPromise}
 function equipmentInspectMarkup(item,category){
- const name=item.name||(category==="weapon"?"Arma":"Armadura"),id=item.id||item.compoundId||"",image=weaponImageMarkup(item,"accessory-inspect-image");
- return '<article class="detail-panel accessory-inspect-card equipment-inspect-card" style="--rarity:'+rarityStyle(item)+'"><header class="accessory-inspect-header"><div class="accessory-inspect-heading"><div class="accessory-inspect-meta detail-header-meta"></div><h3>'+escapeHtml(name)+'</h3></div><div class="accessory-inspect-art">'+image+'</div></header><div class="detail-live"><p class="detail-muted"><span class="spinner"></span>Carregando ficha individual do Questlog…</p></div><a class="accessory-inspect-source" href="https://questlog.gg/chrono-odyssey/en/db/item/'+encodeURIComponent(id)+'" target="_blank" rel="noreferrer">VER FICHA NO QUESTLOG ↗</a></article>';
+ const name=item.name||(category==="weapon"?"Arma":category==="armor"?"Armadura":"Acessório"),id=item.id||item.compoundId||"",nameSize=name.length>38?21:name.length>30?24:name.length>22?29:38,image=category==="accessory"?accessoryImageMarkup(item,"accessory-inspect-image"):weaponImageMarkup(item,"accessory-inspect-image");
+ return '<article class="detail-panel accessory-inspect-card equipment-inspect-card" style="--rarity:'+rarityStyle(item)+';--item-name-size:'+nameSize+'px"><header class="accessory-inspect-header"><div class="accessory-inspect-heading"><div class="accessory-inspect-meta detail-header-meta"></div><h3>'+escapeHtml(name)+'</h3></div><div class="accessory-inspect-art">'+image+'</div></header><div class="detail-live"><p class="detail-muted"><span class="spinner"></span>Carregando ficha individual do Questlog…</p></div><a class="accessory-inspect-source" href="https://questlog.gg/chrono-odyssey/en/db/item/'+encodeURIComponent(id)+'" target="_blank" rel="noreferrer">VER FICHA NO QUESTLOG ↗</a></article>';
 }
 function detailMarkup(w){return equipmentInspectMarkup(w,"weapon")}
 async function loadItemDetails(w,panelRoot){
@@ -719,6 +719,8 @@ function mountArmorDetail(){
  detail.classList.remove("empty-detail");detail.innerHTML=armorDetailMarkup(selectedArmor);const panel=detail.querySelector(".detail-panel");if(panel)loadArmorDetails(selectedArmor,panel);
 }
 function renderArmorList(){
+ const list=$("armor-list"),layout=$("armor-catalog-layout"),detail=$("armor-detail");
+ if(list&&layout&&detail&&list.contains(detail))layout.appendChild(detail);
  if(!armors.length){$("armor-catalog-count").textContent="AGUARDANDO CATÁLOGO";$("armor-list").innerHTML='<div class="empty-state">A estrutura do catálogo está pronta. Aguardando a exportação de armaduras do Questlog.</div>';mountArmorDetail();return}
  const rowMarkup=x=>{
   const isSelected=selectedArmor&&String(selectedArmor.id||selectedArmor.compoundId)===String(x.id||x.compoundId);
@@ -726,7 +728,7 @@ function renderArmorList(){
   const itemMarkup=catalogView("armor")==="grid"
    ?catalogCardMarkup(x,{name:x.name||"Armadura",meta,icon:armorIcon(x),image:weaponImageMarkup(x),selected:isSelected,dataAttr:'data-id="'+escapeHtml(x.id)+'"'})
    :'<button class="weapon-row armor-row '+(isSelected?"selected":"")+'" data-id="'+escapeHtml(x.id)+'" style="--rarity:'+rarityStyle(x)+'"><span class="weapon-symbol"><span>'+armorIcon(x)+'</span>'+weaponImageMarkup(x)+'</span><span><span class="weapon-name">'+escapeHtml(x.name||"Armadura")+'</span><span class="weapon-meta">'+meta+'</span></span><span class="rarity-label">'+escapeHtml(rarity(x))+'</span></button>';
-  return '<div class="catalog-item-entry">'+itemMarkup+(isSelected?'<div class="inline-item-detail">'+armorDetailMarkup(x)+'</div>':'')+'</div>';
+  return '<div class="catalog-item-entry">'+itemMarkup+'</div>';
  };
  if(armorMode==="sets"){
   const q=$("armor-search").value.trim().toLowerCase(),type=$("armor-type-filter").value,grade=$("armor-rarity-filter").value,set=$("armor-set-filter").value,stat=$("armor-stat-filter")?.value||"";
@@ -817,9 +819,7 @@ function renderAccessoryList(){
 window.addEventListener("resize",()=>{
  if($("accessories-view")?.classList.contains("active"))mountAccessoryDetail();
 },{passive:true});
-function accessoryDetailMarkup(item){
- return '<article class="detail-panel accessory-inspect-card" style="--rarity:'+rarityStyle(item)+'"><header class="accessory-inspect-header"><div class="accessory-inspect-heading"><div class="accessory-inspect-meta detail-header-meta"></div><h3>'+escapeHtml(item.name||"Acessório")+'</h3></div><div class="accessory-inspect-art">'+accessoryImageMarkup(item,"accessory-inspect-image")+'</div></header><div class="detail-live"><p class="detail-muted">Carregando ficha individual do Questlog…</p></div><a class="accessory-inspect-source" href="https://questlog.gg/chrono-odyssey/en/db/item/'+encodeURIComponent(item.id||item.compoundId||"")+'" target="_blank" rel="noreferrer">VER FICHA NO QUESTLOG ↗</a></article>';
-}
+function accessoryDetailMarkup(item){return equipmentInspectMarkup(item,"accessory")}
 function findAccessoryGearScore(item){
  const stats=item?.itemStats?.equipmentStats||{};
  for(const [key,entry] of Object.entries(stats)){
