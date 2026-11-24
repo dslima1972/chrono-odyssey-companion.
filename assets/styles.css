@@ -3471,3 +3471,87 @@ footer{color:#7890a0}
  .tabs::-webkit-scrollbar{display:none}
  .tab{flex:0 0 auto;padding:13px 1px 12px;font-size:9px}
 }
+
+
+/* Filtros dos catálogos: controles leves com acabamento em linha inferior */
+.catalog-filters>.search-wrap,
+.catalog-filters>select{
+ background:transparent!important;
+ border:0!important;
+ border-bottom:1px solid rgba(120,144,160,.28)!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ transition:border-color .18s ease,background-color .18s ease,color .18s ease;
+}
+.catalog-filters>.search-wrap{
+ padding:0 10px;
+ min-height:42px;
+}
+.catalog-filters>.search-wrap>span{
+ color:var(--gold);
+ opacity:.72;
+}
+.catalog-filters>.search-wrap input{
+ background:transparent!important;
+ border:0!important;
+ box-shadow:none!important;
+ color:var(--text);
+}
+.catalog-filters>select{
+ padding:0 28px 0 10px;
+ color:var(--muted);
+ cursor:pointer;
+}
+.catalog-filters>.search-wrap:hover,
+.catalog-filters>select:hover{
+ border-bottom-color:rgba(120,144,160,.58)!important;
+ background:rgba(120,144,160,.035)!important;
+}
+.catalog-filters>.search-wrap:focus-within,
+.catalog-filters>select:focus{
+ border-bottom-color:var(--gold)!important;
+ background:rgba(193,166,109,.045)!important;
+ outline:none;
+}
+.catalog-filters>select:focus{color:var(--text)}
+.catalog-filters>select option{
+ background:#111923;
+ color:var(--text);
+}
+.catalog-controls-row .catalog-viewbar,
+.catalog-controls-row .armor-modebar{
+ gap:16px;
+}
+.catalog-controls-row .catalog-view-button,
+.catalog-controls-row .armor-mode{
+ padding:8px 2px 9px;
+ border:0!important;
+ border-bottom:1px solid transparent!important;
+ border-radius:0!important;
+ background:transparent!important;
+ color:var(--muted);
+ box-shadow:none!important;
+ transition:color .18s ease,border-color .18s ease;
+}
+.catalog-controls-row .catalog-view-button:hover,
+.catalog-controls-row .armor-mode:hover{
+ color:var(--text);
+ border-bottom-color:rgba(120,144,160,.48)!important;
+}
+.catalog-controls-row .catalog-view-button.active,
+.catalog-controls-row .armor-mode.active{
+ color:var(--gold2);
+ border-bottom-color:var(--gold)!important;
+ background:transparent!important;
+}
+.catalog-controls-row .catalog-view-button:focus-visible,
+.catalog-controls-row .armor-mode:focus-visible{
+ outline:1px solid rgba(193,166,109,.55);
+ outline-offset:3px;
+}
+@media(max-width:760px){
+ .catalog-filters>.search-wrap{flex:0 0 190px;min-width:190px}
+ .catalog-filters>select{flex:0 0 148px;min-width:148px}
+ .catalog-controls-row .catalog-viewbar,
+ .catalog-controls-row .armor-modebar{gap:13px}
+}
