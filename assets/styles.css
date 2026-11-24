@@ -2872,3 +2872,67 @@ body{font-family:var(--font-ui)}
  #armor-view .catalog-detail-host .detail-prototype .detail-top h3{font-size:28px;line-height:1.05}
 }
 
+
+
+
+/* Estrutura de ficha compartilhada: armas e armaduras */
+#weapons-view .catalog-detail-host .detail-prototype .detail-top,
+#armor-view .catalog-detail-host .detail-prototype .detail-top{
+ grid-template-columns:minmax(0,1.15fr) minmax(210px,.85fr);gap:22px;align-items:start;padding:4px 0 16px;
+}
+#weapons-view .catalog-detail-host .detail-prototype .detail-heading-copy,
+#armor-view .catalog-detail-host .detail-prototype .detail-heading-copy{display:flex;flex-direction:column;align-items:flex-start;min-width:0}
+#weapons-view .catalog-detail-host .detail-prototype .detail-header-meta,
+#armor-view .catalog-detail-host .detail-prototype .detail-header-meta{order:0}
+#weapons-view .catalog-detail-host .detail-prototype .detail-top h3,
+#armor-view .catalog-detail-host .detail-prototype .detail-top h3{order:1;margin:8px 0 0}
+#weapons-view .catalog-detail-host .detail-prototype .detail-heading-copy .gear-score-control,
+#armor-view .catalog-detail-host .detail-prototype .detail-heading-copy .gear-score-control{
+ order:2;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto;gap:4px;
+ width:100%;max-width:190px;margin:10px 0 0;padding:0;border:0;background:transparent;
+}
+#weapons-view .catalog-detail-host .detail-prototype .gear-score-value,
+#armor-view .catalog-detail-host .detail-prototype .gear-score-value{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+#weapons-view .catalog-detail-host .detail-prototype .gear-score-value label,
+#armor-view .catalog-detail-host .detail-prototype .gear-score-value label{font:600 9px/1.3 var(--font-ui);letter-spacing:1.3px;text-transform:uppercase;color:var(--muted)}
+#weapons-view .catalog-detail-host .detail-prototype .gear-score-value strong,
+#armor-view .catalog-detail-host .detail-prototype .gear-score-value strong{font:600 27px/1 var(--font-ui);color:#e6c98e}
+#weapons-view .catalog-detail-host .detail-prototype input.gear-score-slider,
+#armor-view .catalog-detail-host .detail-prototype input.gear-score-slider{width:100%;max-width:150px;margin:2px 0 0}
+#weapons-view .catalog-detail-host .detail-prototype .detail-icon.detail-hero,
+#armor-view .catalog-detail-host .detail-prototype .detail-icon.detail-hero{height:230px;min-height:190px;width:100%;align-self:center;margin:0}
+#weapons-view .catalog-detail-host .detail-prototype .detail-live,
+#armor-view .catalog-detail-host .detail-prototype .detail-live{display:block;margin-top:14px}
+#weapons-view .catalog-detail-host .detail-prototype .stats-primary,
+#armor-view .catalog-detail-host .detail-prototype .stats-primary{width:100%;margin:0;padding:0;border:0}
+#weapons-view .catalog-detail-host .detail-prototype .stats-primary .stat-list,
+#armor-view .catalog-detail-host .detail-prototype .stats-primary .stat-list{display:flex;flex-direction:column;gap:0;width:100%;margin-top:0}
+#weapons-view .catalog-detail-host .detail-prototype .stats-primary .stat-line,
+#armor-view .catalog-detail-host .detail-prototype .stats-primary .stat-line{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(36px,auto);align-items:center;gap:12px;min-height:0;padding:10px 2px;border:0;border-bottom:1px solid rgba(151,169,181,.10);background:transparent}
+#weapons-view .catalog-detail-host .detail-prototype .stats-primary .stat-line strong,
+#armor-view .catalog-detail-host .detail-prototype .stats-primary .stat-line strong{font:600 15px/1.25 var(--font-ui);color:var(--text)}
+#weapons-view .catalog-detail-host .detail-prototype .stats-primary .stat-line span,
+#armor-view .catalog-detail-host .detail-prototype .stats-primary .stat-line span{font:500 11px/1.4 var(--font-ui);color:#c0c7c9}
+#weapons-view .catalog-detail-host .detail-prototype .detail-section:not(.stats-primary),
+#armor-view .catalog-detail-host .detail-prototype .detail-section:not(.stats-primary){margin-top:16px}
+@media(max-width:760px){
+ #weapons-view .catalog-detail-host .detail-prototype .detail-top,
+ #armor-view .catalog-detail-host .detail-prototype .detail-top{grid-template-columns:minmax(0,1fr) minmax(125px,.72fr);gap:12px}
+ #weapons-view .catalog-detail-host .detail-prototype .detail-icon.detail-hero,
+ #armor-view .catalog-detail-host .detail-prototype .detail-icon.detail-hero{height:170px;min-height:145px}
+ #weapons-view .catalog-detail-host .detail-prototype .detail-heading-copy .gear-score-control,
+ #armor-view .catalog-detail-host .detail-prototype .detail-heading-copy .gear-score-control{max-width:175px}
+ #weapons-view .catalog-detail-host .detail-prototype input.gear-score-slider,
+ #armor-view .catalog-detail-host .detail-prototype input.gear-score-slider{max-width:135px}
+}
+@media(max-width:420px){
+ #weapons-view .catalog-detail-host .detail-prototype .detail-top,
+ #armor-view .catalog-detail-host .detail-prototype .detail-top{grid-template-columns:minmax(0,1fr) minmax(100px,.62fr)}
+ #weapons-view .catalog-detail-host .detail-prototype .detail-icon.detail-hero,
+ #armor-view .catalog-detail-host .detail-prototype .detail-icon.detail-hero{height:145px;min-height:125px}
+ #weapons-view .catalog-detail-host .detail-prototype .detail-heading-copy .gear-score-control,
+ #armor-view .catalog-detail-host .detail-prototype .detail-heading-copy .gear-score-control{max-width:155px}
+ #weapons-view .catalog-detail-host .detail-prototype input.gear-score-slider,
+ #armor-view .catalog-detail-host .detail-prototype input.gear-score-slider{max-width:120px}
+}
+
