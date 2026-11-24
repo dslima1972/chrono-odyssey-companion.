@@ -1097,12 +1097,12 @@ function buildEquipmentSlotIconMarkup(slot){
 }
 function buildSlotMarkup(slot,label){
  const item=armors.find(x=>String(x.id||x.compoundId)===String(buildState.armor[slot]));
- return '<article class="build-slot build-slot-clickable icon-only '+(item?'has-item':'is-empty')+'" style="--rarity:'+rarityStyle(item||{})+'" data-build-pick="'+slot+'" tabindex="0" role="button" aria-label="Trocar armadura: '+label+'" title="'+label+'"><span class="build-slot-icon">'+(item?weaponImageMarkup(item):buildEquipmentSlotIconMarkup(slot))+'</span>'+(item?'<button type="button" class="build-slot-config" data-build-config-open="'+slot+'" aria-label="Configurar '+label+'" title="Configurar equipamento">⚙</button>':"")+'</article>';
+ return '<article class="build-slot build-slot-clickable icon-only '+(item?'has-item':'is-empty')+'" style="--rarity:'+rarityStyle(item||{})+'" data-build-pick="'+slot+'" tabindex="0" role="button" aria-label="Trocar armadura: '+label+'" title="'+(item?escapeHtml(item.name||label):label)+'"><span class="build-slot-icon">'+(item?weaponImageMarkup(item):buildEquipmentSlotIconMarkup(slot))+'</span>'+(item?'<span class="build-slot-name">'+escapeHtml(item.name||label)+'</span><button type="button" class="build-slot-config" data-build-config-open="'+slot+'" aria-label="Configurar '+label+'" title="Configurar equipamento">⚙</button>':"")+'</article>';
 }
 function buildAccessorySlotMarkup(slot,label){
  const item=accessories.find(x=>String(x.id||x.compoundId)===String(buildState.accessories[slot]));
  const iconSlot=slot==="ring1"||slot==="ring2"?"ring":slot;
- return '<article class="build-slot build-slot-clickable icon-only '+(item?'has-item':'is-empty')+'" style="--rarity:'+rarityStyle(item||{})+'" data-build-pick="'+slot+'" tabindex="0" role="button" aria-label="Trocar acessório: '+label+'" title="'+label+'"><span class="build-slot-icon">'+(item?accessoryImageMarkup(item):buildEquipmentSlotIconMarkup(iconSlot))+'</span>'+(item?'<button type="button" class="build-slot-config" data-build-config-open="'+slot+'" aria-label="Configurar '+label+'" title="Configurar equipamento">⚙</button>':"")+'</article>';
+ return '<article class="build-slot build-slot-clickable icon-only '+(item?'has-item':'is-empty')+'" style="--rarity:'+rarityStyle(item||{})+'" data-build-pick="'+slot+'" tabindex="0" role="button" aria-label="Trocar acessório: '+label+'" title="'+(item?escapeHtml(item.name||label):label)+'"><span class="build-slot-icon">'+(item?accessoryImageMarkup(item):buildEquipmentSlotIconMarkup(iconSlot))+'</span>'+(item?'<span class="build-slot-name">'+escapeHtml(item.name||label)+'</span><button type="button" class="build-slot-config" data-build-config-open="'+slot+'" aria-label="Configurar '+label+'" title="Configurar equipamento">⚙</button>':"")+'</article>';
 }
 function renderBuildScreen(){
  if(!$("build-class"))return;
@@ -1127,7 +1127,7 @@ function renderBuildWeaponSlots(){
   const label=index?"Arma secundária":"Arma principal";
   if(!type)return '<article class="build-slot build-slot-empty icon-only is-empty" aria-label="'+label+'" title="'+label+'"><span class="build-slot-icon">'+buildEquipmentSlotIconMarkup("weapon")+'</span></article>';
   const cls=CLASS_DATA.find(x=>x.name===buildState.className);
-  return '<article class="build-slot build-slot-clickable icon-only '+(item?'has-item':'is-empty')+'" style="--rarity:'+rarityStyle(item||{})+'" data-build-weapon-pick="'+index+'" tabindex="0" role="button" aria-label="Trocar '+label+' · '+escapeHtml(type)+'" title="'+label+' · '+escapeHtml(type)+'"><span class="build-slot-icon">'+(item?weaponImageMarkup(item):classButtonWeaponIconMarkup(type,cls?.name))+'</span>'+(item?'<button type="button" class="build-slot-config" data-build-config-open="weapon'+index+'" aria-label="Configurar '+label+'" title="Configurar equipamento">⚙</button>':"")+'</article>';
+  return '<article class="build-slot build-slot-clickable icon-only '+(item?'has-item':'is-empty')+'" style="--rarity:'+rarityStyle(item||{})+'" data-build-weapon-pick="'+index+'" tabindex="0" role="button" aria-label="Trocar '+label+' · '+escapeHtml(type)+'" title="'+(item?escapeHtml(item.name||label):label+' · '+escapeHtml(type))+'"><span class="build-slot-icon">'+(item?weaponImageMarkup(item):classButtonWeaponIconMarkup(type,cls?.name))+'</span>'+(item?'<span class="build-slot-name">'+escapeHtml(item.name||label)+'</span><button type="button" class="build-slot-config" data-build-config-open="weapon'+index+'" aria-label="Configurar '+label+'" title="Configurar equipamento">⚙</button>':"")+'</article>';
  }).join("");
 }
 function buildWeaponResultsMarkup(type,index){
@@ -1180,9 +1180,10 @@ async function openBuildItemConfig(slot){
 }
 function renderBuildTotals(){
  const selected=buildSelectedEquipment(),target=$("build-selected-stats");if(!target)return;
- const scores=selected.map(entry=>itemCurrentGearScore(entry.record?{...entry.item,...entry.record}:entry.item)).filter(value=>Number.isFinite(value)&&value>0);
- const average=scores.length?scores.reduce((sum,value)=>sum+value,0)/scores.length:null;
- const averageMarkup='<div class="build-summary-average"><span>Média do Equip Score</span><strong>'+(average===null?"—":average.toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1}))+'</strong><small>'+scores.length+' equipamento(s) considerado(s)</small></div>';
+  const totalEquipmentSlots=2+BUILD_ARMOR_SLOTS.length+BUILD_ACCESSORY_SLOTS.length;
+  const scoreSum=selected.reduce((sum,entry)=>{const item=entry.record?{...entry.item,...entry.record}:entry.item;const value=itemCurrentGearScore(item);return sum+(Number.isFinite(value)&&value>0?value:0)},0);
+  const average=scoreSum/totalEquipmentSlots;
+  const averageMarkup='<div class="build-summary-average"><span>Média do Equip Score</span><strong>'+average.toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1})+'</strong><small>'+selected.length+' de '+totalEquipmentSlots+' posições equipadas · vagas contam como 0</small></div>';
  if(!selected.length){target.innerHTML=averageMarkup+'<p class="build-empty">Selecione equipamentos para visualizar a soma dos atributos da build.</p>';return}
  const totals=new Map();
  const add=(key,label,raw)=>{
