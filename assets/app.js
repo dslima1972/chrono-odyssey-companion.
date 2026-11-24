@@ -816,9 +816,37 @@ function renderAccessoryStats(item){
  if(!rows)return '<p class="detail-muted">A fonte não retornou atributos básicos para este item.</p>';
  return (progression?renderGearScoreControl(item,progression.levels,"Atributo"):"")+'<div class="stat-list">'+rows+'</div>';
 }
+function renderAccessoryReadOnlyOptions(item){
+ const stats=item?.itemStats||{},info=item?.itemInfo||{},grade=itemGradeInfo(item),score=itemCurrentGearScore(item);
+ const suffixAllowed=grade.suffix!==false,suffixSource=stats.suffixes;
+ const suffixes=suffixSource&&typeof suffixSource==="object"?Object.values(suffixSource).filter(x=>x&&typeof x==="object"):[];
+ const suffixRows=suffixes.map(suffix=>{
+  const value=gearScoreValueMarkup(suffix,score,suffix.statType??suffix.type);
+  const chance=Number.isFinite(Number(suffix.chancePercentage))?'<small>'+Number(suffix.chancePercentage).toLocaleString("pt-BR",{maximumFractionDigits:2})+'%</small>':"";
+  return '<div class="accessory-info-option"><strong>'+escapeHtml(suffix.name||"Sufixo")+'</strong><span>'+value+'</span>'+chance+'</div>';
+ }).join("");
+ const suffixSection=suffixAllowed&&(suffixRows||grade.suffix===true)
+  ?'<details class="accessory-info-disclosure"><summary>Possible Suffixes <span>'+(suffixes.length||"—")+'</span></summary><div class="accessory-info-options">'+(suffixRows||'<p class="detail-muted">Nenhuma opção retornada pela ficha.</p>')+'</div></details>':"";
+ const limit=Number(grade.perkCount??stats.perkCount),candidates=[...perkEntries(stats.commonPerks),...perkEntries(stats.perks)];
+ const seen=new Set(),perkRows=[];
+ for(const perk of candidates){
+  const key=String(perk.id||perk.name||"").toLowerCase();if(!key||seen.has(key))continue;seen.add(key);
+  const value=gearScoreValueMarkup(perk,score,perk.statType);
+  const chance=Number.isFinite(Number(perk.chancePercentage))?'<small>'+Number(perk.chancePercentage).toLocaleString("pt-BR",{maximumFractionDigits:2})+'%</small>':"";
+  const stat=perk.statType?humanizeStat(perk.statType):"";
+  perkRows.push('<div class="accessory-info-option"><strong>'+escapeHtml(perk.name||"Perk")+'</strong><span>'+escapeHtml(stat)+(stat?' · ':'')+value+'</span>'+chance+'</div>');
+ }
+ const unique=[...perkEntries(info.uniquePerk??stats.uniquePerk),...perkEntries(info.specialPerks??stats.specialPerks)];
+ for(const perk of unique){
+  const key=String(perk.id||perk.name||perk.description||"").toLowerCase();if(!key||seen.has("unique:"+key))continue;seen.add("unique:"+key);
+  perkRows.push('<div class="accessory-info-option accessory-info-unique"><strong>'+escapeHtml(perk.name||"Perk especial")+'</strong><span>'+escapeHtml(perk.description||"")+'</span></div>');
+ }
+ const perkSection=perkRows.length?'<details class="accessory-info-disclosure"><summary>Possible Perks <span>'+perkRows.length+(Number.isFinite(limit)?' · até '+Math.max(0,limit):"")+'</span></summary><div class="accessory-info-options">'+perkRows.join("")+'</div></details>':"";
+ return suffixSection+perkSection;
+}
 function detailedAccessoryMarkup(record,item){
- const info=record?.itemInfo||{},fields=[detailField("Nível requerido",info.requiredLevel),detailField("Tier",info.tier),detailField("Peso",info.weight),detailField("Durabilidade máxima",info.maxDurability),detailField("Pode reforçar",info.canReinforce===true?"Sim":info.canReinforce===false?"Não":null)].filter(Boolean).join("");
- return '<section class="detail-section stats-primary">'+renderAccessoryStats(record)+'</section>'+renderOptionalItemOptions(record)+(fields?'<details class="detail-disclosure"><summary>Outras informações do acessório</summary><div class="detail-fields">'+fields+'</div></details>':"")+'<p class="detail-note">Dados da ficha individual do Questlog. Campos não fornecidos pela fonte não são exibidos.</p><div class="detail-id-footer">ID: '+escapeHtml(item.id||item.compoundId||"")+'</div>';
+ const info=record?.itemInfo||{},fields=[detailField("Nível requerido",info.requiredLevel),detailField("Peso",info.weight),detailField("Durabilidade máxima",info.maxDurability),detailField("Pode reforçar",info.canReinforce===true?"Sim":info.canReinforce===false?"Não":null)].filter(Boolean).join("");
+ return '<section class="detail-section stats-primary">'+renderAccessoryStats(record)+'</section>'+renderAccessoryReadOnlyOptions(record)+(fields?'<details class="detail-disclosure"><summary>Outras informações do acessório</summary><div class="detail-fields">'+fields+'</div></details>':"")+'<p class="detail-note">Dados da ficha individual do Questlog. Campos não fornecidos pela fonte não são exibidos.</p><div class="detail-id-footer">ID: '+escapeHtml(item.id||item.compoundId||"")+'</div>';
 }
 
 async function getAccessoryDetailsCatalog(){
