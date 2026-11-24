@@ -321,18 +321,15 @@ function optionListMarkup(title,rows,kind){
 function itemGradeInfo(item){return item?.itemStats?.equipmentGradeInfo||item?.equipmentGradeInfo||{}}
 function gearScoreRawValue(entry){if(entry===null||entry===undefined)return null;if(typeof entry!=="object")return entry;return entry.statValue1??entry.value??entry.statValue??entry.amount??entry.maxValue??entry.minValue??null}
 function gearScoreValueAt(levels,score){
- const entries=Object.entries(levels||{}).map(([key,value])=>[Number(key),gearScoreRawValue(value)]).filter(([key,value])=>Number.isFinite(key)&&value!==null&&value!==undefined).sort((a,b)=>a[0]-b[0]);
- if(!entries.length)return null;const target=Number(score);if(!Number.isFinite(target))return entries[0][1];
- const exact=entries.find(([key])=>key===target);if(exact)return exact[1];
- let lower=null,upper=null;for(const entry of entries){if(entry[0]<target)lower=entry;if(entry[0]>target){upper=entry;break}}
- if(lower&&upper){const a=Number(lower[1]),b=Number(upper[1]);if(Number.isFinite(a)&&Number.isFinite(b)){const ratio=(target-lower[0])/(upper[0]-lower[0]);return a+(b-a)*ratio}}
- return lower?lower[1]:entries[0][1];
+ const target=Number(score);if(!Number.isFinite(target))return null;
+ const entry=Object.entries(levels||{}).find(([key,value])=>Number(key)===target&&value!==null&&value!==undefined);
+ return entry?gearScoreRawValue(entry[1]):null;
 }
 function gearScoreValueMarkup(option,score,statType){
  const levels=option?.gearScore&&typeof option.gearScore==="object"?option.gearScore:null;
  if(!levels)return '<span class="roll-value">Valor não informado</span>';
  const value=gearScoreValueAt(levels,score);
- return '<span class="roll-value" data-gear-score-map="'+escapeHtml(JSON.stringify(levels))+'" data-stat-type="'+escapeHtml(statType||option.statType||option.type||"")+'">'+escapeHtml(formatStatValue(statType||option.statType||option.type,value)??"Valor não informado")+'</span>';
+ return '<span class="roll-value" data-gear-score-map="'+escapeHtml(JSON.stringify(levels))+'" data-stat-type="'+escapeHtml(statType||option.statType||option.type||"")+'">'+escapeHtml(value===null||value===undefined?"Sem valor cadastrado para este Equipment Score":formatStatValue(statType||option.statType||option.type,value))+'</span>';
 }
 function itemCurrentGearScore(item){
  const tier=equipmentTier(item),defaults={1:1,2:5,3:15,4:25,5:40};
@@ -846,7 +843,7 @@ document.addEventListener("input",event=>{
  const current=panel.querySelector(".gear-score-current");
  if(current)current.textContent=score;
  panel.querySelectorAll("[data-gear-score-map]").forEach(node=>{
-  try{const levels=JSON.parse(node.getAttribute("data-gear-score-map"));const value=gearScoreValueAt(levels,score);if(value!==undefined&&value!==null)node.textContent=String(formatStatValue(node.dataset.statType,value))}catch(error){}
+  try{const levels=JSON.parse(node.getAttribute("data-gear-score-map"));const value=gearScoreValueAt(levels,score);node.textContent=value===undefined||value===null?"Sem valor cadastrado para este Equipment Score":String(formatStatValue(node.dataset.statType,value))}catch(error){}
  });
 });
 document.addEventListener("change",event=>{
