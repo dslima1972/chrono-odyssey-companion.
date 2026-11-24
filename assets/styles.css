@@ -2178,3 +2178,29 @@ input.gear-score-slider::-moz-range-thumb{width:9px;height:9px;border:1px solid 
   max-width:640px!important;
  }
 }
+
+
+/* Rolagens de equipamento: seleção de sufixo/perks e valores ligados ao Equipment Score */
+.item-options-content .roll-choice{
+ display:flex;align-items:flex-start;gap:10px;min-width:0;padding:9px 10px;
+ border-radius:6px;background:rgba(255,255,255,.025);cursor:pointer;
+}
+.item-options-content .roll-choice input[type="radio"],
+.item-options-content .roll-choice input[type="checkbox"]{
+ flex:0 0 auto;width:16px;height:16px;margin:2px 0 0;accent-color:var(--gold2);
+}
+.item-options-content .roll-choice-copy{display:flex;flex:1 1 auto;flex-direction:column;gap:4px;min-width:0}
+.item-options-content .roll-choice-copy strong{font-size:12px;line-height:1.35}
+.item-options-content .roll-choice-copy small{display:block;color:var(--muted);font-size:10px;line-height:1.4;overflow-wrap:anywhere}
+.item-options-content .roll-value{display:inline;color:var(--text);font-weight:600}
+.item-options-content .roll-limit-note{display:flex;justify-content:space-between;gap:10px;margin:0 0 8px;color:var(--muted);font-size:10px;line-height:1.4}
+.item-options-content .roll-limit-note span{flex:0 0 auto;color:var(--text);font-variant-numeric:tabular-nums}
+.item-options-content .roll-empty p{margin:0;color:var(--muted);font-size:11px;line-height:1.5}
+.item-options-content .perk-options-list{display:grid;gap:5px}
+.item-options-content .perk-options-list .perk-row{margin:0}
+.item-options-content .roll-choice input:disabled{opacity:.38;cursor:not-allowed}
+@media(max-width:650px){
+ .item-options-content .roll-choice{padding:9px 7px;gap:8px}
+ .item-options-content .roll-choice-copy strong{font-size:11px}
+ .item-options-content .roll-choice-copy small{font-size:10px}
+}
