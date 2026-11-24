@@ -958,7 +958,7 @@ document.addEventListener("input",event=>{
  const current=panel.querySelector(".gear-score-current");
  if(current)current.textContent=score;
  panel.querySelectorAll("[data-gear-score-map]").forEach(node=>{
-  try{const levels=JSON.parse(node.getAttribute("data-gear-score-map"));const value=gearScoreValueAt(levels,score);node.textContent=value===undefined||value===null?"Sem valor cadastrado para este Equipment Score":String(formatStatValue(node.dataset.statType,value))}catch(error){}
+  try{const levels=JSON.parse(node.getAttribute("data-gear-score-map"));const level=levels[String(score)],field=node.dataset.statField,value=field?(level?.[field]??null):gearScoreValueAt(levels,score);node.textContent=value===undefined||value===null?"Sem valor cadastrado para este Equipment Score":String(formatStatValue(node.dataset.statType,value))}catch(error){}
   if(panel.classList.contains("build-item-config"))renderBuildTotals();
  });
 });
@@ -973,7 +973,7 @@ document.addEventListener("change",event=>{
    const counter=list.querySelector("[data-perk-counter] span");if(counter)counter.textContent=checked.length+"/"+limit;
    list.querySelectorAll("[data-perk-select]").forEach(box=>{box.disabled=limit<=0||(!box.checked&&checked.length>=limit)});
   }
-   if(input.closest(".build-item-config"))renderBuildItemConfig();
+   if(input.closest(".build-item-config")){renderBuildItemConfig();renderBuildTotals();}
  }
  if(input.matches("[data-suffix-select]")){
   const rollId=input.dataset.itemRollId;
