@@ -2310,7 +2310,7 @@ input.gear-score-slider::-moz-range-thumb{width:9px;height:9px;border:1px solid 
  background:radial-gradient(circle,color-mix(in srgb,var(--rarity) 42%,#29251b),color-mix(in srgb,var(--rarity) 18%,#15140f) 72%);
  border:1px solid color-mix(in srgb,var(--rarity) 62%,#494333);
 }
-#accessories-view .inline-item-detail>.detail-panel{--rarity:var(--rarity);display:block!important}
+#accessories-view .inline-item-detail>.detail-panel{display:block!important}
 #accessories-view .inline-item-detail .detail-prototype .detail-top{grid-template-columns:minmax(0,1.15fr) minmax(210px,.85fr)}
 #accessories-view .inline-item-detail .detail-prototype .detail-icon.detail-hero{
  background:radial-gradient(circle,color-mix(in srgb,var(--rarity) 20%,#0c1720),#0c1720 72%);
