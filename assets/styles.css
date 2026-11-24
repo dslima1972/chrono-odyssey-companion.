@@ -3868,3 +3868,37 @@ footer{color:#7890a0}
  #build-view.build-planner-v2 .build-slot{aspect-ratio:1/1}
  #build-view.build-planner-v2 .bp2-config-panel .accessory-inspect-stat-list{grid-template-columns:1fr}
 }
+
+
+/* BUILD PLANNER — 12 equipment slots in one compact board; isolate the view from navigation */
+#build-view.build-planner-v2:not(.active){display:none!important}
+#build-view.build-planner-v2.active{display:flex!important}
+#build-view.build-planner-v2 .bp2-equipment{
+ display:grid!important;
+ grid-template-columns:repeat(4,minmax(0,1fr));
+ grid-auto-rows:auto;
+ align-content:start;
+ align-items:stretch;
+ gap:5px!important;
+ overflow:hidden!important;
+}
+#build-view.build-planner-v2 .bp2-equipment>.bp2-panel-heading{grid-column:1/-1}
+#build-view.build-planner-v2 .bp2-equipment>.bp2-slot-group{display:contents!important}
+#build-view.build-planner-v2 .bp2-equipment>.bp2-slot-group>h3{display:none!important}
+#build-view.build-planner-v2 .bp2-equipment .build-slot-grid{display:contents!important}
+#build-view.build-planner-v2 .bp2-equipment .build-slot{
+ width:100%!important;
+ min-width:0!important;
+ min-height:0!important;
+ height:auto!important;
+ aspect-ratio:1/1!important;
+ padding:4px!important;
+ margin:0!important;
+}
+#build-view.build-planner-v2 .bp2-equipment .build-slot-icon{width:100%!important;height:100%!important}
+#build-view.build-planner-v2 .bp2-equipment.is-picking>.bp2-slot-group{display:none!important}
+#build-view.build-planner-v2 .bp2-equipment.is-picking>.bp2-panel-heading{display:none!important}
+#build-view.build-planner-v2 .bp2-equipment.is-picking>#build-picker{grid-column:1/-1}
+@media(max-width:760px){
+ #build-view.build-planner-v2 .bp2-equipment{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
