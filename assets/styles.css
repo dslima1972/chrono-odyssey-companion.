@@ -4239,3 +4239,5 @@ footer{color:#7890a0}
 #build-view.build-planner-v2 .build-total-stat>span{min-width:0;color:#a6b4bd;font:500 10px Inter,sans-serif;overflow-wrap:anywhere}
 #build-view.build-planner-v2 .build-total-stat>strong{flex:0 0 auto;color:#e1e8ec;font:600 11px Inter,sans-serif;font-variant-numeric:tabular-nums}
 @media(max-width:760px){#build-view.build-planner-v2 .build-total-group-grid{grid-template-columns:1fr}}
+
+#build-view.build-planner-v2 .build-total-stats{grid-template-columns:1fr;gap:12px}
