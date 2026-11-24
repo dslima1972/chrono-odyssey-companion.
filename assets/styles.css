@@ -3963,3 +3963,18 @@ footer{color:#7890a0}
  #build-view.build-planner-v2 .build-item-config-dialog{padding:13px;max-height:82vh}
  #build-view.build-planner-v2 .build-item-config-controls{display:grid;grid-template-columns:1fr;gap:12px}
 }
+
+
+/* BUILD PLANNER — summary totals and stat labels for suffixes/perks */
+#build-view.build-planner-v2 .build-summary-average{display:grid;grid-template-columns:1fr auto;align-items:center;gap:3px 12px;margin:2px 0 12px;padding:10px 12px;border:1px solid rgba(193,166,109,.28);border-left:2px solid #c1a66d;background:linear-gradient(100deg,rgba(193,166,109,.09),rgba(193,166,109,.015));}
+#build-view.build-planner-v2 .build-summary-average>span{color:#aab8c1;font:600 9px Inter,sans-serif;letter-spacing:.7px;text-transform:uppercase}
+#build-view.build-planner-v2 .build-summary-average>strong{grid-column:2;grid-row:1/3;color:#e1c987;font:600 23px Inter,sans-serif;font-variant-numeric:tabular-nums}
+#build-view.build-planner-v2 .build-summary-average>small{color:#748591;font:500 9px Inter,sans-serif}
+#build-view.build-planner-v2 .roll-stat-values{display:inline-flex;flex-wrap:wrap;gap:7px 12px;align-items:center}
+#build-view.build-planner-v2 .roll-stat-value{display:inline-flex;gap:4px;align-items:baseline}
+#build-view.build-planner-v2 .roll-stat-value small{color:#91a2ad;font:500 10px Inter,sans-serif}
+#build-view.build-planner-v2 .roll-stat-value strong{color:#d2c7ae;font:600 11px Inter,sans-serif}
+#build-view.build-planner-v2 .build-config-option-stats{display:block;margin-top:4px;color:#9aaab5;font:500 10px Inter,sans-serif}
+#build-view.build-planner-v2 .build-config-perk>span{display:block;min-width:0}
+#build-view.build-planner-v2 .build-config-perk>span>strong{display:block;color:#d2c7ae;font:600 11px Inter,sans-serif}
+#build-view.build-planner-v2 .build-config-perk .roll-stat-value strong{color:#c1d0d8}
