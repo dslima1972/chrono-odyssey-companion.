@@ -1195,7 +1195,6 @@ async function loadBuildArmorSlot(slot){
  if(!Object.prototype.hasOwnProperty.call(buildArmorSlotState,slot))return false;
  if(buildArmorSlotState[slot]==="ready")return true;
  if(buildArmorSlotPromises[slot])return buildArmorSlotPromises[slot];
- if(buildLayerState.weapon!=="ready"){$("build-data-status").textContent="Primeiro selecione a classe e o tipo de arma para liberar os equipamentos.";return false}
  buildArmorSlotState[slot]="loading";if(buildLayerState.armor!=="ready")buildLayerState.armor="loading";
  updateBuildLayerStatus();buildStatsOptions("armor",0);buildStatsOptions("armor",1);
  buildArmorSlotPromises[slot]=(async()=>{
