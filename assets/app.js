@@ -276,7 +276,7 @@ function equipmentTier(item){
  return Number.isInteger(tier)&&tier>=1&&tier<=5?tier:null;
 }
 function gearScoreRange(item,levels){
- const ranges={1:[1,5],2:[5,15],3:[15,25],4:[25,40],5:[40,60]};
+ const ranges={1:[1,5],2:[5,15],3:[15,25],4:[25,40],5:[40,50]};
  const tier=equipmentTier(item),range=ranges[tier];
  if(range)return range;
  const entries=Object.entries(levels||{}).filter(([key,value])=>Number.isFinite(Number(key))&&value!==null&&value!==undefined).sort((a,b)=>Number(a[0])-Number(b[0]));
