@@ -3215,3 +3215,34 @@ body{font-family:var(--font-ui)}
   min-height:340px!important;max-height:none!important;height:auto!important;overflow:visible!important;
  }
 }
+
+/* === Padronização definitiva das cores de raridade === */
+/* Lista e detalhe usam o mesmo gradiente-base da visualização por blocos. */
+.weapon-row[style*="--rarity"]{
+ background:linear-gradient(145deg,
+  color-mix(in srgb,var(--rarity) 78%,#211f18),
+  color-mix(in srgb,var(--rarity) 58%,#15140f) 58%,
+  color-mix(in srgb,var(--rarity) 38%,#11110e))!important;
+ border-color:color-mix(in srgb,var(--rarity) 88%,#494333)!important;
+}
+.weapon-row[style*="--rarity"]:hover,
+.weapon-row[style*="--rarity"].selected{
+ background:linear-gradient(145deg,
+  color-mix(in srgb,var(--rarity) 88%,#211f18),
+  color-mix(in srgb,var(--rarity) 68%,#15140f) 58%,
+  color-mix(in srgb,var(--rarity) 48%,#11110e))!important;
+ border-color:var(--rarity)!important;
+}
+
+/* Mesmo padrão nas fichas de armas, armaduras e acessórios.
+   Esta regra também vence o fundo genérico específico dos acessórios. */
+#weapons-view .equipment-inspect-card,
+#armor-view .equipment-inspect-card,
+#accessories-view .equipment-inspect-card,
+#accessories-view .accessory-inspect-card.equipment-inspect-card{
+ background:linear-gradient(145deg,
+  color-mix(in srgb,var(--rarity) 78%,#211f18),
+  color-mix(in srgb,var(--rarity) 58%,#15140f) 58%,
+  color-mix(in srgb,var(--rarity) 38%,#11110e))!important;
+ border-color:color-mix(in srgb,var(--rarity) 88%,#494333)!important;
+}
