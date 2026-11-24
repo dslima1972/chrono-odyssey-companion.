@@ -293,12 +293,20 @@ function defaultGearScore(item,levels){
  const available=entries.map(([key])=>Number(key)).filter(score=>score>=min&&score<=max);
  return available[0]??Number(entries[0][0]);
 }
+function equipmentRollKey(item){return String(item?.id||item?.compoundId||"");}
+const equipmentRollState=Object.create(null);
+function equipmentRollSelection(item){
+ const key=equipmentRollKey(item);
+ if(!key)return {};
+ return equipmentRollState[key]||(equipmentRollState[key]={suffix:"",perks:[],gearScore:null});
+}
 function renderGearScoreControl(item,levels,label){
  if(!levels||typeof levels!=="object")return "";
  const entries=Object.entries(levels).filter(([key,value])=>Number.isFinite(Number(key))&&value!==null&&value!==undefined).sort((a,b)=>Number(a[0])-Number(b[0]));
  if(!entries.length)return "";
- const [min,max]=gearScoreRange(item,levels),initial=Math.min(max,Math.max(min,defaultGearScore(item,levels)));
- return '<div class="gear-score-control"><div class="gear-score-value"><label>Equipment Score</label><strong class="gear-score-current">'+initial+'</strong></div><input class="gear-score-slider" type="range" min="'+min+'" max="'+max+'" step="1" value="'+initial+'" aria-label="Selecionar Equipment Score"></div>';
+ const [min,max]=gearScoreRange(item,levels),saved=Number(equipmentRollSelection(item).gearScore);
+ const initial=Math.min(max,Math.max(min,Number.isFinite(saved)&&saved>0?saved:defaultGearScore(item,levels)));
+ return '<div class="gear-score-control"><div class="gear-score-value"><label>Equipment Score</label><strong class="gear-score-current">'+initial+'</strong></div><input class="gear-score-slider" data-item-roll-id="'+escapeHtml(equipmentRollKey(item))+'" type="range" min="'+min+'" max="'+max+'" step="1" value="'+initial+'" aria-label="Selecionar Equipment Score"></div>';
 }
 function renderWeaponStats(item){
  const levels=findWeaponAttackLevels(item);
@@ -332,6 +340,8 @@ function gearScoreValueMarkup(option,score,statType){
  return '<span class="roll-value" data-gear-score-map="'+escapeHtml(JSON.stringify(levels))+'" data-stat-type="'+escapeHtml(statType||option.statType||option.type||"")+'">'+escapeHtml(value===null||value===undefined?"Sem valor cadastrado para este Equipment Score":formatStatValue(statType||option.statType||option.type,value))+'</span>';
 }
 function itemCurrentGearScore(item){
+ const saved=Number(equipmentRollSelection(item).gearScore);
+ if(Number.isFinite(saved)&&saved>0)return saved;
  const tier=equipmentTier(item),defaults={1:1,2:5,3:15,4:25,5:40};
  return defaults[tier]??1;
 }
@@ -342,11 +352,12 @@ function renderSuffixes(item){
  const suffixes=source&&typeof source==="object"?Object.values(source).filter(s=>s&&typeof s==="object"):[];
  if(!suffixes.length)return grade.suffix===true?'<section class="detail-section roll-empty"><h4>Sufixo</h4><p>Este equipamento permite sufixo, mas a ficha sincronizada não trouxe opções disponíveis.</p></section>':"";
  const score=itemCurrentGearScore(item),group="suffix-"+String(item?.id||item?.compoundId||"equipment").replace(/[^a-z0-9_-]/gi,"");
- const rows=['<label class="suffix-row detail-option-row roll-choice"><input type="radio" name="'+escapeHtml(group)+'" data-suffix-select value=""><span class="roll-choice-copy"><strong>Sem sufixo</strong><small>Não selecionar um sufixo</small></span></label>'];
+ const chosenSuffix=String(equipmentRollSelection(item).suffix||"");
+ const rows=['<label class="suffix-row detail-option-row roll-choice"><input type="radio" name="'+escapeHtml(group)+'" data-suffix-select data-item-roll-id="'+escapeHtml(equipmentRollKey(item))+'" value="" '+(!chosenSuffix?'checked':'')+'><span class="roll-choice-copy"><strong>Sem sufixo</strong><small>Não selecionar um sufixo</small></span></label>'];
  suffixes.forEach((suffix,index)=>{
   const value=gearScoreValueMarkup(suffix,score,suffix.statType??suffix.type);
   const chance=Number.isFinite(Number(suffix.chancePercentage))?' · '+Number(suffix.chancePercentage).toLocaleString("pt-BR",{maximumFractionDigits:2})+'% de chance':"";
-  rows.push('<label class="suffix-row detail-option-row roll-choice"><input type="radio" name="'+escapeHtml(group)+'" data-suffix-select value="'+index+'"><span class="roll-choice-copy"><strong>'+escapeHtml(suffix.name||"Sufixo")+'</strong><small>'+value+escapeHtml(chance)+'</small></span></label>');
+  rows.push('<label class="suffix-row detail-option-row roll-choice"><input type="radio" name="'+escapeHtml(group)+'" data-suffix-select data-item-roll-id="'+escapeHtml(equipmentRollKey(item))+'" value="'+index+'" '+(chosenSuffix===String(index)?'checked':'')+'><span class="roll-choice-copy"><strong>'+escapeHtml(suffix.name||"Sufixo")+'</strong><small>'+value+escapeHtml(chance)+'</small></span></label>');
  });
  return optionListMarkup("Sufixo · escolha 1",rows,"suffix-options");
 }
@@ -376,14 +387,16 @@ function renderPerks(item){
   const stat=perk.statType?humanizeStat(perk.statType):"",value=gearScoreValueMarkup(perk,score,perk.statType);
   const chance=Number.isFinite(Number(perk.chancePercentage))?' · '+Number(perk.chancePercentage).toLocaleString("pt-BR",{maximumFractionDigits:2})+'% de chance':"";
   const meta=[stat].filter(Boolean).join(" · ");
-  rows.push('<label class="perk-row detail-option-row roll-choice"><input type="checkbox" data-perk-select data-perk-limit="'+(Number.isFinite(limit)?Math.max(0,limit):0)+'" '+(!(Number.isFinite(limit)&&limit>0)?'disabled':'')+'><span class="roll-choice-copy"><strong>'+escapeHtml(perk.name||"Perk")+'</strong><small>'+escapeHtml(meta)+(meta?' · ':'')+value+escapeHtml(chance)+'</small></span></label>');
+  const selectedPerks=equipmentRollSelection(item).perks||[];
+  rows.push('<label class="perk-row detail-option-row roll-choice"><input type="checkbox" data-perk-select data-item-roll-id="'+escapeHtml(equipmentRollKey(item))+'" data-perk-key="'+escapeHtml(key)+'" data-perk-limit="'+(Number.isFinite(limit)?Math.max(0,limit):0)+'" '+(selectedPerks.includes(key)?'checked ':'')+(!(Number.isFinite(limit)&&limit>0)?'disabled':'')+'><span class="roll-choice-copy"><strong>'+escapeHtml(perk.name||"Perk")+'</strong><small>'+escapeHtml(meta)+(meta?' · ':'')+value+escapeHtml(chance)+'</small></span></label>');
  }
  const unique=info.uniquePerk??stats.uniquePerk;
  for(const perk of perkEntries(unique)){const key=String(perk.id||perk.name||perk.description||"").toLowerCase();if(!key||seen.has("unique:"+key))continue;seen.add("unique:"+key);rows.push('<div class="perk-row detail-option-row unique-perk"><strong>'+escapeHtml(perk.name||"Perk exclusivo")+' <small>Exclusivo</small></strong><span>'+escapeHtml(perk.description||"Efeito descrito na ficha do item")+'</span></div>')}
  for(const perk of perkEntries(info.specialPerks??stats.specialPerks)){const key=String(perk.id||perk.name||perk.description||"").toLowerCase();if(!key||seen.has("special:"+key))continue;seen.add("special:"+key);rows.push('<div class="perk-row detail-option-row unique-perk"><strong>'+escapeHtml(perk.name||"Perk especial")+' <small>Especial</small></strong><span>'+escapeHtml(perk.description||"Efeito descrito na ficha do item")+'</span></div>')}
  if(!rows.length)return "";
  const selectable=rows.filter(row=>row.includes('data-perk-select')).length;
- const note=Number.isFinite(limit)?'<p class="roll-limit-note" data-perk-counter>Selecione até '+Math.max(0,limit)+' perk(s). <span>0/'+Math.max(0,limit)+'</span></p>':'<p class="roll-limit-note">Limite de perks não informado na ficha; seleção desabilitada.</p>';
+ const selectedCount=equipmentRollSelection(item).perks.length;
+ const note=Number.isFinite(limit)?'<p class="roll-limit-note" data-perk-counter>Selecione até '+Math.max(0,limit)+' perk(s). <span>'+selectedCount+'/'+Math.max(0,limit)+'</span></p>':'<p class="roll-limit-note">Limite de perks não informado na ficha; seleção desabilitada.</p>';
  return '<section class="detail-section perk-options"><h4>Perks disponíveis <span class="detail-option-count">'+selectable+'</span></h4>'+note+'<div class="detail-option-list perk-options-list">'+rows.join("")+'</div></section>';
 }
 function compactMeta(label,value){if(value===undefined||value===null||value==="")return "";return '<span class="detail-meta-chip"><small>'+escapeHtml(label)+'</small><strong>'+escapeHtml(Array.isArray(value)?value.join(", "):String(value))+'</strong></span>'}
@@ -840,6 +853,8 @@ document.addEventListener("input",event=>{
  if(!slider.matches(".gear-score-slider"))return;
  const score=String(slider.value),panel=slider.closest(".detail-panel, .build-stat-summary-card");
  if(!panel)return;
+ const rollId=slider.dataset.itemRollId;
+ if(rollId){const state=equipmentRollState[rollId]||(equipmentRollState[rollId]={suffix:"",perks:[],gearScore:null});state.gearScore=Number(score)}
  const current=panel.querySelector(".gear-score-current");
  if(current)current.textContent=score;
  panel.querySelectorAll("[data-gear-score-map]").forEach(node=>{
@@ -851,10 +866,16 @@ document.addEventListener("change",event=>{
  if(input.matches("[data-perk-select]")){
   const list=input.closest(".perk-options"),limit=Number(input.dataset.perkLimit),checked=list?[...list.querySelectorAll("[data-perk-select]:checked")]:[];
   if(input.checked&&Number.isFinite(limit)&&checked.length>limit){input.checked=false;return}
+  const rollId=input.dataset.itemRollId;
+  if(rollId){const state=equipmentRollState[rollId]||(equipmentRollState[rollId]={suffix:"",perks:[],gearScore:null});state.perks=checked.map(box=>box.dataset.perkKey).filter(Boolean)}
   if(list){
    const counter=list.querySelector("[data-perk-counter] span");if(counter)counter.textContent=checked.length+"/"+limit;
    list.querySelectorAll("[data-perk-select]").forEach(box=>{box.disabled=limit<=0||(!box.checked&&checked.length>=limit)});
   }
+ }
+ if(input.matches("[data-suffix-select]")){
+  const rollId=input.dataset.itemRollId;
+  if(rollId){const state=equipmentRollState[rollId]||(equipmentRollState[rollId]={suffix:"",perks:[],gearScore:null});state.suffix=input.value}
  }
 });
 /* Build planner */
