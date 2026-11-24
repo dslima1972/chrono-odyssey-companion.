@@ -2709,3 +2709,100 @@ input.gear-score-slider::-moz-range-thumb{width:9px;height:9px;border:1px solid 
  #accessories-view .accessory-game-card .detail-heading-copy{transform:translateY(-3px)}
  #accessories-view .accessory-game-card .detail-icon.detail-hero{transform:translateY(7px)}
 }
+
+
+/* Rebuilt accessory inspection panel — based on the in-game item reference */
+#accessories-view .accessory-inspect-card{
+ --inspect-ink:#e9e5d3;--inspect-muted:rgba(224,222,198,.66);
+ position:relative;width:100%;max-width:520px;box-sizing:border-box;justify-self:stretch;
+ overflow:hidden;padding:17px 18px 14px!important;border:0!important;border-radius:3px!important;
+ color:var(--inspect-ink);background:
+ radial-gradient(ellipse at 82% 12%,color-mix(in srgb,var(--rarity) 22%,transparent),transparent 42%),
+ linear-gradient(160deg,#1d2922 0%,#111a16 58%,#0b100e 100%)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.045),0 12px 30px rgba(0,0,0,.18)!important;
+}
+#accessories-view .accessory-inspect-header{
+ display:grid;grid-template-columns:minmax(0,1fr) 138px;gap:10px;align-items:start;
+ min-height:132px;margin:0 0 9px;padding:0!important;border:0!important;
+}
+#accessories-view .accessory-inspect-heading{min-width:0;padding-top:1px}
+#accessories-view .accessory-inspect-meta{display:flex;flex-wrap:wrap;gap:4px 8px;margin:0 0 7px!important}
+#accessories-view .accessory-inspect-meta .detail-meta-chip{display:inline-flex;gap:4px;padding:0;border:0;background:none}
+#accessories-view .accessory-inspect-meta .detail-meta-chip small{font:500 9px/1.3 Inter,sans-serif;color:var(--inspect-muted);letter-spacing:.1px}
+#accessories-view .accessory-inspect-meta .detail-meta-chip strong{font:500 10px/1.3 Inter,sans-serif;color:#d4d0b8}
+#accessories-view .accessory-inspect-heading h3{
+ margin:0!important;color:#f0eddd;font:500 19px/1.25 Cinzel,Georgia,serif;letter-spacing:.1px;
+ text-align:left;overflow-wrap:anywhere;
+}
+#accessories-view .accessory-inspect-art{
+ display:flex;align-items:center;justify-content:center;width:100%;height:132px;
+ background:radial-gradient(ellipse,rgba(177,183,143,.15),transparent 72%);
+}
+#accessories-view .accessory-inspect-image{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 6px 9px rgba(0,0,0,.48))}
+#accessories-view .accessory-inspect-stats{padding:0;margin:0}
+#accessories-view .accessory-inspect-card .gear-score-control{
+ display:grid!important;grid-template-columns:auto minmax(90px,1fr);align-items:end;gap:15px;
+ width:100%;max-width:100%!important;margin:0 0 9px!important;padding:0!important;
+ border:0!important;background:none!important;
+}
+#accessories-view .accessory-inspect-card .gear-score-value{display:flex;flex-direction:column;align-items:flex-start;gap:0}
+#accessories-view .accessory-inspect-card .gear-score-value label{font:500 11px/1.35 Inter,sans-serif;color:var(--inspect-muted);letter-spacing:.15px;text-transform:none}
+#accessories-view .accessory-inspect-card .gear-score-value strong{font:400 43px/.95 Cinzel,Georgia,serif;color:#f5f0dc}
+#accessories-view .accessory-inspect-card input.gear-score-slider{width:100%;max-width:none;margin:0 0 8px;accent-color:#c6a16a;cursor:pointer}
+#accessories-view .accessory-inspect-stat-list{display:grid;gap:3px;padding:0 0 9px}
+#accessories-view .accessory-inspect-stat{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:9px;align-items:baseline;min-height:17px}
+#accessories-view .accessory-inspect-stat strong{font:500 12px/1.35 Inter,sans-serif;color:#f1ecd9;text-align:left;font-variant-numeric:tabular-nums}
+#accessories-view .accessory-inspect-stat span{font:400 12px/1.35 Inter,sans-serif;color:rgba(231,229,209,.86)}
+#accessories-view .accessory-inspect-stat small{font:400 10px/1.35 Inter,sans-serif;color:var(--inspect-muted);text-align:right}
+#accessories-view .accessory-inspect-rolls{margin:3px 0 0;padding:0}
+#accessories-view .accessory-inspect-accordion{
+ margin:0;padding:0;border:0!important;border-top:1px solid rgba(220,218,190,.17)!important;
+ background:transparent!important;
+}
+#accessories-view .accessory-inspect-accordion:last-child{border-bottom:1px solid rgba(220,218,190,.17)!important}
+#accessories-view .accessory-inspect-accordion>summary{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;
+ min-height:38px;padding:8px 1px;color:#e9e5d3;font:500 12px/1.3 Inter,sans-serif;
+ list-style:none;cursor:pointer;
+}
+#accessories-view .accessory-inspect-accordion>summary::-webkit-details-marker{display:none}
+#accessories-view .accessory-inspect-accordion>summary::after{content:"+";font:400 17px/1 Inter,sans-serif;color:#c9b48a}
+#accessories-view .accessory-inspect-accordion[open]>summary::after{content:"−"}
+#accessories-view .accessory-inspect-accordion>summary em{margin-left:auto;color:var(--inspect-muted);font:400 10px/1.3 Inter,sans-serif;font-style:normal}
+#accessories-view .accessory-inspect-options{display:grid;gap:0;padding:0 1px 10px}
+#accessories-view .accessory-inspect-option{
+ display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr) auto;gap:8px;
+ align-items:baseline;padding:5px 0;border-bottom:1px solid rgba(220,218,190,.07);
+}
+#accessories-view .accessory-inspect-option:last-child{border-bottom:0}
+#accessories-view .accessory-inspect-option strong{font:500 11px/1.4 Inter,sans-serif;color:#e8e3d0}
+#accessories-view .accessory-inspect-option>span{font:400 11px/1.4 Inter,sans-serif;color:rgba(231,229,209,.83)}
+#accessories-view .accessory-inspect-option .roll-value{display:inline;color:inherit}
+#accessories-view .accessory-inspect-option small{font:400 10px/1.4 Inter,sans-serif;color:var(--inspect-muted);text-align:right}
+#accessories-view .accessory-inspect-unique{grid-template-columns:1fr}
+#accessories-view .accessory-inspect-extra{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 16px;
+ padding:11px 0 2px;margin-top:8px;border-top:1px solid rgba(220,218,190,.17);
+}
+#accessories-view .accessory-inspect-extra .detail-field{display:flex;flex-direction:column;gap:2px;padding:0;border:0}
+#accessories-view .accessory-inspect-extra .detail-field small{font:400 10px/1.3 Inter,sans-serif;color:var(--inspect-muted)}
+#accessories-view .accessory-inspect-extra .detail-field strong{font:500 11px/1.35 Inter,sans-serif;color:#e9e5d3}
+#accessories-view .accessory-inspect-note{margin:10px 0 0;color:rgba(224,222,198,.4);font:400 9px/1.4 Inter,sans-serif}
+#accessories-view .accessory-inspect-source{display:inline-block;margin-top:9px;color:rgba(218,205,169,.65);font:500 9px/1.3 Inter,sans-serif;letter-spacing:.45px;text-decoration:none}
+#accessories-view .accessory-inspect-source:hover{color:#e8c98f}
+@media(max-width:760px){
+ #accessories-view .accessory-inspect-card{max-width:none;padding:15px!important}
+ #accessories-view .accessory-inspect-header{grid-template-columns:minmax(0,1fr) 118px;min-height:118px}
+ #accessories-view .accessory-inspect-art{height:118px}
+ #accessories-view .accessory-inspect-heading h3{font-size:17px}
+ #accessories-view .accessory-inspect-card .gear-score-control{grid-template-columns:auto minmax(90px,1fr)}
+}
+@media(max-width:390px){
+ #accessories-view .accessory-inspect-header{grid-template-columns:minmax(0,1fr) 94px;min-height:100px}
+ #accessories-view .accessory-inspect-art{height:100px}
+ #accessories-view .accessory-inspect-heading h3{font-size:15px}
+ #accessories-view .accessory-inspect-stat{grid-template-columns:58px minmax(0,1fr) auto;gap:7px}
+ #accessories-view .accessory-inspect-extra{gap:8px}
+ #accessories-view .accessory-inspect-option{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:5px}
+ #accessories-view .accessory-inspect-option small{grid-column:2;text-align:left}
+}
