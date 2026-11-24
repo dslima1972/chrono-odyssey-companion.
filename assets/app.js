@@ -960,7 +960,7 @@ document.addEventListener("change",event=>{
  if(input.matches("[data-suffix-select]")){
   const rollId=input.dataset.itemRollId;
   if(rollId){const state=equipmentRollState[rollId]||(equipmentRollState[rollId]={suffix:"",perks:[],gearScore:null});state.suffix=input.value}
-   if(input.closest(".build-item-config"))renderBuildSelectedStats();
+   if(input.closest(".build-item-config"))renderBuildItemConfig();
  }
   if(input.matches(".gear-score-slider")&&input.closest(".build-item-config"))renderBuildTotals();
 });
@@ -1297,7 +1297,7 @@ function initBuildPlanner(){
  [["weapon",0],["weapon",1],["armor",0],["armor",1],["accessory",0],["accessory",1]].forEach(([kind,index])=>$("build-"+kind+"-stat"+(index+1)).addEventListener("change",e=>{const arr=kind==="weapon"?buildState.weaponStats:kind==="armor"?buildState.armorStats:buildState.accessoryStats;arr[index]=e.target.value;if(index===0&&arr[0]&&arr[0]===arr[1])arr[1]="";closeBuildPicker();buildStatsOptions(kind,0);buildStatsOptions(kind,1);renderBuildWeaponSlots();renderBuildArmorSlots();renderBuildSelectedStats()}));
  document.addEventListener("click",e=>{
   const closeConfig=e.target.closest("[data-build-config-close]");if(closeConfig){selectedBuildSlot="";renderBuildItemConfig();return}
-   const configure=e.target.closest("[data-build-configure]");if(configure)return;
+   const configure=e.target.closest("[data-build-config-open]");if(configure){openBuildItemConfig(configure.dataset.buildConfigOpen);return}
   const detailsToggle=e.target.closest(".co-bp-details-toggle");if(detailsToggle){const card=detailsToggle.closest(".co-bp-item"),details=card?.querySelector(".co-bp-details");if(details){details.hidden=!details.hidden;detailsToggle.setAttribute("aria-expanded",String(!details.hidden));detailsToggle.textContent=details.hidden?"Ver atributos e efeitos":"Ocultar detalhes"}return}
   const more=e.target.closest("[data-build-more]");if(more){buildPickerLimit+=30;const anchor=buildPickerAnchor;const slot=anchor?.dataset.buildPick??("weapon"+(anchor?.dataset.buildWeaponPick||"0"));buildPickList(slot,anchor);return}
   const chosen=e.target.closest("[data-build-choose]");if(chosen){const id=chosen.dataset.id,slot=chosen.dataset.slot;if(chosen.dataset.buildChoose==="weapon"){const index=slot==="weapon0"?0:1;buildState.weapons[index]=id}else if(chosen.dataset.buildChoose==="accessory")buildState.accessories[slot]=id;else buildState.armor[slot]=id;selectedBuildSlot=slot;closeBuildPicker();renderBuildWeaponSlots();renderBuildArmorSlots();renderBuildSelectedStats();openBuildItemConfig(slot);return}
