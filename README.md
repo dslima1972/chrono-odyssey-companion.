@@ -1,27 +1,26 @@
 # Chrono Odyssey Companion
 
-Compêndio comunitário em português para Chrono Odyssey, publicado como site estático pelo GitHub Pages.
+Compêndio comunitário independente, em português, para consulta de informações e equipamentos de Chrono Odyssey. O site é publicado como conteúdo estático pelo GitHub Pages.
 
 ## Estrutura
-- `index.html`: estrutura do site.
-- `assets/`: identidade visual e comportamento da interface.
-- `data/questlog-export.json`: arquivo de catálogo exportado do Questlog (fonte principal).
-- `data/weapons.json`: arquivo reserva inicial.
+- `index.html`: estrutura do site e conteúdo institucional.
+- `assets/`: identidade visual, imagens e comportamento da interface.
+- `data/`: catálogos, fichas detalhadas, índices e manifestos mantidos no próprio repositório.
+- `scripts/`: ferramentas auxiliares de manutenção e validação dos dados.
 
-## Atualizar o catálogo (sem API automática)
-O Questlog pode bloquear consultas automatizadas feitas pelo GitHub Actions. Por isso, o Companion não consulta mais a API diretamente.
+## Manutenção dos catálogos
+Os dados utilizados pelo site são publicados como arquivos locais dentro da pasta `data/`. O frontend consulta esses arquivos do próprio repositório, sem depender de consultas em tempo real a serviços externos para carregar os catálogos e as fichas.
 
-1. Exporte o catálogo de armas do Questlog pelo navegador e salve o arquivo em formato JSON.
-2. No GitHub, abra este repositório e entre na pasta `data`.
-3. Use **Add file → Upload files**.
-4. Envie o arquivo exportado com o nome exato `questlog-export.json`.
-5. Confirme em **Commit changes** na branch `main`.
+Ao atualizar os dados:
+1. Preserve os identificadores dos itens para manter as associações entre catálogo, fichas detalhadas e builds.
+2. Atualize os manifestos correspondentes quando houver inclusão, remoção ou divisão de arquivos.
+3. Verifique se os registros e atributos estão completos e coerentes.
+4. Não estime nem invente valores ausentes; mantenha-os identificados como não disponíveis.
+5. Registre as alterações em commits para manter o histórico de manutenção.
 
-O GitHub Pages publica a atualização automaticamente após o commit. O site tenta ler primeiro `data/questlog-export.json` e aceita uma lista JSON direta ou objetos com listas em `items`, `pageData`, `records` ou `registros`.
+## Independência e propriedade intelectual
+O Chrono Odyssey Companion é um projeto comunitário independente, gratuito e sem finalidade comercial, desenvolvido por fãs. Não é oficial e não possui vínculo, parceria, patrocínio ou aprovação da Chrono Studio, Kakao Games ou de quaisquer empresas responsáveis pelo jogo.
 
-Se o formato do arquivo exportado for diferente, não altere o conteúdo manualmente: o arquivo poderá ser analisado e adaptado depois de enviado ao repositório.
+Chrono Odyssey, seus nomes, marcas, personagens, imagens e demais elementos relacionados ao jogo pertencem aos respectivos titulares. O Companion não reivindica a propriedade desses elementos e é mantido para fins informativos e comunitários.
 
-## Dados e precisão
-Questlog é a fonte principal para os registros do catálogo. O Companion não inventa atributos, efeitos, requisitos ou valores ausentes.
-
-Projeto comunitário não oficial. Chrono Odyssey é propriedade de seus respectivos titulares.
+A indicação de que o projeto é não oficial e não comercial não substitui autorizações ou licenças que possam ser necessárias para utilizar materiais protegidos. Antes de redistribuir imagens, textos ou outros assets, é necessário verificar os direitos e as condições de uso aplicáveis.
