@@ -901,6 +901,20 @@ function buildTypeOptions(){
   el.value=current;
  });
 }
+function renderBuildWeaponChoices(){
+ const cls=CLASS_DATA.find(x=>x.name===buildState.className),types=cls?.weapons||[];
+ [0,1].forEach(index=>{
+  const target=document.querySelector('[data-build-weapon-choices="'+index+'"]');
+  if(!target)return;
+  const selected=index?buildState.weaponType2:buildState.weaponType;
+  if(!cls){target.innerHTML='<span class="build-weapon-choice-empty">Selecione uma classe</span>';return}
+  const choices=(index?['']:[]).concat(types).map(type=>{
+   if(!type)return '<button type="button" class="build-weapon-choice build-weapon-choice-clear '+(!selected?'is-selected':'')+'" data-build-weapon-choice="'+index+'" data-weapon-type="" aria-label="Sem arma secundária" title="Sem arma secundária"><span>—</span></button>';
+   return '<button type="button" class="build-weapon-choice '+(selected===type?'is-selected':'')+'" data-build-weapon-choice="'+index+'" data-weapon-type="'+escapeHtml(type)+'" aria-label="'+escapeHtml(type)+'" title="'+escapeHtml(type)+'">'+classButtonWeaponIconMarkup(type,cls.name)+'</button>';
+  }).join("");
+  target.innerHTML=choices;
+ });
+}
 function buildStatsOptions(kind,index){
  const selected=kind==="weapon"?buildState.weaponStats:kind==="accessory"?buildState.accessoryStats:buildState.armorStats;
  const target=$("build-"+kind+"-stat"+(index+1));if(!target)return;
@@ -914,12 +928,13 @@ function buildStatsOptions(kind,index){
  target.innerHTML='<option value="">'+(index?"Sem segunda estatística":"Selecione uma estatística")+'</option>'+options.map(s=>'<option value="'+escapeHtml(s)+'">'+escapeHtml(s)+'</option>').join("");target.value=selected[index]||"";
 }
 function buildSlotMarkup(slot,label){
- return '<article class="build-slot build-slot-clickable" data-build-pick="'+slot+'" tabindex="0" role="button" aria-label="Selecionar armadura: '+label+'"><div class="build-slot-icon">'+(ARMOR_TYPE_ICONS[slot]||"✧")+'</div><div class="build-slot-copy"><small>'+label+'</small><strong class="build-slot-name">Não selecionado</strong><span class="build-slot-meta">Clique para escolher uma peça</span></div><span class="build-slot-chevron">⌄</span></article>';
+ const item=armors.find(x=>String(x.id||x.compoundId)===String(buildState.armor[slot]));
+ return '<article class="build-slot build-slot-clickable '+(item?'has-item':'is-empty')+'" data-build-pick="'+slot+'" tabindex="0" role="button" aria-label="Selecionar armadura: '+label+'"><div class="build-slot-icon">'+(item?weaponImageMarkup(item):'<span>'+(ARMOR_TYPE_ICONS[slot]||"✧")+'</span>')+'</div><div class="build-slot-copy"><small>'+label+'</small><strong class="build-slot-name">'+escapeHtml(item?.name||"Vazio")+'</strong></div></article>';
 }
 function buildAccessorySlotMarkup(slot,label){
  const item=accessories.find(x=>String(x.id||x.compoundId)===String(buildState.accessories[slot]));
  const glyph=accessoryIcon({subCategory:slot==="belt"?"belt":slot==="necklace"?"necklace":"ring"});
- return '<article class="build-slot build-slot-clickable" data-build-pick="'+slot+'" tabindex="0" role="button" aria-label="Selecionar acessório: '+label+'"><div class="build-slot-icon" style="--rarity:'+(item?rarityStyle(item):"var(--gold2)")+'">'+(item?accessoryImageMarkup(item):glyph)+'</div><div class="build-slot-copy"><small>'+label.toUpperCase()+'</small><strong class="build-slot-name">'+escapeHtml(item?.name||"Não selecionado")+'</strong><span class="build-slot-meta">'+(item?escapeHtml(rarity(item)):"Clique para escolher um acessório")+'</span></div><span class="build-slot-chevron">⌄</span></article>';
+ return '<article class="build-slot build-slot-clickable '+(item?'has-item':'is-empty')+'" data-build-pick="'+slot+'" tabindex="0" role="button" aria-label="Selecionar acessório: '+label+'"><div class="build-slot-icon" style="--rarity:'+(item?rarityStyle(item):"var(--gold2)")+'">'+(item?accessoryImageMarkup(item):'<span>'+glyph+'</span>')+'</div><div class="build-slot-copy"><small>'+label+'</small><strong class="build-slot-name">'+escapeHtml(item?.name||"Vazio")+'</strong></div></article>';
 }
 function renderBuildScreen(){
  if(!$("build-class"))return;
@@ -929,8 +944,9 @@ function renderBuildScreen(){
  $("build-class").value=buildState.className;
  buildTypeOptions();buildStatsOptions("weapon",0);buildStatsOptions("weapon",1);buildStatsOptions("armor",0);buildStatsOptions("armor",1);buildStatsOptions("accessory",0);buildStatsOptions("accessory",1);
  const cls=CLASS_DATA.find(x=>x.name===buildState.className);
- $("build-character").innerHTML=cls?'<img src="./assets/classes/'+cls.name.toLowerCase()+'.jpg" alt="Arte da classe '+escapeHtml(cls.name)+'" onerror="this.style.display=\'none\'"><div class="build-character-caption"><span>PERSONAGEM</span><strong>'+escapeHtml(cls.name)+'</strong><small>THE WORLD OF SETERA</small></div>':'<div class="build-character-placeholder"><span>✧</span><strong>Seu personagem</strong><small>Selecione uma classe para começar</small></div>';
+ $("build-character").innerHTML=cls?'<img src="./assets/classes/buttons/'+cls.name.toLowerCase()+'.jpg" data-fallback="./assets/classes/'+cls.name.toLowerCase()+'.jpg" alt="Arte da classe '+escapeHtml(cls.name)+'" onerror="if(this.dataset.fallback){this.onerror=null;this.src=this.dataset.fallback}else{this.style.display=\'none\'}" onerror="this.style.display=\'none\'"><div class="build-character-caption"><span>PERSONAGEM</span><strong>'+escapeHtml(cls.name)+'</strong><small>THE WORLD OF SETERA</small></div>':'<div class="build-character-placeholder"><span>✧</span><strong>Seu personagem</strong><small>Selecione uma classe para começar</small></div>';
  $("build-class-summary").textContent=cls?cls.role:"Escolha uma classe para liberar as opções de equipamento.";
+ renderBuildWeaponChoices();
  $("build-weapon-type").disabled=!cls;$("build-weapon-type2").disabled=!cls;
  $("build-weapon-stat1").disabled=!buildState.weaponType||buildLayerState.weapon!=="ready";$("build-weapon-stat2").disabled=!buildState.weaponType||buildLayerState.weapon!=="ready";
  $("build-armor-stat1").disabled=!cls;$("build-armor-stat2").disabled=!cls;$("build-accessory-stat1").disabled=!cls;$("build-accessory-stat2").disabled=!cls;
@@ -940,8 +956,10 @@ function renderBuildWeaponSlots(){
  const types=[buildState.weaponType,buildState.weaponType2];
  $("build-weapon-slots").innerHTML=types.map((type,index)=>{
   const item=weapons.find(w=>String(w.id||w.compoundId)===String(buildState.weapons[index]));
-  if(!type)return '<article class="build-slot build-slot-empty"><div class="build-slot-icon">⚔</div><div class="build-slot-copy"><small>'+(index?"ARMA SECUNDÁRIA":"ARMA PRINCIPAL")+'</small><strong>Tipo não selecionado</strong><span>Escolha o tipo de arma acima</span></div></article>';
-  return '<article class="build-slot build-slot-clickable" data-build-weapon-pick="'+index+'" tabindex="0" role="button" aria-label="Selecionar '+(index?"arma secundária":"arma principal")+'"><div class="build-slot-icon" style="--rarity:'+(item?rarityStyle(item):"var(--gold2)")+'">'+(item?weaponImageMarkup(item):"⚔")+'</div><div class="build-slot-copy"><small>'+(index?"ARMA SECUNDÁRIA":"ARMA PRINCIPAL")+' · '+escapeHtml(type)+'</small><strong class="build-slot-name">'+escapeHtml(item?.name||"Nenhuma peça selecionada")+'</strong><span class="build-slot-meta">'+(item?escapeHtml(rarity(item)):"Clique para escolher uma arma")+'</span></div><span class="build-slot-chevron">⌄</span></article>';
+  const label=index?"Arma secundária":"Arma principal";
+  if(!type)return '<article class="build-slot build-slot-empty is-empty"><div class="build-slot-icon"><span>⚔</span></div><div class="build-slot-copy"><small>'+label+'</small><strong class="build-slot-name">Vazio</strong></div></article>';
+  const cls=CLASS_DATA.find(x=>x.name===buildState.className);
+  return '<article class="build-slot build-slot-clickable '+(item?'has-item':'is-empty')+'" data-build-weapon-pick="'+index+'" tabindex="0" role="button" aria-label="Selecionar '+label+'"><div class="build-slot-icon" style="--rarity:'+(item?rarityStyle(item):"var(--gold2)")+'">'+(item?weaponImageMarkup(item):classButtonWeaponIconMarkup(type,cls?.name))+'</div><div class="build-slot-copy"><small>'+label+' · '+escapeHtml(type)+'</small><strong class="build-slot-name">'+escapeHtml(item?.name||"Vazio")+'</strong></div></article>';
  }).join("");
 }
 function buildWeaponResultsMarkup(type,index){
@@ -1080,6 +1098,14 @@ async function loadBuildLayer(kind){
 }
 function closeBuildPicker(){const picker=$("build-picker");picker.hidden=true;$("build-view").appendChild(picker)}
 function initBuildPlanner(){
+ document.addEventListener("click",e=>{
+  const choice=e.target.closest("[data-build-weapon-choice]");
+  if(!choice)return;
+  const index=Number(choice.dataset.buildWeaponChoice),select=$("build-weapon-type"+(index?"2":""));
+  if(!select)return;
+  select.value=choice.dataset.weaponType||"";
+  select.dispatchEvent(new Event("change",{bubbles:true}));
+ });
  $("build-class").addEventListener("change",e=>{buildState.className=e.target.value;buildState.weaponType="";buildState.weaponType2="";buildState.weapons=["",""];buildState.armor={};buildState.weaponStats=["",""];buildState.armorStats=["",""];renderBuildScreen()});
  ["build-weapon-type","build-weapon-type2"].forEach((id,index)=>$(id).addEventListener("change",async e=>{if(index){buildState.weaponType2=e.target.value;buildState.weapons[1]=""}else{buildState.weaponType=e.target.value;buildState.weapons[0]=""}buildState.weaponStats=["",""];renderBuildScreen();if(buildState.weaponType||buildState.weaponType2){await loadBuildLayer("weapon");buildStatsOptions("weapon",0);buildStatsOptions("weapon",1);renderBuildScreen()}}));
  [["accessory",0],["accessory",1]].forEach(([kind,index])=>$("build-"+kind+"-stat"+(index+1)).addEventListener("focus",async()=>{if(buildLayerState[kind]!=="ready"){await loadBuildLayer(kind);buildStatsOptions(kind,0);buildStatsOptions(kind,1)}}));
