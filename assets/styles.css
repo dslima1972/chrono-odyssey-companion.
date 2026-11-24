@@ -1460,3 +1460,74 @@ input.gear-score-slider::-moz-range-thumb{width:9px;height:9px;border:1px solid 
  #build-view .build-slot-icon{width:46px;height:48px;flex-basis:46px}
  #build-view .build-equipment-slot-glyph{width:31px;height:31px}
 }
+
+
+/* Build planner: equipment orbit around the class artwork */
+#build-view .build-workspace{position:relative;display:block;min-height:620px;margin-top:18px;padding:10px 0 18px}
+#build-view .build-character-panel{position:relative;z-index:1;width:34%;max-width:340px;margin:0 auto;top:auto;position:relative;display:block;border:0;background:transparent;padding:0;box-shadow:none}
+#build-view #build-character{height:480px;min-height:480px;background:radial-gradient(ellipse at 50% 40%,rgba(132,119,85,.2),rgba(15,20,17,.08) 58%,transparent 76%);overflow:visible}
+#build-view #build-character img{height:480px;object-fit:contain;object-position:center bottom;mask-image:linear-gradient(#000 84%,transparent 100%)}
+#build-view .build-character-caption{bottom:8px;left:0;right:0;text-align:center}
+#build-view .build-character-panel>p{display:none}
+#build-view .build-equipment-panel{position:absolute;inset:0;z-index:2;display:block;pointer-events:none}
+#build-view .build-equipment-panel>section{display:contents}
+#build-view .build-equipment-panel h3{position:absolute;clip:rect(0 0 0 0);clip-path:inset(50%);width:1px;height:1px;overflow:hidden;white-space:nowrap}
+#build-view .build-slot-grid{display:contents}
+#build-view .build-slot{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:5px;width:112px;min-height:110px;padding:7px 6px 8px;border:1px solid rgba(180,153,96,.14);border-radius:12px;background:linear-gradient(155deg,rgba(30,35,29,.9),rgba(10,15,13,.94));box-shadow:0 8px 22px rgba(0,0,0,.2);pointer-events:auto;transition:background .18s,border-color .18s,transform .18s}
+#build-view .build-slot-icon{width:78px;height:76px;flex:0 0 76px;border:0;border-radius:8px;background:rgba(0,0,0,.18);padding:5px;color:#c6ad77}
+#build-view .build-slot-icon img{width:100%;height:100%;object-fit:contain}
+#build-view .build-equipment-slot-glyph{width:43px;height:43px}
+#build-view .build-slot-copy{display:block;flex:none;width:100%;text-align:center}
+#build-view .build-slot-copy strong{display:block;font:500 9px/1.25 Inter,sans-serif;color:#e4dfd0;overflow-wrap:anywhere}
+#build-view .build-slot.is-empty{min-height:84px;min-width:84px;width:84px;height:84px;justify-content:center;background:rgba(17,23,20,.72);border-color:rgba(180,153,96,.09)}
+#build-view .build-slot.is-empty .build-slot-icon{width:58px;height:58px;flex-basis:58px;background:transparent}
+#build-view .build-slot.is-empty .build-equipment-slot-glyph{width:38px;height:38px;opacity:.8}
+#build-view .build-slot.is-empty .build-slot-copy{display:none}
+#build-view .build-slot.has-item{border-color:color-mix(in srgb,var(--rarity) 76%,transparent);background:linear-gradient(155deg,color-mix(in srgb,var(--rarity) 28%,#20241f),color-mix(in srgb,var(--rarity) 13%,#0a0e0c) 70%);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--rarity) 24%,transparent),0 0 22px color-mix(in srgb,var(--rarity) 17%,transparent),0 8px 22px rgba(0,0,0,.3)}
+#build-view .build-slot.has-item .build-slot-icon{background:color-mix(in srgb,var(--rarity) 17%,#090d0b);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--rarity) 38%,transparent)}
+#build-view .build-slot.has-item .build-slot-copy strong{color:color-mix(in srgb,var(--rarity) 38%,#fff)}
+#build-view .build-slot-clickable:hover,#build-view .build-slot-clickable:focus-visible{transform:translateY(-2px);border-color:color-mix(in srgb,var(--rarity,var(--gold2)) 82%,#fff);box-shadow:0 0 0 2px color-mix(in srgb,var(--rarity,var(--gold2)) 22%,transparent),0 10px 26px rgba(0,0,0,.35)}
+/* weapon slots */
+#build-view #build-weapon-slots .build-slot:nth-child(1){top:3%;left:calc(50% - 132px)}
+#build-view #build-weapon-slots .build-slot:nth-child(2){top:3%;left:calc(50% + 20px)}
+/* armor slots: shoulder/head/chest/arms/legs/feet distributed along both sides */
+#build-view #build-armor-slots .build-slot:nth-child(1){top:17%;left:4%}
+#build-view #build-armor-slots .build-slot:nth-child(2){top:37%;left:4%}
+#build-view #build-armor-slots .build-slot:nth-child(3){top:57%;left:4%}
+#build-view #build-armor-slots .build-slot:nth-child(4){top:17%;right:4%}
+#build-view #build-armor-slots .build-slot:nth-child(5){top:37%;right:4%}
+#build-view #build-armor-slots .build-slot:nth-child(6){top:57%;right:4%}
+/* accessories along the lower edge */
+#build-view #build-accessory-slots .build-slot:nth-child(1){bottom:0;left:calc(50% - 240px)}
+#build-view #build-accessory-slots .build-slot:nth-child(2){bottom:0;left:calc(50% - 136px)}
+#build-view #build-accessory-slots .build-slot:nth-child(3){bottom:0;left:calc(50% + 32px)}
+#build-view #build-accessory-slots .build-slot:nth-child(4){bottom:0;left:calc(50% + 136px)}
+@media(max-width:900px){
+ #build-view .build-workspace{min-height:580px}
+ #build-view .build-character-panel{width:38%;max-width:280px}
+ #build-view #build-character,#build-view #build-character img{height:430px;min-height:430px}
+ #build-view .build-slot{width:94px;min-height:96px}
+ #build-view .build-slot-icon{width:65px;height:65px;flex-basis:65px}
+ #build-view .build-slot.is-empty{width:72px;height:72px;min-height:72px}
+ #build-view #build-armor-slots .build-slot:nth-child(1),#build-view #build-armor-slots .build-slot:nth-child(2),#build-view #build-armor-slots .build-slot:nth-child(3){left:1%}
+ #build-view #build-armor-slots .build-slot:nth-child(4),#build-view #build-armor-slots .build-slot:nth-child(5),#build-view #build-armor-slots .build-slot:nth-child(6){right:1%}
+}
+@media(max-width:650px){
+ #build-view .build-workspace{display:grid;min-height:0;padding:0;gap:12px}
+ #build-view .build-character-panel{width:100%;max-width:none;display:block}
+ #build-view #build-character,#build-view #build-character img{height:280px;min-height:280px}
+ #build-view .build-character-panel>p{display:block}
+ #build-view .build-equipment-panel{position:relative;inset:auto;display:grid;gap:12px}
+ #build-view .build-equipment-panel>section{display:block;padding:12px;background:#101710;border:0}
+ #build-view .build-equipment-panel h3{position:static;clip:auto;clip-path:none;width:auto;height:auto;overflow:visible;white-space:normal}
+ #build-view .build-slot-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+ #build-view .build-slot{position:static;width:auto;min-height:96px}
+ #build-view .build-slot.is-empty{width:auto;height:84px;min-height:84px}
+ #build-view .build-slot-icon{width:64px;height:62px;flex-basis:62px}
+ #build-view .build-slot.is-empty .build-slot-icon{width:54px;height:54px;flex-basis:54px}
+}
+@media(max-width:390px){
+ #build-view .build-slot{min-height:86px;padding:5px 3px}
+ #build-view .build-slot-icon{width:56px;height:54px;flex-basis:54px}
+ #build-view .build-slot-copy strong{font-size:8px}
+}
