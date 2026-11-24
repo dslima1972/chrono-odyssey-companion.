@@ -1423,3 +1423,40 @@ input.gear-score-slider::-moz-range-thumb{width:9px;height:9px;border:1px solid 
 #build-view .build-result-icon{border-radius:6px;background:rgba(0,0,0,.25)}
 @media(max-width:900px){#build-view .build-workspace{grid-template-columns:1fr}#build-view .build-character-panel{display:grid;grid-template-columns:minmax(150px,.7fr) 1fr;gap:12px;align-items:center}#build-view #build-character,#build-view #build-character img{min-height:270px;height:270px}}
 @media(max-width:650px){#build-view .build-controls,#build-view .build-stat-panels{grid-template-columns:1fr}#build-view .build-character-panel{grid-template-columns:1fr}#build-view #build-character,#build-view #build-character img{min-height:300px;height:300px}#build-view .build-slot-grid{grid-template-columns:1fr 1fr}#build-view .build-weapon-choice{width:44px;height:44px}#build-view .build-equipment-panel>section{padding:14px 12px}}
+
+/* Build planner: compact weapon-type selectors and icon-only equipment slots */
+#build-view .build-controls{grid-template-columns:minmax(155px,.72fr) minmax(0,1fr) minmax(0,1fr);align-items:start;gap:18px;padding:15px 17px}
+#build-view .build-controls .build-class-control{min-width:0}
+#build-view .build-weapon-filter-control{display:flex;flex-direction:column;gap:8px;min-width:0}
+#build-view .build-weapon-filter-control>label{display:block}
+#build-view .build-optional-label{font-size:8px;letter-spacing:.5px;text-transform:none;color:#78817c}
+#build-view .build-native-select{display:none!important}
+#build-view .build-weapon-choice-list{display:flex;align-items:center;flex-wrap:wrap;gap:6px;min-height:42px}
+#build-view .build-weapon-choice-empty{font-size:10px;letter-spacing:0;text-transform:none;color:#727c77}
+#build-view .build-weapon-choice{width:40px;height:40px;flex:0 0 40px;padding:5px;border:0;border-radius:9px;background:rgba(5,10,11,.32);opacity:.68}
+#build-view .build-weapon-choice img{width:100%;height:100%;object-fit:contain}
+#build-view .build-weapon-choice:hover{background:rgba(194,160,91,.13);opacity:1}
+#build-view .build-weapon-choice.is-selected{background:rgba(194,160,91,.2);box-shadow:inset 0 -2px #c7a45d;opacity:1}
+#build-view .build-weapon-choice-clear{font-size:19px;color:#bba36e}
+#build-view .build-slot{min-height:76px;padding:8px;gap:8px;border:0;border-radius:10px;background:rgba(8,14,15,.4);box-shadow:none}
+#build-view .build-slot-icon{width:54px;height:56px;flex:0 0 54px;display:grid;place-items:center;border:0;border-radius:8px;background:rgba(0,0,0,.19);color:#b8a474}
+#build-view .build-equipment-slot-glyph{width:36px;height:36px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+#build-view .build-slot-copy{min-width:0;gap:0}
+#build-view .build-slot-copy small{display:none}
+#build-view .build-slot-copy strong{font-size:10px;line-height:1.3;overflow-wrap:anywhere}
+#build-view .build-slot.is-empty .build-slot-copy{display:none}
+#build-view .build-slot-clickable:hover,#build-view .build-slot-clickable:focus-visible{box-shadow:inset 0 0 0 1px rgba(199,164,93,.28);background:rgba(194,160,91,.08)}
+#build-view .build-slot.is-empty .build-slot-icon{background:rgba(0,0,0,.13)}
+@media(max-width:760px){
+ #build-view .build-controls{grid-template-columns:1fr 1fr;gap:14px}
+ #build-view .build-class-control{grid-column:1/-1}
+ #build-view .build-weapon-choice-list{gap:5px}
+ #build-view .build-weapon-choice{width:38px;height:38px;flex-basis:38px}
+}
+@media(max-width:480px){
+ #build-view .build-controls{grid-template-columns:1fr 1fr;padding:12px 10px}
+ #build-view .build-weapon-choice{width:34px;height:34px;flex-basis:34px;padding:4px}
+ #build-view .build-slot{min-height:65px;padding:6px}
+ #build-view .build-slot-icon{width:46px;height:48px;flex-basis:46px}
+ #build-view .build-equipment-slot-glyph{width:31px;height:31px}
+}
