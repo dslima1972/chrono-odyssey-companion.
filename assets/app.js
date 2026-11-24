@@ -775,6 +775,10 @@ function mountAccessoryDetail(){
  if(panel)loadAccessoryDetails(selectedAccessory,panel);
 }
 function renderAccessoryList(){
+ const list=$("accessory-list"),layout=$("accessory-catalog-layout"),detail=$("accessory-detail");
+ // No mobile, a ficha fica dentro da entrada selecionada. Retire-a antes de reconstruir a lista,
+ // pois substituir list.innerHTML destruiria o próprio nó e impediria selecionar outro item.
+ if(list&&layout&&detail&&list.contains(detail))layout.appendChild(detail);
  const rows=accessoryFiltered();
  $("accessory-catalog-count").textContent=accessories.length?rows.length+" / "+accessories.length+" PEÇAS":"AGUARDANDO CATÁLOGO";
  if(selectedAccessory&&!rows.some(x=>String(x.id||x.compoundId)===String(selectedAccessory.id||selectedAccessory.compoundId)))selectedAccessory=null;
