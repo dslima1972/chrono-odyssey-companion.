@@ -670,7 +670,7 @@ function renderArmorStats(item){
  return (levels?renderGearScoreControl(item,levels,"Defesa"):"")+stats;
 }
 
-function renderOptionalItemOptions(item){const content=renderSuffixes(item)+renderPerks(item);return content?'<details class="detail-disclosure item-options-disclosure"><summary>Exibir sufixos e perks</summary><div class="item-options-content">'+content+'</div></details>':""}
+function renderOptionalItemOptions(item){const content=renderSuffixes(item)+renderPerks(item);return content?'<details class="detail-disclosure item-options-disclosure"><summary>Sufixos e perks</summary><div class="item-options-content">'+content+'</div></details>':""}
 function detailedArmorMarkup(item,catalogItem){
  const info=item?.itemInfo||{},grade=item?.equipmentGradeInfo||{};
  const quick=compactMeta("ID",catalogItem.id||catalogItem.compoundId)+compactMeta("Nível",info.requiredLevel)+compactMeta("Tier",info.tier)+compactMeta("Conjunto",armorSetLabel(catalogItem));
@@ -790,7 +790,7 @@ window.addEventListener("resize",()=>{
  if($("accessories-view")?.classList.contains("active"))mountAccessoryDetail();
 },{passive:true});
 function accessoryDetailMarkup(item){
- return '<div class="detail-panel detail-prototype detail-prototype-accessory" style="--rarity:'+rarityStyle(item)+'"><div class="detail-top"><div class="detail-heading-copy"><h3>'+escapeHtml(item.name||"Acessório")+'</h3><div class="detail-header-meta"></div></div><div class="detail-icon detail-hero"><span>'+accessoryIcon(item)+'</span>'+accessoryImageMarkup(item,"detail-hero-image")+'<i class="detail-hero-glow"></i></div></div><div class="detail-live"><p class="detail-muted">Carregando ficha individual do Questlog…</p></div><a class="detail-source" href="https://questlog.gg/chrono-odyssey/en/db/item/'+encodeURIComponent(item.id||item.compoundId||"")+'" target="_blank" rel="noreferrer">CONSULTAR FICHA NO QUESTLOG ↗</a></div>';
+ return '<div class="detail-panel detail-prototype detail-prototype-accessory accessory-game-card" style="--rarity:'+rarityStyle(item)+'"><div class="detail-top"><div class="detail-heading-copy"><div class="detail-header-meta"></div><h3>'+escapeHtml(item.name||"Acessório")+'</h3></div><div class="detail-icon detail-hero"><span>'+accessoryIcon(item)+'</span>'+accessoryImageMarkup(item,"detail-hero-image")+'<i class="detail-hero-glow"></i></div></div><div class="detail-live"><p class="detail-muted">Carregando ficha individual do Questlog…</p></div><a class="detail-source" href="https://questlog.gg/chrono-odyssey/en/db/item/'+encodeURIComponent(item.id||item.compoundId||"") + '" target="_blank" rel="noreferrer">CONSULTAR FICHA NO QUESTLOG ↗</a></div>';
 }
 function findAccessoryGearScore(item){
  const stats=item?.itemStats?.equipmentStats||{};
@@ -841,7 +841,7 @@ async function loadAccessoryDetails(item,panelRoot){
    current.innerHTML=detailedAccessoryMarkup(record,item);
    const stats=current.querySelector(".stats-primary"),heading=current.closest(".detail-panel")?.querySelector(".detail-heading-copy");if(stats&&heading)heading.appendChild(stats);
    const meta=current.closest(".detail-panel")?.querySelector(".detail-header-meta");
-   if(meta)meta.innerHTML=compactMeta("Tier",record?.itemInfo?.tier)+compactMeta("Raridade",rarity(item))+compactMeta("Nível",record?.itemInfo?.requiredLevel)+compactMeta("Classe","Todas")+compactMeta("Tipo",accessoryType(item));
+   if(meta)meta.innerHTML=compactMeta("Tier",record?.itemInfo?.tier)+compactMeta("Raridade",rarity(item))+compactMeta("Tipo",accessoryType(item));
   }
  }catch(e){
   const current=panelRoot.querySelector(".detail-live");
