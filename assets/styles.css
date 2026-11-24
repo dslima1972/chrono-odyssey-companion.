@@ -1306,3 +1306,11 @@ input.gear-score-slider::-moz-range-thumb{width:9px;height:9px;border:1px solid 
 .catalog-grid-view .armor-set-group>div{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:10px;padding:10px}
 .catalog-grid-view .armor-set-group .catalog-item-entry{min-width:0;display:flex;flex-direction:column;gap:8px;border:0}
 @media(max-width:760px){.catalog-grid-view{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:8px}.catalog-card{padding:7px}.catalog-card-copy strong{font-size:11px}.catalog-grid-view .armor-set-group>div{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:8px}.catalog-viewbar{flex-wrap:wrap}}
+
+/* Em blocos, a ficha detalhada ocupa a largura total do catálogo, não a coluna do card */
+.catalog-grid-view>.catalog-item-entry:has(>.inline-item-detail),
+.catalog-grid-view .armor-set-group .catalog-item-entry:has(>.inline-item-detail){grid-column:1/-1;width:100%;min-width:0}
+.catalog-grid-view>.catalog-item-entry:has(>.inline-item-detail)>.catalog-card,
+.catalog-grid-view .armor-set-group .catalog-item-entry:has(>.inline-item-detail)>.catalog-card{width:100%;max-width:190px;justify-self:start}
+.catalog-grid-view .catalog-item-entry:has(>.inline-item-detail)>.inline-item-detail{width:100%;min-width:0;box-sizing:border-box}
+.catalog-grid-view .catalog-item-entry:has(>.inline-item-detail) .detail-panel{width:100%;max-width:none;box-sizing:border-box}
