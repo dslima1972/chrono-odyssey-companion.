@@ -2204,3 +2204,72 @@ input.gear-score-slider::-moz-range-thumb{width:9px;height:9px;border:1px solid 
  .item-options-content .roll-choice-copy strong{font-size:11px}
  .item-options-content .roll-choice-copy small{font-size:10px}
 }
+
+
+/* Chrono Odyssey Companion — novo padrão do catálogo de acessórios */
+#accessories-view .accessory-catalog-layout{grid-template-columns:minmax(270px,.82fr) minmax(0,1.18fr);gap:28px;align-items:start}
+#accessories-view .accessory-list{min-width:0;min-height:300px;border:0;background:transparent;overflow:visible}
+#accessories-view .accessory-list .weapon-row{grid-template-columns:52px minmax(0,1fr) auto;gap:14px;min-height:76px;padding:10px 14px;border:0;border-bottom:1px solid rgba(151,169,181,.10);border-left:2px solid transparent;background:transparent;transition:background .16s ease,border-color .16s ease}
+#accessories-view .accessory-list .weapon-row:hover{background:rgba(139,160,174,.07)}
+#accessories-view .accessory-list .weapon-row.selected{background:linear-gradient(90deg,rgba(195,163,106,.13),rgba(195,163,106,.035));border-left-color:var(--gold)}
+#accessories-view .accessory-list .weapon-symbol{width:50px;height:50px;border:0;border-radius:3px;background:linear-gradient(145deg,#1c2b36,#111d27)}
+#accessories-view .accessory-list .weapon-symbol img{background:transparent;padding:3px}
+#accessories-view .accessory-list .weapon-name{font-size:13px}
+#accessories-view .accessory-list .weapon-meta{font-size:10px}
+#accessories-view .accessory-list .rarity-label{font-size:9px;white-space:nowrap}
+#accessories-view .accessory-detail{display:block!important;position:sticky;top:18px;min-width:0;min-height:360px;padding:22px 24px;border:0;background:radial-gradient(ellipse at 85% 8%,rgba(195,163,106,.075),transparent 42%),linear-gradient(145deg,rgba(25,39,50,.82),rgba(14,25,34,.72))}
+#accessories-view .accessory-detail.empty-detail{position:sticky}
+#accessories-view .accessory-detail .detail-top{display:grid;grid-template-columns:minmax(0,1fr) minmax(130px,.72fr);align-items:center;gap:18px;padding:0 0 18px;border-bottom:1px solid rgba(151,169,181,.13)}
+#accessories-view .accessory-detail .detail-heading-copy{min-width:0}
+#accessories-view .accessory-detail .detail-top h3{margin:0 0 12px;font:600 clamp(19px,2vw,27px) Cinzel,Georgia,serif;line-height:1.25}
+#accessories-view .accessory-detail .detail-icon.detail-hero{width:100%;height:170px;min-height:145px;flex:initial;border:0;background:radial-gradient(circle,rgba(195,163,106,.12),rgba(11,20,28,.22) 70%)}
+#accessories-view .accessory-detail .detail-hero-image{object-fit:contain;padding:8px}
+#accessories-view .accessory-detail .detail-header-meta{display:flex;flex-wrap:wrap;gap:12px 18px;margin:0!important}
+#accessories-view .accessory-detail .detail-meta-chip{display:flex;flex-direction:column;gap:4px;padding:0!important;border:0!important;background:transparent!important}
+#accessories-view .accessory-detail .detail-meta-chip small{color:var(--muted);font-size:8px;letter-spacing:.9px;text-transform:uppercase}
+#accessories-view .accessory-detail .detail-meta-chip strong{font-size:10px;font-weight:500}
+#accessories-view .accessory-detail .detail-meta-chip:nth-child(2) strong{color:var(--rarity)}
+#accessories-view .accessory-detail .detail-live{min-width:0}
+#accessories-view .accessory-detail .stats-primary{margin-top:16px;padding-top:0;border-top:0}
+#accessories-view .accessory-detail .stats-primary .gear-score-control{max-width:280px;margin:0 0 14px;padding:0;border:0;background:transparent}
+#accessories-view .accessory-detail .stats-primary .stat-list{display:flex;flex-direction:column;gap:0;width:100%;margin-top:10px}
+#accessories-view .accessory-detail .stats-primary .stat-line{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(36px,auto);align-items:center;gap:12px;padding:10px 2px;border:0;border-bottom:1px solid rgba(151,169,181,.10);background:transparent}
+#accessories-view .accessory-detail .detail-section{margin-top:16px}
+#accessories-view .accessory-detail .detail-note{font-size:10px;line-height:1.65}
+#accessories-view .accessory-detail .detail-source{margin-top:12px}
+#accessories-view .accessory-list.catalog-grid-view{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#accessories-view .accessory-list.catalog-grid-view .catalog-card{min-width:0;min-height:145px;padding:10px;border:0;border-bottom:1px solid rgba(151,169,181,.10);background:rgba(20,32,42,.62)}
+#accessories-view .accessory-list.catalog-grid-view .catalog-card.selected{background:rgba(195,163,106,.12);box-shadow:inset 2px 0 var(--gold)}
+#accessories-view .accessory-list.catalog-grid-view .catalog-card-image{width:58px;height:58px;border:0;background:rgba(7,14,20,.28)}
+#accessories-view .accessory-list.catalog-grid-view .catalog-card-copy strong{font:500 11px Cinzel,Georgia,serif}
+#accessories-view .filters.armor-filters{grid-template-columns:minmax(220px,1.7fr) repeat(3,minmax(125px,1fr));gap:9px}
+#accessories-view .filters .search-wrap,#accessories-view .filters select{min-height:40px;height:40px}
+#accessories-view .catalog-viewbar{margin:2px 0 12px;border:0;background:transparent}
+#accessories-view .catalog-viewbar>span{margin-right:auto}
+#accessories-view .armor-data-note{margin-top:14px}
+@media(max-width:900px){
+ #accessories-view .filters.armor-filters{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #accessories-view .filters .search-wrap{grid-column:1/-1}
+ #accessories-view .accessory-catalog-layout{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:16px}
+ #accessories-view .accessory-detail{padding:18px}
+ #accessories-view .accessory-detail .detail-top{grid-template-columns:1fr}
+ #accessories-view .accessory-detail .detail-icon.detail-hero{grid-row:1;height:145px;min-height:125px}
+}
+@media(max-width:680px){
+ #accessories-view .accessory-catalog-layout{display:flex;flex-direction:column;gap:16px}
+ #accessories-view .accessory-list{width:100%;min-height:0}
+ #accessories-view .accessory-detail{position:static;top:auto;width:100%;min-height:0;padding:18px 14px}
+ #accessories-view .accessory-detail .detail-top{grid-template-columns:minmax(0,1fr) minmax(105px,.62fr);gap:12px}
+ #accessories-view .accessory-detail .detail-icon.detail-hero{grid-row:auto;height:125px;min-height:110px}
+ #accessories-view .accessory-detail .detail-top h3{font-size:19px}
+ #accessories-view .accessory-list .weapon-row{grid-template-columns:46px minmax(0,1fr) auto;min-height:68px;padding:9px 8px;gap:10px}
+ #accessories-view .accessory-list .weapon-symbol{width:44px;height:44px}
+}
+@media(max-width:420px){
+ #accessories-view .filters.armor-filters{grid-template-columns:1fr 1fr;gap:7px}
+ #accessories-view .filters .search-wrap{grid-column:1/-1}
+ #accessories-view .filters select{padding:0 8px;font-size:10px}
+ #accessories-view .accessory-detail .detail-top{grid-template-columns:1fr}
+ #accessories-view .accessory-detail .detail-icon.detail-hero{grid-row:1;height:145px}
+ #accessories-view .accessory-list.catalog-grid-view{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
