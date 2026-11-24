@@ -748,18 +748,30 @@ function accessoryFiltered(){
 }
 function fillAccessoryFilters(){fillRarityOptions("accessory-rarity-filter")}
 function renderAccessoryList(){
- const rows=accessoryFiltered();$("accessory-catalog-count").textContent=accessories.length?rows.length+" / "+accessories.length+" PEÇAS":"AGUARDANDO CATÁLOGO";
- if(!rows.length){$("accessory-list").innerHTML='<div class="empty-state">'+(accessories.length?"Nenhum acessório corresponde aos filtros selecionados.":"Aguardando a exportação do Questlog.")+'</div>';return}
- $("accessory-list").innerHTML=rows.map(x=>{
-  const isSelected=selectedAccessory&&String(selectedAccessory.id||selectedAccessory.compoundId)===String(x.id||x.compoundId);
-  const itemMarkup=catalogView("accessories")==="grid"
-   ?catalogCardMarkup(x,{name:x.name||"Acessório",meta:accessoryType(x),icon:accessoryIcon(x),image:accessoryImageMarkup(x),selected:isSelected,dataAttr:'data-accessory-id="'+escapeHtml(x.id)+'"'})
-   :'<button class="weapon-row armor-row '+(isSelected?"selected":"")+'" data-accessory-id="'+escapeHtml(x.id)+'" style="--rarity:'+rarityStyle(x)+'"><span class="weapon-symbol"><span>'+accessoryIcon(x)+'</span>'+accessoryImageMarkup(x)+'</span><span><span class="weapon-name">'+escapeHtml(x.name||"Acessório")+'</span><span class="weapon-meta">'+escapeHtml(accessoryType(x))+'</span></span><span class="rarity-label">'+escapeHtml(rarity(x))+'</span></button>';
-  return '<div class="catalog-item-entry">'+itemMarkup+(isSelected?'<div class="inline-item-detail">'+accessoryDetailMarkup(x)+'</div>':'')+'</div>';
- }).join("");
+ const rows=accessoryFiltered();
+ $("accessory-catalog-count").textContent=accessories.length?rows.length+" / "+accessories.length+" PEÇAS":"AGUARDANDO CATÁLOGO";
+ if(selectedAccessory&&!rows.some(x=>String(x.id||x.compoundId)===String(selectedAccessory.id||selectedAccessory.compoundId)))selectedAccessory=null;
+ if(!rows.length){
+  $("accessory-list").innerHTML='<div class="empty-state">'+(accessories.length?"Nenhum acessório corresponde aos filtros selecionados.":"Aguardando a exportação do Questlog.")+'</div>';
+ }else{
+  $("accessory-list").innerHTML=rows.map(x=>{
+   const isSelected=selectedAccessory&&String(selectedAccessory.id||selectedAccessory.compoundId)===String(x.id||x.compoundId);
+   return catalogView("accessories")==="grid"
+    ?catalogCardMarkup(x,{name:x.name||"Acessório",meta:accessoryType(x),icon:accessoryIcon(x),image:accessoryImageMarkup(x),selected:isSelected,dataAttr:'data-accessory-id="'+escapeHtml(x.id)+'"'})
+    :'<button type="button" class="weapon-row armor-row '+(isSelected?"selected":"")+'" data-accessory-id="'+escapeHtml(x.id)+'" style="--rarity:'+rarityStyle(x)+'"><span class="weapon-symbol"><span>'+accessoryIcon(x)+'</span>'+accessoryImageMarkup(x)+'</span><span><span class="weapon-name">'+escapeHtml(x.name||"Acessório")+'</span><span class="weapon-meta">'+escapeHtml(accessoryType(x))+'</span></span><span class="rarity-label">'+escapeHtml(rarity(x))+'</span></button>';
+  }).join("");
+ }
  applyCatalogView("accessories","accessory-list");
  document.querySelectorAll("#accessory-list [data-accessory-id]").forEach(b=>b.addEventListener("click",()=>selectAccessory(b.dataset.accessoryId)));
- if(selectedAccessory){const panel=$("accessory-list").querySelector(".inline-item-detail .detail-panel");if(panel)loadAccessoryDetails(selectedAccessory,panel)}
+ const detail=$("accessory-detail");
+ if(selectedAccessory){
+  detail.classList.remove("empty-detail");
+  detail.innerHTML=accessoryDetailMarkup(selectedAccessory);
+  loadAccessoryDetails(selectedAccessory,detail);
+ }else{
+  detail.classList.add("empty-detail");
+  detail.innerHTML='<div class="detail-ornament">✧</div><h3>Selecione um acessório</h3><p>Escolha uma peça no catálogo para consultar atributos, sufixos e perks disponíveis.</p>';
+ }
 }
 function accessoryDetailMarkup(item){
  return '<div class="detail-panel detail-prototype detail-prototype-accessory" style="--rarity:'+rarityStyle(item)+'"><div class="detail-top"><div class="detail-heading-copy"><h3>'+escapeHtml(item.name||"Acessório")+'</h3><div class="detail-header-meta"></div></div><div class="detail-icon detail-hero"><span>'+accessoryIcon(item)+'</span>'+accessoryImageMarkup(item,"detail-hero-image")+'<i class="detail-hero-glow"></i></div></div><div class="detail-live"><p class="detail-muted">Carregando ficha individual do Questlog…</p></div><a class="detail-source" href="https://questlog.gg/chrono-odyssey/en/db/item/'+encodeURIComponent(item.id||item.compoundId||"")+'" target="_blank" rel="noreferrer">CONSULTAR FICHA NO QUESTLOG ↗</a></div>';
