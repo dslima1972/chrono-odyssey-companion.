@@ -959,8 +959,8 @@ document.addEventListener("input",event=>{
  if(current)current.textContent=score;
  panel.querySelectorAll("[data-gear-score-map]").forEach(node=>{
   try{const levels=JSON.parse(node.getAttribute("data-gear-score-map"));const level=levels[String(score)],field=node.dataset.statField,value=field?(level?.[field]??null):gearScoreValueAt(levels,score);node.textContent=value===undefined||value===null?"Sem valor cadastrado para este Equipment Score":String(formatStatValue(node.dataset.statType,value))}catch(error){}
-  if(panel.classList.contains("build-item-config"))renderBuildTotals();
  });
+ if(panel.classList.contains("build-item-config"))renderBuildTotals();
 });
 document.addEventListener("change",event=>{
  const input=event.target;
@@ -1182,7 +1182,7 @@ function renderBuildTotals(){
  const totals=new Map();
  const add=(key,label,raw)=>{
   if(raw===null||raw===undefined||raw==="")return;
-  const source=String(raw).replace(/,/g,"."),match=source.match(/-?\d+(?:\.\d+)?/);if(!match)return;
+  const source=String(formatStatValue(key,raw)??raw).replace(/,/g,"."),match=source.match(/-?\d+(?:\.\d+)?/);if(!match)return;
   const value=Number(match[0]);if(!Number.isFinite(value))return;
   const suffix=source.slice(match[0].length).trim(),identity=normalizeStatIdentity(key||label);
   const current=totals.get(identity)||{label:label||humanizeStat(key),value:0,suffix};
