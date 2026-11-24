@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./assets/styles.css?v=20261124raritycolors3">
-  <script src="./assets/app.js?v=20261124equipmentfix5" defer></script>
+  <script src="./assets/app.js?v=20261124slotlabels1" defer></script>
   <script src="./assets/dressing-room.js?v=20261123e20" defer></script>
 </head>
 <body>
@@ -198,7 +198,7 @@
           <input id="dressing-search" class="dressing-search" type="search" placeholder="Buscar peça pelo nome…" autocomplete="off">
           <div class="dressing-filter-row"><select id="dressing-rarity"><option value="">Todas as raridades</option><option>Comum</option><option>Incomum</option><option>Raro</option><option>Épico</option><option>Lendário</option></select></div>
           <div class="dressing-slot-tabs" id="dressing-slot-tabs">
-            <button type="button" class="active" data-slot="head">Cabeça</button><button type="button" data-slot="chest">Peitoral</button><button type="button" data-slot="hands">Mãos</button><button type="button" data-slot="back">Costas</button><button type="button" data-slot="legs">Pernas</button><button type="button" data-slot="feet">Pés</button>
+            <button type="button" class="active" data-slot="head">Elmo</button><button type="button" data-slot="chest">Peitoral</button><button type="button" data-slot="hands">Luvas</button><button type="button" data-slot="back">Capa</button><button type="button" data-slot="legs">Calça</button><button type="button" data-slot="feet">Botas</button>
           </div>
           <div class="dressing-items" id="dressing-items"><div class="loading">Carregando catálogo de armaduras…</div></div>
         </aside>
@@ -207,12 +207,12 @@
           <div class="dressing-composition-toolbar"><div class="dressing-mode-switch"><button type="button" id="dressing-mode-fixed" class="active">Encaixe fixo</button><button type="button" id="dressing-mode-free">Montagem livre</button></div><button type="button" id="dressing-layout-reset" class="secondary-action">Restaurar montagem</button></div>
           <div class="dressing-stage dressing-composition-stage">
             <div class="dressing-composition fixed-layout" id="dressing-composition" aria-label="Composição visual das peças selecionadas">
-              <div class="composition-piece composition-back" data-composition-slot="back"><span>Costas</span></div>
-              <div class="composition-piece composition-head" data-composition-slot="head"><span>Cabeça</span></div>
+              <div class="composition-piece composition-back" data-composition-slot="back"><span>Capa</span></div>
+              <div class="composition-piece composition-head" data-composition-slot="head"><span>Elmo</span></div>
               <div class="composition-piece composition-chest" data-composition-slot="chest"><span>Peitoral</span></div>
-              <div class="composition-piece composition-hands" data-composition-slot="hands"><span>Mãos</span></div>
-              <div class="composition-piece composition-legs" data-composition-slot="legs"><span>Pernas</span></div>
-              <div class="composition-piece composition-feet" data-composition-slot="feet"><span>Pés</span></div>
+              <div class="composition-piece composition-hands" data-composition-slot="hands"><span>Luvas</span></div>
+              <div class="composition-piece composition-legs" data-composition-slot="legs"><span>Calça</span></div>
+              <div class="composition-piece composition-feet" data-composition-slot="feet"><span>Botas</span></div>
             </div>
           </div>
           <p class="composition-note">No encaixe fixo, as peças ocupam posições de inventário. Na montagem livre, arraste e redimensione cada peça para criar sua própria composição.</p>
