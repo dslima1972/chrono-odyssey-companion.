@@ -752,23 +752,19 @@ function mountAccessoryDetail(){
  if(!layout||!list||!detail)return;
  const mobile=window.matchMedia("(max-width: 760px)").matches;
  if(mobile&&selectedAccessory){
-  const entry=Array.from(list.querySelectorAll(".catalog-item-entry")).find(el=>el.querySelector("[data-accessory-id]")?.dataset.accessoryId===String(selectedAccessory.id||selectedAccessory.compoundId));
-  if(entry)entry.appendChild(detail);
-  else layout.appendChild(detail);
- }else{
-  layout.appendChild(detail);
- }
- detail.classList.toggle("empty-detail",!selectedAccessory);
+  const id=String(selectedAccessory.id||selectedAccessory.compoundId);
+  const entry=Array.from(list.querySelectorAll(".catalog-item-entry")).find(el=>el.querySelector("[data-accessory-id]")?.dataset.accessoryId===id);
+  if(entry)entry.appendChild(detail);else layout.appendChild(detail);
+ }else layout.appendChild(detail);
  if(!selectedAccessory){
   detail.innerHTML='<div class="detail-ornament">✧</div><h3>Selecione um acessório</h3><p>Escolha um colar, anel ou cinto para consultar sua ficha.</p>';
+  detail.classList.add("empty-detail");
   return;
  }
- const panel=detail.querySelector(".detail-panel")||detail;
- panel.classList.add("detail-panel","detail-prototype","detail-prototype-accessory");
- panel.style.setProperty("--rarity",rarityStyle(selectedAccessory));
- if(!panel.querySelector(".detail-live"))panel.outerHTML=accessoryDetailMarkup(selectedAccessory).replace(/^<div /,'<div id="accessory-detail" ');
- const active=$("accessory-detail");
- if(active)loadAccessoryDetails(selectedAccessory,active);
+ detail.classList.remove("empty-detail");
+ detail.innerHTML=accessoryDetailMarkup(selectedAccessory);
+ const panel=detail.querySelector(".detail-panel");
+ if(panel)loadAccessoryDetails(selectedAccessory,panel);
 }
 function renderAccessoryList(){
  const rows=accessoryFiltered();
