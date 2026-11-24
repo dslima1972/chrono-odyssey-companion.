@@ -755,7 +755,15 @@ function mountAccessoryDetail(){
   const id=String(selectedAccessory.id||selectedAccessory.compoundId);
   const entry=Array.from(list.querySelectorAll(".catalog-item-entry")).find(el=>el.querySelector("[data-accessory-id]")?.dataset.accessoryId===id);
   if(entry)entry.appendChild(detail);else layout.appendChild(detail);
- }else layout.appendChild(detail);
+  detail.classList.add("accessory-detail-inline");
+  detail.hidden=false;
+  detail.style.display="block";
+ }else{
+  detail.classList.remove("accessory-detail-inline");
+  detail.hidden=false;
+  detail.style.display="";
+  layout.appendChild(detail);
+ }
  if(!selectedAccessory){
   detail.innerHTML='<div class="detail-ornament">✧</div><h3>Selecione um acessório</h3><p>Escolha um colar, anel ou cinto para consultar sua ficha.</p>';
   detail.classList.add("empty-detail");
@@ -867,9 +875,12 @@ async function loadAccessoryDetails(item,panelRoot){
   if(!record)throw new Error("Ficha individual não encontrada para este acessório.");
   if(current&&selectedAccessory&&String(selectedAccessory.id||selectedAccessory.compoundId)===id){
    current.innerHTML=detailedAccessoryMarkup(record,item);
+   const scoreControl=current.querySelector(".gear-score-control");
+   const heading=current.closest(".detail-panel")?.querySelector(".accessory-inspect-heading");
+   if(scoreControl&&heading)heading.appendChild(scoreControl);
 
    const meta=current.closest(".detail-panel")?.querySelector(".detail-header-meta");
-   if(meta)meta.innerHTML=[record?.itemInfo?.tier!==undefined&&record?.itemInfo?.tier!==null?"Tier "+record.itemInfo.tier:"",rarity(item),accessoryType(item)].filter(Boolean).map(value=>'<span class="accessory-inspect-meta-value">'+escapeHtml(value)+'</span>').join("");
+   if(meta)meta.innerHTML=[record?.itemInfo?.tier!==undefined&&record?.itemInfo?.tier!==null?"Tier "+record.itemInfo.tier:"",rarity(item),accessoryType(item)].filter(Boolean).map((value,index)=>'<span class="accessory-inspect-meta-value'+(index===1?' rarity-value':'')+'">'+escapeHtml(value)+'</span>').join("");
   }
  }catch(e){
   const current=panelRoot.querySelector(".detail-live");
