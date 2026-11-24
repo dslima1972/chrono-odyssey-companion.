@@ -1212,7 +1212,7 @@ function renderBuildTotals(){
   const value=key+" "+label;
   if(/^(strength|dexterity|intelligence|vitality|wisdom|constitution|luck|agility|willpower)$/.test(key)||/(strength|dexterity|intelligence|vitality|wisdom|constitution|forca|destreza|inteligencia|vitalidade|sabedoria)/.test(value))return "attributes";
   if(/(gather|harvest|mining|fishing|craft|process|lifeskill|life.?skill|coleta|minera|pesca|fabric|cozinh)/.test(value))return "lifeskill";
-  if(/(damage.?reduction|reduction.?damage|damage.?taken.?reduction|damage.?resistance|reduce.?damage|dano.?recebido|reducao.?dano|reducao.?de.?dano|reduz.?dano|mitigation|defense|defence|armor|armour|resistance|block|parry|guard|defesa|resistencia|bloqueio|apar)/.test(value))return "defense";
+  if(/(damage.*reduc|reduc.*damage|damage.?taken.?reduction|damage.?resistance|reduce.?damage|dano.*reduc|reduc.*dano|dano.?recebido|reduz.?dano|mitigation|defense|defence|armor|armour|resistance|block|parry|guard|defesa|resistencia|bloqueio|apar)/.test(value))return "defense";
   if(/(health|healing|heal|hitpoint|(^|[^a-z])hp|life|stamina|mana|regen|recovery|restoration|cura|vida|vigor|recuper)/.test(value))return "life";
   if(/(attack|damage|critical|crit|stagger|penetration|power|offense|offensive|ataque|dano|critico|ofens)/.test(value))return "attack";
   return "utility";
