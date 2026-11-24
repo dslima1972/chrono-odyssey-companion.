@@ -3281,9 +3281,9 @@ body{font-family:var(--font-ui)}
 /* Intensidade reduzida e uniforme em lista, blocos e fichas. */
 .weapon-row[style*="--rarity"]{
  background:linear-gradient(145deg,
-  color-mix(in srgb,var(--rarity) 30%,#211f18),
-  color-mix(in srgb,var(--rarity) 20%,#15140f) 58%,
-  color-mix(in srgb,var(--rarity) 12%,#11110e))!important;
+  color-mix(in srgb,var(--rarity) 30%,#111923),
+  color-mix(in srgb,var(--rarity) 20%,#0d151e) 58%,
+  color-mix(in srgb,var(--rarity) 12%,#080d13))!important;
  border-color:color-mix(in srgb,var(--rarity) 50%,#494333)!important;
 }
 .weapon-row[style*="--rarity"]:hover,
@@ -3300,9 +3300,9 @@ body{font-family:var(--font-ui)}
 #accessories-view .accessory-inspect-card.equipment-inspect-card,
 .catalog-card{
  background:linear-gradient(145deg,
-  color-mix(in srgb,var(--rarity) 30%,#211f18),
-  color-mix(in srgb,var(--rarity) 20%,#15140f) 58%,
-  color-mix(in srgb,var(--rarity) 12%,#11110e))!important;
+  color-mix(in srgb,var(--rarity) 30%,#111923),
+  color-mix(in srgb,var(--rarity) 20%,#0d151e) 58%,
+  color-mix(in srgb,var(--rarity) 12%,#080d13))!important;
  border-color:color-mix(in srgb,var(--rarity) 50%,#494333)!important;
 }
 #weapons-view .weapon-list .weapon-symbol,
@@ -3314,4 +3314,121 @@ body{font-family:var(--font-ui)}
   color-mix(in srgb,var(--rarity) 14%,#15140f) 58%,
   color-mix(in srgb,var(--rarity) 8%,#11110e))!important;
  border-color:color-mix(in srgb,var(--rarity) 58%,#494333)!important;
+}
+
+
+/* === Identidade visual Chrono Odyssey Companion · abismo, aço e ouro claro === */
+:root{
+ --bg:#080d13;
+ --panel:#111923;
+ --panel2:#1a2632;
+ --border:#344858;
+ --gold:#c1a66d;
+ --gold2:#d2c7ae;
+ --text:#d2c7ae;
+ --muted:#a6a18f;
+ --faint:#7890a0;
+ --common:#aab2b9;
+ --uncommon:#6eae83;
+ --rare:#72a9db;
+ --epic:#b18bd8;
+ --legendary:#e5b94f;
+ --steel:#7890a0;
+ --stone:#a6a18f;
+ --bronze:#a88d61;
+}
+html,body{background-color:var(--bg)}
+body{
+ color:var(--text);
+ background:
+  radial-gradient(ellipse at 50% -18%,rgba(52,72,88,.42),transparent 56%),
+  radial-gradient(ellipse at 100% 52%,rgba(26,38,50,.28),transparent 42%),
+  var(--bg);
+}
+.ambient-one{background:#a88d61;opacity:.045}
+.ambient-two{background:#7890a0;opacity:.075}
+.topbar{background:rgba(8,13,19,.91);border-color:rgba(120,144,160,.24)}
+.brand-mark,.hero-rule,.eyebrow,.detail-ornament,.info-symbol{color:var(--gold)}
+.brand-mark{text-shadow:0 0 20px rgba(193,166,109,.28)}
+.brand small,.hero p,.intro-copy,.weapon-meta,.detail-top p,.detail-note,
+.info-card p,.class-card-role,.class-section p,.class-section li{color:var(--muted)}
+.source-link,.detail-source,.info-card a,.class-open,.class-section h4{color:var(--gold2)}
+.tabs,.section-heading,footer{border-color:rgba(120,144,160,.28)}
+.tab:hover,.tab.active{color:var(--gold2)}
+.tab.active{border-color:var(--gold)}
+.search-wrap,input,select{background:#0d151e;color:var(--text);border-color:#344858}
+.search-wrap:focus-within,select:focus,input:focus{border-color:var(--gold)}
+input::placeholder{color:#7890a0}
+.weapon-list,.class-detail,.info-card,.build-stat-panel,.build-character-panel,
+.build-equipment-panel,.build-selected-stats-section,.build-picker,
+.dressing-catalog,.dressing-preview,.dressing-equipped{
+ background-color:rgba(17,25,35,.94);
+ border-color:var(--border);
+}
+.weapon-row{border-bottom-color:rgba(120,144,160,.18)}
+.weapon-row:hover,.weapon-row.selected{background-color:#1a2632}
+.weapon-symbol,.detail-icon{background-color:#111923}
+.detail-panel,.class-card,.class-detail-hero,.class-video-card,.class-weapon-details article,
+.class-source-note,.detail-field,.detail-disclosure,.stat-line,.progression-grid div,
+.build-stat-panel,.build-slot,.build-selected-stat,.build-picker-item,
+.dressing-item,.dressing-equipped-item{
+ background-color:#111923;
+ border-color:#344858;
+}
+.detail-panel{background:linear-gradient(145deg,#1a2632,#0d151e)}
+.detail-field,.stat-line,.progression-grid div,.class-video-card,.class-weapon-details article{
+ background:#0d151e;
+}
+.class-card,.info-card{background:linear-gradient(145deg,#1a2632,#111923)}
+.class-card:hover{border-color:var(--gold)}
+.class-back,.mobile-back,.armor-mode,.class-filter-btn{
+ background:#111923;color:var(--gold2);border-color:#344858
+}
+.armor-mode.active,.armor-mode:hover,#class-grid .class-filter-btn:hover,
+#class-grid .class-filter-btn:focus-visible{background:#1a2632;border-color:var(--gold);color:var(--gold2)}
+.class-weapon-tags span,.detail-meta-chip{border-color:#344858;background:#0d151e}
+.class-weapon-tags span{color:var(--gold2)}
+.class-section,.detail-section,.suffix-row{border-color:rgba(120,144,160,.25)}
+.class-section h4,.detail-section h4{color:var(--gold2)}
+.class-cover-frame,.class-cover-fallback{background:radial-gradient(circle,#344858,#111923)}
+.class-source-note{background:#0d151e;border-color:#344858}
+footer{color:#7890a0}
+.spinner{border-color:#526675;border-top-color:var(--gold)}
+/* Tipografia: Cinzel fica reservada à marca e aos títulos; dados e itens usam Inter. */
+.weapon-name,.detail-top h3,.detail-heading-copy h3,.class-weapon-details h5,
+.class-video-card h5,.detail-field strong,.stat-line strong,
+.build-slot strong,.build-picker-item strong{
+ font-family:Inter,system-ui,sans-serif;
+}
+/* Superfícies de raridade preservam integralmente as cinco cores aprovadas. */
+.weapon-row[style*="--rarity"]{
+ background:linear-gradient(145deg,
+  color-mix(in srgb,var(--rarity) 30%,#111923),
+  color-mix(in srgb,var(--rarity) 20%,#0d151e) 58%,
+  color-mix(in srgb,var(--rarity) 12%,#080d13))!important;
+ border-color:color-mix(in srgb,var(--rarity) 50%,#344858)!important;
+}
+.weapon-row[style*="--rarity"]:hover,.weapon-row[style*="--rarity"].selected{
+ background:linear-gradient(145deg,
+  color-mix(in srgb,var(--rarity) 38%,#111923),
+  color-mix(in srgb,var(--rarity) 26%,#0d151e) 58%,
+  color-mix(in srgb,var(--rarity) 16%,#080d13))!important;
+ border-color:color-mix(in srgb,var(--rarity) 78%,#344858)!important;
+}
+#weapons-view .equipment-inspect-card,#armor-view .equipment-inspect-card,
+#accessories-view .equipment-inspect-card,#accessories-view .accessory-inspect-card.equipment-inspect-card,
+.catalog-card{
+ background:linear-gradient(145deg,
+  color-mix(in srgb,var(--rarity) 30%,#111923),
+  color-mix(in srgb,var(--rarity) 20%,#0d151e) 58%,
+  color-mix(in srgb,var(--rarity) 12%,#080d13))!important;
+ border-color:color-mix(in srgb,var(--rarity) 50%,#344858)!important;
+}
+#weapons-view .weapon-list .weapon-symbol,#armor-view .weapon-list .weapon-symbol,
+#accessories-view .accessory-list .weapon-symbol,.catalog-card-image{
+ background:radial-gradient(circle,
+  color-mix(in srgb,var(--rarity) 22%,#1a2632),
+  color-mix(in srgb,var(--rarity) 14%,#111923) 58%,
+  color-mix(in srgb,var(--rarity) 8%,#080d13))!important;
+ border-color:color-mix(in srgb,var(--rarity) 58%,#344858)!important;
 }
