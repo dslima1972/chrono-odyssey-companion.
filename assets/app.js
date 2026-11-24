@@ -942,6 +942,7 @@ document.addEventListener("input",event=>{
  if(current)current.textContent=score;
  panel.querySelectorAll("[data-gear-score-map]").forEach(node=>{
   try{const levels=JSON.parse(node.getAttribute("data-gear-score-map"));const value=gearScoreValueAt(levels,score);node.textContent=value===undefined||value===null?"Sem valor cadastrado para este Equipment Score":String(formatStatValue(node.dataset.statType,value))}catch(error){}
+  if(panel.classList.contains("build-item-config"))renderBuildTotals();
  });
 });
 document.addEventListener("change",event=>{
