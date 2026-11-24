@@ -927,14 +927,28 @@ function buildStatsOptions(kind,index){
  const options=[...new Set(records.filter(Boolean).flatMap(buildRecordStats))].sort((a,b)=>a.localeCompare(b,"pt-BR"));
  target.innerHTML='<option value="">'+(index?"Sem segunda estatística":"Selecione uma estatística")+'</option>'+options.map(s=>'<option value="'+escapeHtml(s)+'">'+escapeHtml(s)+'</option>').join("");target.value=selected[index]||"";
 }
+function buildEquipmentSlotIconMarkup(slot){
+ const paths={
+  head:'<path d="M10 23a14 14 0 0 1 28 0v4H10z"/><path d="M8 27h32l-3 6H11zM17 15l7 5 7-5M24 20v7"/>',
+  chest:'<path d="M16 8 9 13l-4 12 7 4 3-7v18h18V22l3 7 7-4-4-12-7-5-8 5z"/><path d="m16 8 8 5 8-5M24 13v27"/>',
+  hands:'<path d="M15 39 9 29l-2-8a2 2 0 0 1 4-1l3 5-2-14a2 2 0 0 1 4-.5l3 12-1-15a2 2 0 0 1 4-.2l2 14 1-11a2 2 0 0 1 4 0l-1 13 3-7a2 2 0 0 1 4 1l-4 17-6 7z"/>',
+  legs:'<path d="M13 7h22l-2 17-2 17H21l-1-15-3 15H7l4-18z"/><path d="M24 8v17"/>',
+  feet:'<path d="M15 7h16v20l5 6 5 3v5H8v-5l5-5 2-9z"/><path d="M15 27h16M12 35h24"/>',
+  back:'<path d="M15 8 24 13l9-5 7 8-5 7 2 18H11l2-18-5-7z"/><path d="m15 8 9 5 9-5M24 13v28"/>',
+  necklace:'<path d="M11 8c2 12 7 17 13 20 6-3 11-8 13-20"/><path d="m24 27 5 6-5 8-5-8z"/>',
+  ring:'<ellipse cx="24" cy="27" rx="12" ry="14"/><path d="m18 13 6-6 6 6-6 4z"/>',
+  belt:'<path d="M5 16h38v16H5z"/><rect x="19" y="18" width="10" height="12" rx="2"/><path d="M24 21v6"/>'
+ };
+ return '<svg class="build-equipment-slot-glyph" viewBox="0 0 48 48" aria-hidden="true" focusable="false">'+(paths[slot]||paths.chest)+'</svg>';
+}
 function buildSlotMarkup(slot,label){
  const item=armors.find(x=>String(x.id||x.compoundId)===String(buildState.armor[slot]));
- return '<article class="build-slot build-slot-clickable '+(item?'has-item':'is-empty')+'" data-build-pick="'+slot+'" tabindex="0" role="button" aria-label="Selecionar armadura: '+label+'"><div class="build-slot-icon">'+(item?weaponImageMarkup(item):'<span>'+(ARMOR_TYPE_ICONS[slot]||"✧")+'</span>')+'</div><div class="build-slot-copy"><small>'+label+'</small><strong class="build-slot-name">'+escapeHtml(item?.name||"Vazio")+'</strong></div></article>';
+ return '<article class="build-slot build-slot-clickable '+(item?'has-item':'is-empty')+'" data-build-pick="'+slot+'" tabindex="0" role="button" aria-label="Selecionar armadura: '+label+'" title="'+label+'"><div class="build-slot-icon">'+(item?weaponImageMarkup(item):buildEquipmentSlotIconMarkup(slot))+'</div><div class="build-slot-copy"><strong class="build-slot-name">'+escapeHtml(item?.name||"")+'</strong></div></article>';
 }
 function buildAccessorySlotMarkup(slot,label){
  const item=accessories.find(x=>String(x.id||x.compoundId)===String(buildState.accessories[slot]));
- const glyph=accessoryIcon({subCategory:slot==="belt"?"belt":slot==="necklace"?"necklace":"ring"});
- return '<article class="build-slot build-slot-clickable '+(item?'has-item':'is-empty')+'" data-build-pick="'+slot+'" tabindex="0" role="button" aria-label="Selecionar acessório: '+label+'"><div class="build-slot-icon" style="--rarity:'+(item?rarityStyle(item):"var(--gold2)")+'">'+(item?accessoryImageMarkup(item):'<span>'+glyph+'</span>')+'</div><div class="build-slot-copy"><small>'+label+'</small><strong class="build-slot-name">'+escapeHtml(item?.name||"Vazio")+'</strong></div></article>';
+ const iconSlot=slot==="ring1"||slot==="ring2"?"ring":slot;
+ return '<article class="build-slot build-slot-clickable '+(item?'has-item':'is-empty')+'" data-build-pick="'+slot+'" tabindex="0" role="button" aria-label="Selecionar acessório: '+label+'" title="'+label+'"><div class="build-slot-icon" style="--rarity:'+(item?rarityStyle(item):"var(--gold2)")+'">'+(item?accessoryImageMarkup(item):buildEquipmentSlotIconMarkup(iconSlot))+'</div><div class="build-slot-copy"><strong class="build-slot-name">'+escapeHtml(item?.name||"")+'</strong></div></article>';
 }
 function renderBuildScreen(){
  if(!$("build-class"))return;
@@ -957,9 +971,9 @@ function renderBuildWeaponSlots(){
  $("build-weapon-slots").innerHTML=types.map((type,index)=>{
   const item=weapons.find(w=>String(w.id||w.compoundId)===String(buildState.weapons[index]));
   const label=index?"Arma secundária":"Arma principal";
-  if(!type)return '<article class="build-slot build-slot-empty is-empty"><div class="build-slot-icon"><span>⚔</span></div><div class="build-slot-copy"><small>'+label+'</small><strong class="build-slot-name">Vazio</strong></div></article>';
+  if(!type)return '<article class="build-slot build-slot-empty is-empty" aria-label="'+label+'" title="'+label+'"><div class="build-slot-icon">'+buildEquipmentSlotIconMarkup("hands")+'</div></article>';
   const cls=CLASS_DATA.find(x=>x.name===buildState.className);
-  return '<article class="build-slot build-slot-clickable '+(item?'has-item':'is-empty')+'" data-build-weapon-pick="'+index+'" tabindex="0" role="button" aria-label="Selecionar '+label+'"><div class="build-slot-icon" style="--rarity:'+(item?rarityStyle(item):"var(--gold2)")+'">'+(item?weaponImageMarkup(item):classButtonWeaponIconMarkup(type,cls?.name))+'</div><div class="build-slot-copy"><small>'+label+' · '+escapeHtml(type)+'</small><strong class="build-slot-name">'+escapeHtml(item?.name||"Vazio")+'</strong></div></article>';
+  return '<article class="build-slot build-slot-clickable '+(item?'has-item':'is-empty')+'" data-build-weapon-pick="'+index+'" tabindex="0" role="button" aria-label="Selecionar '+label+' · '+escapeHtml(type)+'" title="'+label+' · '+escapeHtml(type)+'"><div class="build-slot-icon" style="--rarity:'+(item?rarityStyle(item):"var(--gold2)")+'">'+(item?weaponImageMarkup(item):classButtonWeaponIconMarkup(type,cls?.name))+'</div><div class="build-slot-copy"><strong class="build-slot-name">'+escapeHtml(item?.name||"")+'</strong></div></article>';
  }).join("");
 }
 function buildWeaponResultsMarkup(type,index){
