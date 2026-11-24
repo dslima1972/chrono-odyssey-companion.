@@ -1012,10 +1012,10 @@ function renderBuildSelectedStats(){
  target.innerHTML=selected.map(entry=>'<article class="build-stat-summary-card" style="--rarity:'+rarityStyle(entry.item)+'"><header><span class="build-stat-summary-icon">'+weaponImageMarkup(entry.item)+'</span><span><small>'+escapeHtml(entry.label)+' · '+escapeHtml(rarity(entry.item))+'</small><strong>'+escapeHtml(entry.item.name||"Item")+'</strong></span></header>'+(entry.record?renderBuildSummaryStats(entry.record):'<p class="build-empty">Ficha detalhada não carregada para este item.</p>')+'</article>').join("");
 }
 function buildPickerStatsMarkup(record){
- const rows=getItemStatEntries(record).slice(0,4).map(entry=>'<span class="build-picker-stat"><small>'+escapeHtml(entry.label)+'</small><strong>'+escapeHtml(formatStatValue(entry.key,entry.value??"Valor não informado"))+'</strong>'+(entry.chance?'<em>'+escapeHtml(entry.chance)+'</em>':"")+'</span>');
+ const rows=getItemStatEntries(record).map(entry=>'<span class="build-picker-stat"><small>'+escapeHtml(entry.label)+'</small><strong>'+escapeHtml(formatStatValue(entry.key,entry.value??"Valor não informado"))+'</strong>'+(entry.chance?'<em>'+escapeHtml(entry.chance)+'</em>':"")+'</span>');
  if(!rows.length){
   const names=buildRecordStats(record);
-  return names.length?'<div class="build-picker-stats">'+names.slice(0,4).map(name=>'<span class="build-picker-stat"><small>'+escapeHtml(name)+'</small><strong>Valor não informado</strong></span>').join("")+'</div>':'<div class="build-picker-no-stats">Atributos não disponíveis na ficha sincronizada.</div>';
+  return names.length?'<div class="build-picker-stats">'+names.map(name=>'<span class="build-picker-stat"><small>'+escapeHtml(name)+'</small><strong>Valor não informado</strong></span>').join("")+'</div>':'<div class="build-picker-no-stats">Atributos não disponíveis na ficha sincronizada.</div>';
  }
  return '<div class="build-picker-stats">'+rows.join("")+'</div>';
 }
