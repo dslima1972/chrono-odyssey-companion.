@@ -994,6 +994,7 @@ const buildLayerPromises={weapon:null,armor:null,accessory:null};
 const buildArmorSlotState={head:"idle",chest:"idle",hands:"idle",legs:"idle",feet:"idle",back:"idle"};
 const buildArmorSlotPromises={head:null,chest:null,hands:null,legs:null,feet:null,back:null};
 let buildArmorBuildManifestPromise=null;
+const buildPickerIndexCache=new WeakMap();
 let buildPickerRarity="";
 let buildPickerAnchor=null;
 let buildPickerLimit=30;
@@ -1116,7 +1117,7 @@ function renderBuildScreen(){
  $("build-class-summary").textContent=cls?cls.role:"Escolha uma classe para liberar as opções de equipamento.";
  renderBuildWeaponChoices();
  $("build-weapon-type").disabled=!cls;$("build-weapon-type2").disabled=!cls;
- $("build-weapon-stat1").disabled=!buildState.weaponType||buildLayerState.weapon!=="ready";$("build-weapon-stat2").disabled=!buildState.weaponType||buildLayerState.weapon!=="ready";
+ $("build-weapon-stat1").disabled=!buildState.weaponType&&!buildState.weaponType2;$("build-weapon-stat2").disabled=!buildState.weaponType&&!buildState.weaponType2;
  $("build-armor-stat1").disabled=!cls;$("build-armor-stat2").disabled=!cls;$("build-accessory-stat1").disabled=!cls;$("build-accessory-stat2").disabled=!cls;
  renderBuildWeaponSlots();renderBuildArmorSlots();renderBuildSelectedStats();
 }
@@ -1176,7 +1177,7 @@ async function openBuildItemConfig(slot){
  selectedBuildSlot=slot;renderBuildItemConfig();
  const entry=buildSelectedSlotRecord(slot);if(!entry)return;
  const pending=entry.kind==="weapon"?loadBuildLayer("weapon"):entry.kind==="accessory"?loadBuildLayer("accessory"):loadBuildArmorSlot(slot);
- await pending;renderBuildItemConfig();
+ await pending;if(selectedBuildSlot===slot)renderBuildItemConfig();
 }
 function renderBuildTotals(){
  const selected=buildSelectedEquipment(),target=$("build-selected-stats");if(!target)return;
@@ -1204,8 +1205,22 @@ function renderBuildTotals(){
   const candidates=[...perkEntries(stats.commonPerks),...perkEntries(stats.perks)],selectedPerks=selection.perks||[],seen=new Set();
   candidates.forEach(perk=>{const key=String(perk.id||perk.name||"").toLowerCase();if(!key||seen.has(key)||!selectedPerks.includes(key))return;seen.add(key);optionStatEntries(perk,score).forEach(stat=>add(stat.key,stat.label,stat.value))});
  });
- const rows=[...totals.values()].sort((a,b)=>a.label.localeCompare(b.label,"pt-BR"));
- target.innerHTML=averageMarkup+(rows.length?'<div class="build-total-stats">'+rows.map(stat=>'<div class="build-total-stat"><span>'+escapeHtml(stat.label)+'</span><strong>'+escapeHtml(stat.value.toLocaleString("pt-BR",{maximumFractionDigits:2}))+(stat.suffix||"")+'</strong></div>').join("")+'</div>':'<p class="build-empty">As fichas selecionadas ainda não disponibilizaram atributos numéricos somáveis.</p>');
+ const groupOrder=["attributes","attack","defense","life","lifeskill","utility"];
+ const groupLabels={attributes:"Atributos",attack:"Ataque",defense:"Defesa",life:"Vida e Recuperação",lifeskill:"Life Skill",utility:"Utilidade"};
+ const classify=stat=>{
+  const key=normalizeStatIdentity(stat.identity||stat.key||stat.label),label=normalizeStatIdentity(stat.label||"");
+  const value=key+" "+label;
+  if(/^(strength|dexterity|intelligence|vitality|wisdom|constitution|luck|agility|willpower)$/.test(key)||/(strength|dexterity|intelligence|vitality|wisdom|constitution|forca|destreza|inteligencia|vitalidade|sabedoria)/.test(value))return "attributes";
+  if(/(gather|harvest|mining|fishing|craft|process|lifeskill|life.?skill|coleta|minera|pesca|fabric|cozinh)/.test(value))return "lifeskill";
+  if(/(health|healing|heal|hitpoint|(^|[^a-z])hp|life|stamina|mana|regen|recovery|restoration|cura|vida|vigor|recuper)/.test(value))return "life";
+  if(/(defense|defence|armor|armour|resistance|block|parry|guard|mitigation|defesa|resistencia|bloqueio|apar)/.test(value))return "defense";
+  if(/(attack|damage|critical|crit|stagger|penetration|power|offense|offensive|ataque|dano|critico|ofens)/.test(value))return "attack";
+  return "utility";
+ };
+ const groups=new Map(groupOrder.map(key=>[key,[]]));
+ [...totals.values()].sort((a,b)=>a.label.localeCompare(b.label,"pt-BR")).forEach(stat=>groups.get(classify(stat)).push(stat));
+ const groupMarkup=groupOrder.filter(key=>groups.get(key).length).map(key=>'<section class="build-total-group build-total-group-'+key+'"><header><h4>'+groupLabels[key]+'</h4><small>'+groups.get(key).length+(groups.get(key).length===1?' atributo':' atributos')+'</small></header><div class="build-total-group-grid">'+groups.get(key).map(stat=>'<div class="build-total-stat"><span>'+escapeHtml(stat.label)+'</span><strong>'+escapeHtml(stat.value.toLocaleString("pt-BR",{maximumFractionDigits:2}))+(stat.suffix||"")+'</strong></div>').join("")+'</div></section>').join("");
+ target.innerHTML=averageMarkup+(groupMarkup||'<p class="build-empty">As fichas selecionadas ainda não disponibilizaram atributos numéricos somáveis.</p>');
 }
 function renderBuildSelectedStats(){renderBuildTotals();renderBuildItemConfig()}
 function buildPickerStatsMarkup(record){
@@ -1215,6 +1230,20 @@ function buildPickerStatsMarkup(record){
   return names.length?'<div class="co-bp-stats">'+names.map(name=>'<div class="co-bp-stat"><span class="co-bp-stat-name">'+escapeHtml(name)+'</span><strong class="co-bp-stat-value">Valor não informado</strong></div>').join("")+'</div>':'<div class="co-bp-no-stats">Atributos não disponíveis na ficha sincronizada.</div>';
  }
  return '<div class="co-bp-stats">'+rows.join("")+'</div>';
+}
+function buildPickerTypeRows(source,kind,type){
+ if(!Array.isArray(source))return [];
+ let index=buildPickerIndexCache.get(source);
+ if(!index){
+  index=new Map();
+  source.forEach(item=>{
+   const key=kind==="weapon"?weaponType(item):String(item.subCategory||"").toLowerCase();
+   if(!index.has(key))index.set(key,[]);
+   index.get(key).push(item);
+  });
+  buildPickerIndexCache.set(source,index);
+ }
+ return index.get(type)||[];
 }
 async function buildPickList(slot,anchor){
  const isWeapon=slot==="weapon0"||slot==="weapon1",isAccessory=BUILD_ACCESSORY_SLOTS.some(([key])=>key===slot),kind=isWeapon?"weapon":isAccessory?"accessory":"armor";
@@ -1226,8 +1255,8 @@ async function buildPickList(slot,anchor){
  buildPickerAnchor=anchor;equipmentPanel.classList.add("is-picking");if(picker.parentElement!==equipmentPanel)equipmentPanel.appendChild(picker);
  $("build-picker-title").textContent=isWeapon?"Selecionar arma":isAccessory?"Selecionar acessório":"Selecionar armadura";
  const activeKind=kind;document.querySelectorAll("#build-picker [data-picker-stat-kind]").forEach(panel=>{panel.hidden=panel.dataset.pickerStatKind!==activeKind});
- const getRows=()=>source.filter(item=>isWeapon?weaponType(item)===type:String(item.subCategory||"").toLowerCase()===type)
-  .filter(item=>!buildPickerRarity||rarity(item)===buildPickerRarity)
+ const typedRows=buildPickerTypeRows(source,kind,type);
+ const getRows=()=>typedRows.filter(item=>!buildPickerRarity||rarity(item)===buildPickerRarity)
   .filter(item=>!stats.length||buildItemMatches(item,details[String(item.id||item.compoundId)],stats,"all"));
  const render=()=>{
   if(buildPickerAnchor!==anchor||picker.hidden)return;
@@ -1326,7 +1355,8 @@ function initBuildPlanner(){
   select.dispatchEvent(new Event("change",{bubbles:true}));
  });
  $("build-class").addEventListener("change",e=>{buildState.className=e.target.value;buildState.weaponType="";buildState.weaponType2="";buildState.weapons=["",""];buildState.armor={};buildState.weaponStats=["",""];buildState.armorStats=["",""];renderBuildScreen()});
- ["build-weapon-type","build-weapon-type2"].forEach((id,index)=>$(id).addEventListener("change",e=>{if(index){buildState.weaponType2=e.target.value;buildState.weapons[1]=""}else{buildState.weaponType=e.target.value;buildState.weapons[0]=""}buildState.weaponStats=["",""];renderBuildScreen();if(buildState.weaponType||buildState.weaponType2){if(buildLayerState.weapon==="ready"){buildStatsOptions("weapon",0);buildStatsOptions("weapon",1)}else{loadBuildLayer("weapon")}}}));
+ ["build-weapon-type","build-weapon-type2"].forEach((id,index)=>$(id).addEventListener("change",e=>{if(index){buildState.weaponType2=e.target.value;buildState.weapons[1]=""}else{buildState.weaponType=e.target.value;buildState.weapons[0]=""}buildState.weaponStats=["",""];renderBuildScreen()}));
+ [0,1].forEach(index=>$("build-weapon-stat"+(index+1)).addEventListener("focus",async()=>{if((buildState.weaponType||buildState.weaponType2)&&buildLayerState.weapon!=="ready"){await loadBuildLayer("weapon");buildStatsOptions("weapon",0);buildStatsOptions("weapon",1)}}));
  [["accessory",0],["accessory",1]].forEach(([kind,index])=>$("build-"+kind+"-stat"+(index+1)).addEventListener("focus",async()=>{if(buildLayerState[kind]!=="ready"){await loadBuildLayer(kind);buildStatsOptions(kind,0);buildStatsOptions(kind,1)}}));
  [["weapon",0],["weapon",1],["armor",0],["armor",1],["accessory",0],["accessory",1]].forEach(([kind,index])=>$("build-"+kind+"-stat"+(index+1)).addEventListener("change",e=>{const arr=kind==="weapon"?buildState.weaponStats:kind==="armor"?buildState.armorStats:buildState.accessoryStats;arr[index]=e.target.value;if(index===0&&arr[0]&&arr[0]===arr[1])arr[1]="";closeBuildPicker();buildStatsOptions(kind,0);buildStatsOptions(kind,1);renderBuildWeaponSlots();renderBuildArmorSlots();renderBuildSelectedStats()}));
  document.addEventListener("click",e=>{
