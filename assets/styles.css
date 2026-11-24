@@ -3978,3 +3978,107 @@ footer{color:#7890a0}
 #build-view.build-planner-v2 .build-config-perk>span{display:block;min-width:0}
 #build-view.build-planner-v2 .build-config-perk>span>strong{display:block;color:#d2c7ae;font:600 11px Inter,sans-serif}
 #build-view.build-planner-v2 .build-config-perk .roll-stat-value strong{color:#c1d0d8}
+
+
+/* BUILD PLANNER — full-height mobile equipment picker */
+@media(max-width:760px){
+ #build-view.build-planner-v2 #build-picker{
+  position:fixed!important;
+  inset:8px!important;
+  z-index:1300!important;
+  display:grid!important;
+  grid-template-rows:auto auto minmax(0,1fr)!important;
+  gap:10px!important;
+  width:auto!important;
+  max-width:none!important;
+  height:auto!important;
+  max-height:none!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:12px!important;
+  overflow:hidden!important;
+  background:linear-gradient(155deg,#172532 0%,#101923 58%,#0b121a 100%)!important;
+  border:1px solid rgba(193,166,109,.48)!important;
+  border-radius:7px!important;
+  box-shadow:0 18px 60px rgba(0,0,0,.82)!important;
+ }
+ #build-view.build-planner-v2 #build-picker .build-picker-head{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  gap:8px!important;
+  align-items:center!important;
+ }
+ #build-view.build-planner-v2 #build-picker .build-picker-head h3{
+  grid-column:1!important;
+  grid-row:1!important;
+  font-size:16px!important;
+ }
+ #build-view.build-planner-v2 #build-picker .build-picker-head button{
+  grid-column:2!important;
+  grid-row:1!important;
+  min-height:36px!important;
+  padding:0 12px!important;
+  font-size:11px!important;
+ }
+ #build-view.build-planner-v2 #build-picker .co-bp-filters{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:8px!important;
+  width:100%!important;
+  min-width:0!important;
+ }
+ #build-view.build-planner-v2 #build-picker .co-bp-filter{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  gap:5px!important;
+  min-width:0!important;
+  font-size:10px!important;
+ }
+ #build-view.build-planner-v2 #build-picker .co-bp-filters select{
+  width:100%!important;
+  height:40px!important;
+  min-height:40px!important;
+  padding:0 9px!important;
+  font-size:12px!important;
+ }
+ #build-view.build-planner-v2 #build-picker .build-picker-list{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-auto-rows:max-content!important;
+  align-content:start!important;
+  align-items:start!important;
+  min-height:0!important;
+  max-height:none!important;
+  width:100%!important;
+  margin:0!important;
+  padding:2px 3px 10px 1px!important;
+  gap:10px!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+  -webkit-overflow-scrolling:touch;
+ }
+ #build-view.build-planner-v2 #build-picker .co-bp-item{
+  width:100%!important;
+  min-height:0!important;
+  padding:11px!important;
+  gap:9px!important;
+  border-radius:5px!important;
+ }
+ #build-view.build-planner-v2 #build-picker .co-bp-item-head{min-height:64px!important;gap:10px!important}
+ #build-view.build-planner-v2 #build-picker .co-bp-item-icon{
+  width:60px!important;height:60px!important;min-width:60px!important;max-width:60px!important;
+  min-height:60px!important;max-height:60px!important;flex-basis:60px!important;
+ }
+ #build-view.build-planner-v2 #build-picker .co-bp-item-title strong{font-size:13px!important;line-height:1.35!important}
+ #build-view.build-planner-v2 #build-picker .co-bp-item-title small{font-size:10px!important}
+ #build-view.build-planner-v2 #build-picker .co-bp-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px 10px!important;padding-top:8px!important}
+ #build-view.build-planner-v2 #build-picker .co-bp-stat{min-height:28px!important}
+ #build-view.build-planner-v2 #build-picker .co-bp-stat-name{font-size:10px!important}
+ #build-view.build-planner-v2 #build-picker .co-bp-stat-value{font-size:11px!important}
+}
+@media(max-width:380px){
+ #build-view.build-planner-v2 #build-picker{inset:5px!important;padding:9px!important}
+ #build-view.build-planner-v2 #build-picker .co-bp-item{padding:9px!important}
+ #build-view.build-planner-v2 #build-picker .co-bp-item-icon{width:54px!important;height:54px!important;min-width:54px!important;max-width:54px!important;flex-basis:54px!important}
+}
