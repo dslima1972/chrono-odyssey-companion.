@@ -73,8 +73,15 @@ function accessoryImageFallback(img){
  weaponImageFallback(img)
 }
 function accessoryImageMarkup(item,extraClass=""){
- // Usa o mesmo arquivo WebP de alta qualidade já utilizado por armas e armaduras.
- return weaponImageMarkup(item,extraClass);
+ const path=String(item.icon||"").trim();if(!path)return "";
+ let assetPath=path;
+ if(/^https?:\/\//i.test(assetPath)){try{assetPath=new URL(assetPath).pathname}catch(e){return ""}}
+ assetPath=assetPath.replace(/^\/(?:chrono-odyssey\/)?/i,"").replace(/\.(?:png|jpe?g|webp)$/i,"");
+ const parts=assetPath.split("/"),file=parts.pop()||"",dot=file.lastIndexOf(".");
+ const normalized=dot>0&&file.slice(0,dot)===file.slice(dot+1)?[...parts,file.slice(0,dot)].join("/"):assetPath;
+ const formats=[".webp",".png",".jpg",".jpeg"],bases=[normalized,...(normalized!==assetPath?[assetPath]:[])],candidates=[];
+ bases.forEach(base=>formats.forEach(ext=>candidates.push("https://cdn.questlog.gg/chrono-odyssey/"+base+ext)));
+ return '<img class="'+extraClass+'" src="'+escapeHtml(candidates[0])+'" data-image-candidates="'+escapeHtml(JSON.stringify(candidates))+'" data-image-index="0" alt="Imagem de '+escapeHtml(item.name||"acessório")+'" loading="lazy" decoding="async" referrerpolicy="no-referrer" onload="weaponImageLoaded(this)" onerror="accessoryImageFallback(this)">';
 }
 
 function rarityColorForLabel(label){const i=RARITIES.indexOf(label);return i<0?"var(--text)":RARITY_COLORS[i]}
@@ -305,13 +312,13 @@ function renderGearScoreControl(item,levels,label){
 function renderWeaponStats(item){
  const levels=findWeaponAttackLevels(item);
  let entries=dedupeStatEntries(getItemStatEntries(item)).filter(entry=>statFamily(entry.identity)!=="attack");
+ let rows="";
  if(levels){
-  const score=defaultGearScore(item,levels),attackValue=levels[String(score)]??Object.values(levels)[0];
-  entries.unshift({key:"attack",identity:"attack",label:"Ataque",value:attackValue,chance:"",gearScoreMap:escapeHtml(JSON.stringify(levels))});
+  const score=defaultGearScore(item,levels),attackValue=gearScoreValueAt(levels,score)??levels[String(score)]??Object.values(levels)[0];
+  rows+='<div class="accessory-inspect-stat"><strong data-gear-score-map="'+escapeHtml(JSON.stringify(levels))+'" data-stat-type="attack">'+escapeHtml(formatStatValue("attack",attackValue))+'</strong><span>Ataque</span></div>';
  }
- if(!entries.length)return '<p class="detail-muted">A fonte não retornou atributos básicos para este item.</p>';
- const stats='<div class="stat-list">'+entries.map(entry=>'<div class="stat-line"><span>'+escapeHtml(entry.label)+'</span><strong '+(entry.gearScoreMap?'data-gear-score-map="'+entry.gearScoreMap+'"':'')+'>'+escapeHtml(formatStatValue(entry.key,entry.value))+'</strong><small>'+escapeHtml(entry.chance||"")+'</small></div>').join("")+'</div>';
- return (levels?renderGearScoreControl(item,levels,"Ataque"):"")+stats;
+ rows+=entries.map(entry=>'<div class="accessory-inspect-stat"><strong>'+escapeHtml(formatStatValue(entry.key,entry.value))+'</strong><span>'+escapeHtml(entry.label||humanizeStat(entry.identity||entry.key))+'</span>'+(entry.chance?'<small>'+escapeHtml(entry.chance)+'</small>':"")+'</div>').join("");
+ return '<section class="accessory-inspect-stats">'+(levels?renderGearScoreControl(item,levels,"Ataque"):"")+'<div class="accessory-inspect-stat-list">'+(rows||'<p class="detail-muted">A fonte não retornou atributos básicos para este item.</p>')+'</div></section>';
 }
 
 function optionListMarkup(title,rows,kind){
@@ -670,7 +677,7 @@ function renderArmorStats(item){
 }
 function renderOptionalItemOptions(item){const content=renderSuffixes(item)+renderPerks(item);return content?'<details class="detail-disclosure item-options-disclosure"><summary>Sufixos e perks</summary><div class="item-options-content">'+content+'</div></details>':""}
 function detailedArmorMarkup(item,catalogItem){
- return renderArmorStats(item)+renderAccessoryReadOnlyOptions(item)+renderEquipmentFooter(item,true)+'<p class="detail-note">Dados da ficha individual do Questlog.</p><div class="detail-id-footer">ID: '+escapeHtml(catalogItem.id||catalogItem.compoundId||"")+'</div>';
+ return renderArmorStats(item)+renderAccessoryReadOnlyOptions(item)+renderEquipmentFooter(item,true);
 }
 function armorDetailMarkup(item){return equipmentInspectMarkup(item,"armor")}
 async function getArmorDetailsCatalog(){
