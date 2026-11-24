@@ -934,7 +934,7 @@ document.addEventListener("click",event=>{
 document.addEventListener("input",event=>{
  const slider=event.target;
  if(!slider.matches(".gear-score-slider"))return;
- const score=String(slider.value),panel=slider.closest(".detail-panel, .build-stat-summary-card");
+ const score=String(slider.value),panel=slider.closest(".detail-panel, .build-stat-summary-card, .build-item-config");
  if(!panel)return;
  const rollId=slider.dataset.itemRollId;
  if(rollId){const state=equipmentRollState[rollId]||(equipmentRollState[rollId]={suffix:"",perks:[],gearScore:null});state.gearScore=Number(score)}
@@ -948,7 +948,7 @@ document.addEventListener("input",event=>{
 document.addEventListener("change",event=>{
  const input=event.target;
  if(input.matches("[data-perk-select]")){
-  const list=input.closest(".perk-options"),limit=Number(input.dataset.perkLimit),checked=list?[...list.querySelectorAll("[data-perk-select]:checked")]:[];
+  const list=input.closest(".build-config-perks, .perk-options"),limit=Number(input.dataset.perkLimit),checked=list?[...list.querySelectorAll("[data-perk-select]:checked")]:[];
   if(input.checked&&Number.isFinite(limit)&&checked.length>limit){input.checked=false;return}
   const rollId=input.dataset.itemRollId;
   if(rollId){const state=equipmentRollState[rollId]||(equipmentRollState[rollId]={suffix:"",perks:[],gearScore:null});state.perks=checked.map(box=>box.dataset.perkKey).filter(Boolean)}
@@ -1292,7 +1292,7 @@ function initBuildPlanner(){
   const more=e.target.closest("[data-build-more]");if(more){buildPickerLimit+=30;const anchor=buildPickerAnchor;const slot=anchor?.dataset.buildPick??("weapon"+(anchor?.dataset.buildWeaponPick||"0"));buildPickList(slot,anchor);return}
   const chosen=e.target.closest("[data-build-choose]");if(chosen){const id=chosen.dataset.id,slot=chosen.dataset.slot;if(chosen.dataset.buildChoose==="weapon"){const index=slot==="weapon0"?0:1;buildState.weapons[index]=id}else if(chosen.dataset.buildChoose==="accessory")buildState.accessories[slot]=id;else buildState.armor[slot]=id;selectedBuildSlot=slot;closeBuildPicker();renderBuildWeaponSlots();renderBuildArmorSlots();renderBuildSelectedStats();return}
   if(e.target.closest("#build-picker"))return;
-  const pick=e.target.closest("[data-build-pick]");if(pick){const slot=pick.dataset.buildPick,current=buildSelectedSlotRecord(slot);if(current){selectedBuildSlot=slot;loadBuildArmorSlot(slot).then(()=>renderBuildItemConfig());renderBuildItemConfig();return}selectedBuildSlot=slot;buildPickerLimit=30;buildPickList(slot,pick);return}
+  const pick=e.target.closest("[data-build-pick]");if(pick){const slot=pick.dataset.buildPick,current=buildSelectedSlotRecord(slot);if(current){selectedBuildSlot=slot;const pending=current.kind==="accessory"?loadBuildLayer("accessory"):loadBuildArmorSlot(slot);pending.then(()=>renderBuildItemConfig());renderBuildItemConfig();return}selectedBuildSlot=slot;buildPickerLimit=30;buildPickList(slot,pick);return}
   const wp=e.target.closest("[data-build-weapon-pick]");if(wp){const slot="weapon"+wp.dataset.buildWeaponPick,current=buildSelectedSlotRecord(slot);if(current){selectedBuildSlot=slot;loadBuildLayer("weapon").then(()=>renderBuildItemConfig());renderBuildItemConfig();return}selectedBuildSlot=slot;buildPickerLimit=30;buildPickList(slot,wp);return}
   const result=e.target.closest("[data-build-weapon]");if(result){buildState.weapons[Number(result.dataset.buildWeapon)]=result.dataset.id;renderBuildWeaponSlots();return}
   const armorResult=e.target.closest("[data-build-armor]");if(armorResult){buildState.armor[armorResult.dataset.buildArmor]=armorResult.dataset.id;renderBuildArmorSlots()}
