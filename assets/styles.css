@@ -4185,3 +4185,45 @@ footer{color:#7890a0}
  #build-view.build-planner-v2 .build-slot.has-item .build-slot-icon img{width:88%!important;height:calc(100% - 22px)!important;max-height:calc(100% - 22px)!important}
  #build-view.build-planner-v2 #build-character img{transform:scale(1.12)!important}
 }
+
+
+/* BUILD PLANNER — final alignment for character, slot names and picker close */
+#build-view.build-planner-v2 #build-character img{
+ object-position:center center!important;
+ transform-origin:center center!important;
+}
+#build-view.build-planner-v2 .build-slot-name{
+ top:2px!important;
+ bottom:auto!important;
+ left:2px!important;
+ right:25px!important;
+ min-height:3.6em!important;
+ max-height:3.6em!important;
+ padding:1px 2px!important;
+ background:none!important;
+ color:#fff!important;
+ text-align:center!important;
+ -webkit-line-clamp:3!important;
+ font-size:7.5px!important;
+ line-height:1.2!important;
+ text-shadow:0 1px 3px rgba(0,0,0,.95)!important;
+}
+#build-view.build-planner-v2 .build-slot.has-item .build-slot-icon{
+ padding-top:31px!important;
+}
+#build-view.build-planner-v2 .build-slot.has-item .build-slot-icon img{
+ height:calc(100% - 35px)!important;
+ max-height:calc(100% - 35px)!important;
+}
+@media(max-width:650px){
+ #build-view.build-planner-v2 .build-slot-name{
+  left:2px!important;right:24px!important;top:2px!important;
+  min-height:3.6em!important;max-height:3.6em!important;
+  font-size:7px!important;line-height:1.2!important;
+ }
+ #build-view.build-planner-v2 .build-slot.has-item .build-slot-icon{padding-top:29px!important}
+ #build-view.build-planner-v2 .build-slot.has-item .build-slot-icon img{
+  height:calc(100% - 33px)!important;max-height:calc(100% - 33px)!important;
+ }
+ #build-picker #build-picker-close{transform:translateY(-5px)!important}
+}
