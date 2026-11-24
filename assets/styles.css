@@ -2388,3 +2388,148 @@ input.gear-score-slider::-moz-range-thumb{width:9px;height:9px;border:1px solid 
  #accessories-view #accessory-detail .detail-top{grid-template-columns:1fr}
  #accessories-view #accessory-detail .detail-icon.detail-hero{grid-row:1;height:130px}
 }
+
+
+
+/* Acessórios — ficha inspirada no painel de equipamento de Chrono Odyssey */
+#accessories-view .accessory-game-card{
+ width:100%;max-width:430px;justify-self:center;box-sizing:border-box;
+ padding:18px 18px 14px!important;
+ border:1px solid rgba(151,164,126,.34)!important;
+ background:
+  radial-gradient(ellipse at 78% 9%,rgba(119,139,91,.16),transparent 43%),
+  linear-gradient(155deg,#263126 0%,#1b261e 42%,#101a17 100%)!important;
+ box-shadow:inset 0 0 0 1px rgba(0,0,0,.38),inset 0 18px 36px rgba(0,0,0,.13),0 12px 28px rgba(0,0,0,.2);
+ color:#e2dfce;
+}
+#accessories-view .accessory-game-card .detail-top{
+ display:grid;grid-template-columns:minmax(0,1fr) 104px;align-items:start;gap:10px;
+ padding:0 0 13px;border-bottom:1px solid rgba(192,190,151,.2);
+}
+#accessories-view .accessory-game-card .detail-heading-copy{display:flex;flex-direction:column;gap:7px;min-width:0}
+#accessories-view .accessory-game-card .detail-header-meta{
+ order:0;display:flex;flex-wrap:wrap;gap:4px 7px;margin:0!important;
+}
+#accessories-view .accessory-game-card .detail-meta-chip{
+ display:inline-flex;align-items:center;gap:4px;padding:0!important;
+ border:0!important;background:transparent!important;
+}
+#accessories-view .accessory-game-card .detail-meta-chip small{
+ color:rgba(220,220,194,.58);font:500 8px Inter,sans-serif;letter-spacing:.15px;text-transform:none;
+}
+#accessories-view .accessory-game-card .detail-meta-chip strong{
+ color:#bfc49d;font:500 8px Inter,sans-serif;white-space:nowrap;
+}
+#accessories-view .accessory-game-card .detail-top h3{
+ order:1;margin:0!important;color:#f0eddb;
+ font:500 15px/1.35 Cinzel,Georgia,serif;letter-spacing:.05px;
+}
+#accessories-view .accessory-game-card .detail-icon.detail-hero{
+ position:relative;width:104px;height:112px;min-height:0;flex:none;
+ border:0!important;background:radial-gradient(ellipse,rgba(154,165,117,.18),transparent 72%)!important;
+}
+#accessories-view .accessory-game-card .detail-hero-image{
+ object-fit:contain;padding:2px;filter:drop-shadow(0 5px 7px rgba(0,0,0,.45));
+}
+#accessories-view .accessory-game-card .detail-live{margin-top:0;min-width:0}
+#accessories-view .accessory-game-card .stats-primary{
+ display:flex;flex-direction:column;margin:0!important;padding:12px 0 11px!important;
+ border:0!important;border-bottom:1px solid rgba(192,190,151,.2)!important;
+}
+#accessories-view .accessory-game-card .gear-score-control{
+ display:grid!important;grid-template-columns:auto minmax(80px,1fr);
+ align-items:end;gap:13px;width:100%;max-width:none!important;
+ margin:0 0 8px!important;padding:0!important;border:0!important;background:transparent!important;
+}
+#accessories-view .accessory-game-card .gear-score-value{
+ display:flex;flex-direction:column;align-items:flex-start;gap:0;min-width:0;
+}
+#accessories-view .accessory-game-card .gear-score-value label{
+ color:rgba(220,220,194,.62);font:500 9px Inter,sans-serif;letter-spacing:.25px;text-transform:none;
+}
+#accessories-view .accessory-game-card .gear-score-value strong{
+ color:#f0eddb;font:500 36px/1 Cinzel,Georgia,serif;text-shadow:0 2px 9px rgba(0,0,0,.35);
+}
+#accessories-view .accessory-game-card input.gear-score-slider{
+ width:100%;min-width:0;margin:0 0 7px!important;accent-color:#c4bd91;cursor:pointer;
+}
+#accessories-view .accessory-game-card .stat-list{
+ display:grid;gap:0;width:100%;margin:0!important;
+}
+#accessories-view .accessory-game-card .stat-line{
+ display:grid;grid-template-columns:48px minmax(0,1fr) auto;align-items:center;
+ gap:8px;padding:4px 0!important;border:0!important;background:transparent!important;
+}
+#accessories-view .accessory-game-card .stat-line strong{
+ grid-column:1;grid-row:1;color:#e5e1cd;font:500 11px/1.25 Inter,sans-serif;text-align:left;
+}
+#accessories-view .accessory-game-card .stat-line span{
+ grid-column:2;grid-row:1;color:rgba(226,224,207,.82);font:400 10px/1.35 Inter,sans-serif;
+}
+#accessories-view .accessory-game-card .stat-line small{
+ grid-column:3;grid-row:1;color:rgba(220,220,194,.55);font:400 8px Inter,sans-serif;text-align:right;
+}
+#accessories-view .accessory-game-card .item-options-disclosure{
+ margin-top:0;border:0;border-bottom:1px solid rgba(192,190,151,.2);
+ background:transparent;
+}
+#accessories-view .accessory-game-card .item-options-disclosure>summary{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;
+ padding:11px 0;color:#d8d5bd;font:500 10px Inter,sans-serif;letter-spacing:.15px;
+ list-style:none;cursor:pointer;
+}
+#accessories-view .accessory-game-card .item-options-disclosure>summary::-webkit-details-marker{display:none}
+#accessories-view .accessory-game-card .item-options-disclosure>summary::after{
+ content:"+";color:#c9c49b;font:400 17px/1 Inter,sans-serif;
+}
+#accessories-view .accessory-game-card .item-options-disclosure[open]>summary::after{content:"−"}
+#accessories-view .accessory-game-card .item-options-content{padding:0 0 9px}
+#accessories-view .accessory-game-card .item-options-content .detail-section{
+ margin:8px 0 0;padding:8px 0 0;border-top:1px solid rgba(192,190,151,.13);
+}
+#accessories-view .accessory-game-card .item-options-content .detail-section h4{
+ margin:0 0 7px;color:#d5d1b7;font:500 10px Cinzel,Georgia,serif;
+}
+#accessories-view .accessory-game-card .item-options-content .roll-choice{
+ background:rgba(0,0,0,.14);border-radius:2px;padding:7px 6px;
+}
+#accessories-view .accessory-game-card .item-options-content .roll-choice-copy strong{color:#e5e1cd;font-size:10px}
+#accessories-view .accessory-game-card .item-options-content .roll-choice-copy small{color:rgba(220,220,194,.62);font-size:9px}
+#accessories-view .accessory-game-card .item-options-content .roll-limit-note{color:rgba(220,220,194,.6)}
+#accessories-view .accessory-game-card .detail-disclosure:not(.item-options-disclosure){
+ margin-top:8px;border:0;border-top:1px solid rgba(192,190,151,.15);background:transparent;
+}
+#accessories-view .accessory-game-card .detail-disclosure:not(.item-options-disclosure)>summary{
+ padding:9px 0;color:rgba(220,220,194,.65);font-size:9px;
+}
+#accessories-view .accessory-game-card .detail-note{
+ margin:9px 0 0;color:rgba(220,220,194,.42);font-size:8px;line-height:1.45;
+}
+#accessories-view .accessory-game-card .detail-id-footer{
+ margin-top:7px;color:rgba(220,220,194,.28);font-size:8px;text-align:right;
+}
+#accessories-view .accessory-game-card .detail-source{
+ display:inline-block;margin-top:9px;color:rgba(213,209,183,.55);
+ font-size:8px;letter-spacing:.35px;
+}
+#accessories-view .accessory-game-card .detail-muted{color:rgba(220,220,194,.6);font-size:10px}
+@media(max-width:760px){
+ #accessories-view .accessory-catalog-layout{display:block!important}
+ #accessories-view .accessory-list{display:block;width:100%!important}
+ #accessories-view .accessory-list .catalog-item-entry{display:flex;flex-direction:column;gap:0;width:100%;min-width:0}
+ #accessories-view .accessory-list .catalog-item-entry>#accessory-detail{
+  position:relative!important;top:auto!important;grid-column:auto!important;
+  width:100%!important;max-width:none!important;max-height:none!important;
+  margin:7px 0 15px!important;padding:15px 13px!important;overflow:visible!important;
+ }
+ #accessories-view .accessory-game-card .detail-top{grid-template-columns:minmax(0,1fr) 88px;gap:8px}
+ #accessories-view .accessory-game-card .detail-icon.detail-hero{width:88px;height:96px}
+ #accessories-view .accessory-game-card .gear-score-control{grid-template-columns:auto minmax(65px,1fr);gap:10px}
+ #accessories-view .accessory-game-card .gear-score-value strong{font-size:32px}
+}
+@media(max-width:380px){
+ #accessories-view .accessory-game-card .detail-top{grid-template-columns:minmax(0,1fr) 76px}
+ #accessories-view .accessory-game-card .detail-icon.detail-hero{width:76px;height:88px}
+ #accessories-view .accessory-game-card .detail-top h3{font-size:13px}
+ #accessories-view .accessory-game-card .stat-line{grid-template-columns:43px minmax(0,1fr) auto}
+}
