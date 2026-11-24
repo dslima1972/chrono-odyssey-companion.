@@ -3161,3 +3161,35 @@ body{font-family:var(--font-ui)}
  .equipment-inspect-card .gear-score-value strong{font-size:28px!important}
  .equipment-inspect-card input.gear-score-slider{max-width:120px}
 }
+
+
+/* Correções finais de consistência entre fichas e listas */
+.weapon-row{background:linear-gradient(100deg,color-mix(in srgb,var(--rarity) 24%,#101c26),color-mix(in srgb,var(--rarity) 12%,#101c26) 72%,transparent)!important}
+.weapon-row:hover,.weapon-row.selected{background:linear-gradient(100deg,color-mix(in srgb,var(--rarity) 38%,#172633),color-mix(in srgb,var(--rarity) 20%,#172633) 75%)!important}
+.equipment-inspect-card,.accessory-inspect-card{
+ min-height:0!important;height:auto!important;max-height:none!important;overflow:visible!important;
+ background:radial-gradient(ellipse at 82% 12%,color-mix(in srgb,var(--rarity) 48%,transparent),transparent 52%),linear-gradient(155deg,color-mix(in srgb,var(--rarity) 31%,#263027) 0%,color-mix(in srgb,var(--rarity) 22%,#172019) 48%,#0b100e 100%)!important;
+}
+#weapons-view .equipment-inspect-card .accessory-inspect-stats,
+#armor-view .equipment-inspect-card .accessory-inspect-stats,
+#accessories-view .equipment-inspect-card .accessory-inspect-stats{padding:0;margin:5px 0 0}
+#weapons-view .equipment-inspect-card .accessory-inspect-stat-list,
+#armor-view .equipment-inspect-card .accessory-inspect-stat-list,
+#accessories-view .equipment-inspect-card .accessory-inspect-stat-list{display:grid;gap:3px;padding:0 0 9px}
+#weapons-view .equipment-inspect-card .accessory-inspect-stat,
+#armor-view .equipment-inspect-card .accessory-inspect-stat,
+#accessories-view .equipment-inspect-card .accessory-inspect-stat{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:9px;align-items:baseline;min-height:17px;padding:0;border:0;background:transparent}
+#weapons-view .equipment-inspect-card .accessory-inspect-stat strong,
+#armor-view .equipment-inspect-card .accessory-inspect-stat strong,
+#accessories-view .equipment-inspect-card .accessory-inspect-stat strong{font:500 12px/1.35 Inter,sans-serif;color:#f1ecd9;text-align:left;font-variant-numeric:tabular-nums}
+#weapons-view .equipment-inspect-card .accessory-inspect-stat span,
+#armor-view .equipment-inspect-card .accessory-inspect-stat span,
+#accessories-view .equipment-inspect-card .accessory-inspect-stat span{font:400 12px/1.35 Inter,sans-serif;color:rgba(231,229,209,.9);text-align:left}
+.catalog-controls-row{display:flex;align-items:center;justify-content:flex-start;gap:8px;flex-wrap:nowrap;margin:0 0 14px}
+.catalog-controls-row .catalog-viewbar,.catalog-controls-row .armor-modebar{display:flex;align-items:center;justify-content:flex-start;gap:7px;margin:0;padding:0;min-height:34px}
+.catalog-controls-row .catalog-viewbar>span,.catalog-controls-row .armor-modebar>span{display:none}
+.catalog-controls-row .catalog-view-button,.catalog-controls-row .armor-mode{white-space:nowrap}
+@media(max-width:760px){
+ .catalog-controls-row{justify-content:flex-start;gap:7px;flex-wrap:nowrap;overflow-x:auto;max-width:100%;padding-bottom:2px}
+ .catalog-controls-row .catalog-viewbar,.catalog-controls-row .armor-modebar{flex:0 0 auto}
+}
