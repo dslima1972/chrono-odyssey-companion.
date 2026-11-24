@@ -846,7 +846,8 @@ function renderAccessoryReadOnlyOptions(item){
 }
 function detailedAccessoryMarkup(record,item){
  const info=record?.itemInfo||{},fields=[detailField("Nível requerido",info.requiredLevel),detailField("Peso",info.weight),detailField("Durabilidade máxima",info.maxDurability),detailField("Pode reforçar",info.canReinforce===true?"Sim":info.canReinforce===false?"Não":null)].filter(Boolean).join("");
- return '<section class="detail-section stats-primary">'+renderAccessoryStats(record)+'</section>'+renderAccessoryReadOnlyOptions(record)+(fields?'<details class="detail-disclosure"><summary>Outras informações do acessório</summary><div class="detail-fields">'+fields+'</div></details>':"")+'<p class="detail-note">Dados da ficha individual do Questlog. Campos não fornecidos pela fonte não são exibidos.</p><div class="detail-id-footer">ID: '+escapeHtml(item.id||item.compoundId||"")+'</div>';
+ const otherInfo=fields?'<details class="accessory-info-disclosure accessory-other-info"><summary>Outras informações do acessório <span>'+(fields.match(/class="detail-field"/g)||[]).length+'</span></summary><div class="accessory-info-options accessory-other-fields">'+fields+'</div></details>':"";
+ return '<section class="detail-section stats-primary">'+renderAccessoryStats(record)+'</section>'+renderAccessoryReadOnlyOptions(record)+otherInfo+'<p class="detail-note">Dados da ficha individual do Questlog. Campos não fornecidos pela fonte não são exibidos.</p><div class="detail-id-footer">ID: '+escapeHtml(item.id||item.compoundId||"")+'</div>';
 }
 
 async function getAccessoryDetailsCatalog(){
