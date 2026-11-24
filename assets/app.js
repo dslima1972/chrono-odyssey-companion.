@@ -1068,20 +1068,14 @@ function buildEquipmentSlotIconMarkup(slot){
  };
  return '<svg class="build-equipment-slot-glyph" viewBox="0 0 48 48" aria-hidden="true" focusable="false">'+(paths[slot]||paths.chest)+'</svg>';
 }
-function buildSlotCardCopy(item,label){
- if(!item)return '<span class="bp2-slot-copy"><small>'+escapeHtml(label)+'</small><strong>Selecionar</strong></span>';
- const record={...(item||{}),...(buildArmorDetails[String(item.id||item.compoundId)]||buildAccessoryDetails[String(item.id||item.compoundId)]||{})};
- const stats=getItemStatEntries(record).slice(0,2).map(entry=>'<span class="bp2-slot-stat"><b>'+escapeHtml(entry.label)+'</b> '+escapeHtml(formatStatValue(entry.key,entry.value))+'</span>').join("");
- return '<span class="bp2-slot-copy"><small>'+escapeHtml(label)+' · '+escapeHtml(rarity(item))+'</small><strong>'+escapeHtml(item.name||"Equipamento")+'</strong>'+(stats?'<span class="bp2-slot-stats">'+stats+'</span>':'')+'</span>';
-}
 function buildSlotMarkup(slot,label){
  const item=armors.find(x=>String(x.id||x.compoundId)===String(buildState.armor[slot]));
- return '<article class="build-slot build-slot-clickable '+(item?'has-item':'is-empty')+'" style="--rarity:'+rarityStyle(item||{})+'" data-build-pick="'+slot+'" tabindex="0" role="button" aria-label="Selecionar armadura: '+label+'" title="'+label+'"><div class="build-slot-icon">'+(item?weaponImageMarkup(item):buildEquipmentSlotIconMarkup(slot))+'</div>'+buildSlotCardCopy(item,label)+'</article>';
+ return '<article class="build-slot build-slot-clickable icon-only '+(item?'has-item':'is-empty')+'" style="--rarity:'+rarityStyle(item||{})+'" data-build-pick="'+slot+'" tabindex="0" role="button" aria-label="Selecionar armadura: '+label+'" title="'+label+'"><span class="build-slot-icon">'+(item?weaponImageMarkup(item):buildEquipmentSlotIconMarkup(slot))+'</span></article>';
 }
 function buildAccessorySlotMarkup(slot,label){
  const item=accessories.find(x=>String(x.id||x.compoundId)===String(buildState.accessories[slot]));
  const iconSlot=slot==="ring1"||slot==="ring2"?"ring":slot;
- return '<article class="build-slot build-slot-clickable '+(item?'has-item':'is-empty')+'" style="--rarity:'+rarityStyle(item||{})+'" data-build-pick="'+slot+'" tabindex="0" role="button" aria-label="Selecionar acessório: '+label+'" title="'+label+'"><div class="build-slot-icon">'+(item?accessoryImageMarkup(item):buildEquipmentSlotIconMarkup(iconSlot))+'</div>'+buildSlotCardCopy(item,label)+'</article>';
+ return '<article class="build-slot build-slot-clickable icon-only '+(item?'has-item':'is-empty')+'" style="--rarity:'+rarityStyle(item||{})+'" data-build-pick="'+slot+'" tabindex="0" role="button" aria-label="Selecionar acessório: '+label+'" title="'+label+'"><span class="build-slot-icon">'+(item?accessoryImageMarkup(item):buildEquipmentSlotIconMarkup(iconSlot))+'</span></article>';
 }
 function renderBuildScreen(){
  if(!$("build-class"))return;
@@ -1106,9 +1100,7 @@ function renderBuildWeaponSlots(){
   const label=index?"Arma secundária":"Arma principal";
   if(!type)return '<article class="build-slot build-slot-empty is-empty" aria-label="'+label+'" title="'+label+'"><div class="build-slot-icon">'+buildEquipmentSlotIconMarkup("weapon")+'</div></article>';
   const cls=CLASS_DATA.find(x=>x.name===buildState.className);
-  const record=item?{...item,...(buildWeaponDetails[String(item.id||item.compoundId)]||{})}:null;
-  const stats=record?getItemStatEntries(record).slice(0,2).map(entry=>'<span class="bp2-slot-stat"><b>'+escapeHtml(entry.label)+'</b> '+escapeHtml(formatStatValue(entry.key,entry.value))+'</span>').join(""):"";
-  return '<article class="build-slot build-slot-clickable '+(item?'has-item':'is-empty')+'" style="--rarity:'+rarityStyle(item||{})+'" data-build-weapon-pick="'+index+'" tabindex="0" role="button" aria-label="Selecionar '+label+' · '+escapeHtml(type)+'" title="'+label+' · '+escapeHtml(type)+'"><div class="build-slot-icon">'+(item?weaponImageMarkup(item):classButtonWeaponIconMarkup(type,cls?.name))+'</div><span class="bp2-slot-copy"><small>'+escapeHtml(label)+' · '+escapeHtml(item?rarity(item):type)+'</small><strong>'+escapeHtml(item?.name||"Selecionar arma")+'</strong>'+(stats?'<span class="bp2-slot-stats">'+stats+'</span>':'')+'</span></article>';
+  return '<article class="build-slot build-slot-clickable icon-only '+(item?'has-item':'is-empty')+'" style="--rarity:'+rarityStyle(item||{})+'" data-build-weapon-pick="'+index+'" tabindex="0" role="button" aria-label="Selecionar '+label+' · '+escapeHtml(type)+'" title="'+label+' · '+escapeHtml(type)+'"><span class="build-slot-icon">'+(item?weaponImageMarkup(item):classButtonWeaponIconMarkup(type,cls?.name))+'</span></article>';
  }).join("");
 }
 function buildWeaponResultsMarkup(type,index){
@@ -1152,26 +1144,38 @@ function buildPickerStatsMarkup(record){
 }
 async function buildPickList(slot,anchor){
  const isWeapon=slot==="weapon0"||slot==="weapon1",isAccessory=BUILD_ACCESSORY_SLOTS.some(([key])=>key===slot),kind=isWeapon?"weapon":isAccessory?"accessory":"armor";
- let rows=[];
- if(kind==="armor"&&buildArmorSlotState[slot]!=="ready"||kind!=="armor"&&buildLayerState[kind]!=="ready"){
-  const picker=$( "build-picker");buildPickerAnchor=anchor;const equipmentPanel=document.querySelector(".bp2-equipment");equipmentPanel.classList.add("is-picking");if(picker.parentElement!==equipmentPanel)equipmentPanel.appendChild(picker);
-  const label=kind==="armor"?(BUILD_ARMOR_SLOTS.find(x=>x[0]===slot)?.[1]||"armaduras"):BUILD_LAYER_CONFIG[kind].label;
-  $("build-picker-title").textContent="Carregando "+label+"…";$("build-picker-list").innerHTML='<p class="build-empty">Carregando os dados deste grupo…</p>';picker.hidden=false;
-  const loaded=kind==="armor"?await loadBuildArmorSlot(slot):await loadBuildLayer(kind);if(!loaded)return;
- }
- if(isWeapon){const type=slot==="weapon0"?buildState.weaponType:buildState.weaponType2;rows=weapons.filter(w=>weaponType(w)===type).filter(w=>buildItemMatches(w,buildWeaponDetails[String(w.id||w.compoundId)],buildState.weaponStats.filter(Boolean),"all"));}
- else if(isAccessory){const type=slot==="ring1"||slot==="ring2"?"ring":slot;rows=accessories.filter(x=>String(x.subCategory||"").toLowerCase()===type).filter(x=>buildItemMatches(x,buildAccessoryDetails[String(x.id||x.compoundId)],buildState.accessoryStats.filter(Boolean),"all"));}
- else rows=armors.filter(x=>String(x.subCategory||"").toLowerCase()===slot).filter(x=>buildItemMatches(x,buildArmorDetails[String(x.id||x.compoundId)],buildState.armorStats.filter(Boolean),"all"));
- const picker=$("build-picker");
- buildPickerAnchor=anchor;const equipmentPanel=document.querySelector(".bp2-equipment");equipmentPanel.classList.add("is-picking");if(picker.parentElement!==equipmentPanel)equipmentPanel.appendChild(picker);
+ const type=isWeapon?(slot==="weapon0"?buildState.weaponType:buildState.weaponType2):isAccessory?(slot==="ring1"||slot==="ring2"?"ring":slot):slot;
+ const stats=isWeapon?buildState.weaponStats.filter(Boolean):isAccessory?buildState.accessoryStats.filter(Boolean):buildState.armorStats.filter(Boolean);
+ const source=isWeapon?weapons:isAccessory?accessories:armors;
+ const details=isWeapon?buildWeaponDetails:isAccessory?buildAccessoryDetails:buildArmorDetails;
+ const picker=$("build-picker"),equipmentPanel=document.querySelector(".bp2-equipment");
+ buildPickerAnchor=anchor;equipmentPanel.classList.add("is-picking");if(picker.parentElement!==equipmentPanel)equipmentPanel.appendChild(picker);
  $("build-picker-title").textContent=isWeapon?"Selecionar arma":isAccessory?"Selecionar acessório":"Selecionar armadura";
- const activeKind=isWeapon?"weapon":isAccessory?"accessory":"armor";document.querySelectorAll("#build-picker [data-picker-stat-kind]").forEach(panel=>{panel.hidden=panel.dataset.pickerStatKind!==activeKind});
- const filteredRows=rows.filter(x=>!buildPickerRarity||rarity(x)===buildPickerRarity);
- const visibleRows=filteredRows.slice(0,buildPickerLimit);
- $("build-picker-list").innerHTML=visibleRows.length?visibleRows.map(x=>{const source=isWeapon?buildWeaponDetails:isAccessory?buildAccessoryDetails:buildArmorDetails;const key=String(x.id||x.compoundId);const record=source[key]?{...x,...source[key]}:x;return '<article class="co-bp-item" style="--rarity:'+rarityStyle(x)+'"><button type="button" class="co-bp-item-select" data-build-choose="'+(isWeapon?"weapon":isAccessory?"accessory":"armor")+'" data-slot="'+slot+'" data-id="'+escapeHtml(x.id||x.compoundId)+'"><span class="co-bp-item-head"><span class="co-bp-item-icon">'+(isAccessory?accessoryImageMarkup(x):weaponImageMarkup(x))+'</span><span class="co-bp-item-title"><strong>'+escapeHtml(x.name)+'</strong><small>'+escapeHtml(rarity(x))+'</small></span></span></button><div class="co-bp-stats-inline">'+buildPickerStatsMarkup(record)+'</div></article>'}).join(""):'<p class="build-empty">Nenhuma peça disponível com os filtros atuais.</p>';
- if(filteredRows.length>visibleRows.length)$("build-picker-list").insertAdjacentHTML("beforeend",'<button type="button" class="co-bp-more" data-build-more>Exibir mais ('+(filteredRows.length-visibleRows.length)+' restantes)</button>');
- $("build-picker-rarity").value=buildPickerRarity;
+ const activeKind=kind;document.querySelectorAll("#build-picker [data-picker-stat-kind]").forEach(panel=>{panel.hidden=panel.dataset.pickerStatKind!==activeKind});
+ const getRows=()=>source.filter(item=>isWeapon?weaponType(item)===type:String(item.subCategory||"").toLowerCase()===type)
+  .filter(item=>!buildPickerRarity||rarity(item)===buildPickerRarity)
+  .filter(item=>!stats.length||buildItemMatches(item,details[String(item.id||item.compoundId)],stats,"all"));
+ const render=()=>{
+  if(buildPickerAnchor!==anchor||picker.hidden)return;
+  const rows=getRows(),visibleRows=rows.slice(0,buildPickerLimit);
+  $("build-picker-list").innerHTML=visibleRows.length?visibleRows.map(item=>{
+   const key=String(item.id||item.compoundId),record=details[key]?{...item,...details[key]}:item;
+   return '<article class="co-bp-item" style="--rarity:'+rarityStyle(item)+'"><button type="button" class="co-bp-item-select" data-build-choose="'+kind+'" data-slot="'+slot+'" data-id="'+escapeHtml(item.id||item.compoundId)+'"><span class="co-bp-item-head"><span class="co-bp-item-icon">'+(isAccessory?accessoryImageMarkup(item):weaponImageMarkup(item))+'</span><span class="co-bp-item-title"><strong>'+escapeHtml(item.name)+'</strong><small>'+escapeHtml(rarity(item))+'</small></span></span></button><div class="co-bp-stats-inline">'+buildPickerStatsMarkup(record)+'</div></article>';
+  }).join(""):'<p class="build-empty">Nenhuma peça disponível com os filtros atuais.</p>';
+  if(rows.length>visibleRows.length)$("build-picker-list").insertAdjacentHTML("beforeend",'<button type="button" class="co-bp-more" data-build-more>Exibir mais ('+(rows.length-visibleRows.length)+' restantes)</button>');
+  $("build-picker-rarity").value=buildPickerRarity;
+ };
+ $("build-picker-list").innerHTML='<p class="build-empty">Preparando equipamentos…</p>';
  picker.hidden=false;
+ // A lista principal usa imediatamente o catálogo já carregado pelas páginas. As fichas
+ // detalhadas são buscadas em paralelo e só são aguardadas quando há filtro por atributos.
+ const pending=kind==="armor"?loadBuildArmorSlot(slot):loadBuildLayer(kind);
+ if(stats.length){
+  const loaded=await pending;if(!loaded){render();return}
+  render();return;
+ }
+ render();
+ pending.then(loaded=>{if(loaded)render()});
 }
 const BUILD_LAYER_CONFIG={
  weapon:{manifest:"weapon-details-manifest.json",label:"armas",assign:data=>{buildWeaponDetails=data}},
@@ -1216,8 +1220,7 @@ async function loadBuildLayer(kind){
  if(buildLayerState[kind]==="ready")return true;
  if(buildLayerPromises[kind])return buildLayerPromises[kind];
  const config=BUILD_LAYER_CONFIG[kind];if(!config)return false;
- if(kind==="armor"&&buildLayerState.weapon!=="ready"){$("build-data-status").textContent="Primeiro selecione a classe e o tipo de arma para carregar as fichas de armas. Depois, os dados de armaduras serão liberados.";return false}
- if(kind==="accessory"&&buildLayerState.armor!=="ready"){$("build-data-status").textContent="A etapa de acessórios será liberada depois que os dados de armaduras forem carregados.";return false}
+
  buildLayerState[kind]="loading";updateBuildLayerStatus();buildStatsOptions(kind,0);buildStatsOptions(kind,1);
  buildLayerPromises[kind]=(async()=>{
   try{
