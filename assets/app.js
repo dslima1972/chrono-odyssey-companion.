@@ -360,8 +360,13 @@ function gearScoreValueMarkup(option,score,statType){return optionStatsMarkup(op
 function itemCurrentGearScore(item){
  const saved=Number(equipmentRollSelection(item).gearScore);
  if(Number.isFinite(saved)&&saved>0)return saved;
+ const levels=findWeaponAttackLevels(item)||findArmorDefenseLevels(item)||findAccessoryGearScore(item)?.levels||null;
+ if(levels){
+  const selected=defaultGearScore(item,levels);
+  if(Number.isFinite(selected)&&selected>0)return selected;
+ }
  const tier=equipmentTier(item),defaults={1:1,2:5,3:15,4:25,5:40};
- return defaults[tier]??1;
+ return defaults[tier]??null;
 }
 function renderSuffixes(item){
  const stats=item?.itemStats||{},grade=itemGradeInfo(item),source=stats.suffixes;
@@ -1175,7 +1180,7 @@ async function openBuildItemConfig(slot){
 }
 function renderBuildTotals(){
  const selected=buildSelectedEquipment(),target=$("build-selected-stats");if(!target)return;
- const scores=selected.map(entry=>itemCurrentGearScore(entry.item)).filter(value=>Number.isFinite(value)&&value>0);
+ const scores=selected.map(entry=>itemCurrentGearScore(entry.record?{...entry.item,...entry.record}:entry.item)).filter(value=>Number.isFinite(value)&&value>0);
  const average=scores.length?scores.reduce((sum,value)=>sum+value,0)/scores.length:null;
  const averageMarkup='<div class="build-summary-average"><span>Média do Equip Score</span><strong>'+(average===null?"—":average.toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1}))+'</strong><small>'+scores.length+' equipamento(s) considerado(s)</small></div>';
  if(!selected.length){target.innerHTML=averageMarkup+'<p class="build-empty">Selecione equipamentos para visualizar a soma dos atributos da build.</p>';return}
@@ -1191,7 +1196,7 @@ function renderBuildTotals(){
  selected.forEach(entry=>{
   const item=entry.record?{...entry.item,...entry.record}:entry.item;
   getItemStatEntries(item).forEach(stat=>add(stat.key,stat.label,stat.value));
-  const selection=equipmentRollSelection(entry.item),score=itemCurrentGearScore(entry.item),stats=item?.itemStats||{};
+  const selection=equipmentRollSelection(entry.item),score=itemCurrentGearScore(item),stats=item?.itemStats||{};
   const suffixes=stats.suffixes&&typeof stats.suffixes==="object"?Object.values(stats.suffixes).filter(x=>x&&typeof x==="object"):[];
   const chosen=suffixes[Number(selection.suffix)];
   if(chosen)optionStatEntries(chosen,score).forEach(stat=>add(stat.key,stat.label,stat.value));
