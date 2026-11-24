@@ -1212,8 +1212,8 @@ function renderBuildTotals(){
   const value=key+" "+label;
   if(/^(strength|dexterity|intelligence|vitality|wisdom|constitution|luck|agility|willpower)$/.test(key)||/(strength|dexterity|intelligence|vitality|wisdom|constitution|forca|destreza|inteligencia|vitalidade|sabedoria)/.test(value))return "attributes";
   if(/(gather|harvest|mining|fishing|craft|process|lifeskill|life.?skill|coleta|minera|pesca|fabric|cozinh)/.test(value))return "lifeskill";
+  if(/(damage.?reduction|reduction.?damage|damage.?taken.?reduction|damage.?resistance|reduce.?damage|dano.?recebido|reducao.?dano|reducao.?de.?dano|reduz.?dano|mitigation|defense|defence|armor|armour|resistance|block|parry|guard|defesa|resistencia|bloqueio|apar)/.test(value))return "defense";
   if(/(health|healing|heal|hitpoint|(^|[^a-z])hp|life|stamina|mana|regen|recovery|restoration|cura|vida|vigor|recuper)/.test(value))return "life";
-  if(/(defense|defence|armor|armour|resistance|block|parry|guard|mitigation|defesa|resistencia|bloqueio|apar)/.test(value))return "defense";
   if(/(attack|damage|critical|crit|stagger|penetration|power|offense|offensive|ataque|dano|critico|ofens)/.test(value))return "attack";
   return "utility";
  };
@@ -1256,8 +1256,9 @@ async function buildPickList(slot,anchor){
  $("build-picker-title").textContent=isWeapon?"Selecionar arma":isAccessory?"Selecionar acessório":"Selecionar armadura";
  const activeKind=kind;document.querySelectorAll("#build-picker [data-picker-stat-kind]").forEach(panel=>{panel.hidden=panel.dataset.pickerStatKind!==activeKind});
  const typedRows=buildPickerTypeRows(source,kind,type);
+ let buildPickerStatsReady=!stats.length;
  const getRows=()=>typedRows.filter(item=>!buildPickerRarity||rarity(item)===buildPickerRarity)
-  .filter(item=>!stats.length||buildItemMatches(item,details[String(item.id||item.compoundId)],stats,"all"));
+  .filter(item=>!buildPickerStatsReady||!stats.length||buildItemMatches(item,details[String(item.id||item.compoundId)],stats,"all"));
  const render=()=>{
   if(buildPickerAnchor!==anchor||picker.hidden)return;
   const rows=getRows(),visibleRows=rows.slice(0,buildPickerLimit);
@@ -1270,15 +1271,15 @@ async function buildPickList(slot,anchor){
  };
  $("build-picker-list").innerHTML='<p class="build-empty">Preparando equipamentos…</p>';
  picker.hidden=false;
- // A lista principal usa imediatamente o catálogo já carregado pelas páginas. As fichas
- // detalhadas são buscadas em paralelo e só são aguardadas quando há filtro por atributos.
+ // Exibe imediatamente o catálogo. Com filtros por atributos, a lista provisória
+ // continua navegável até as fichas carregarem; depois os filtros são aplicados.
  const pending=kind==="armor"?loadBuildArmorSlot(slot):loadBuildLayer(kind);
- if(stats.length){
-  const loaded=await pending;if(!loaded){render();return}
-  render();return;
- }
  render();
- pending.then(loaded=>{if(loaded)render()});
+ if(stats.length){
+  pending.then(loaded=>{if(buildPickerAnchor!==anchor)return;buildPickerStatsReady=!!loaded;render()});
+ }else{
+  pending.then(loaded=>{if(loaded&&buildPickerAnchor===anchor)render()});
+ }
 }
 const BUILD_LAYER_CONFIG={
  weapon:{manifest:"weapon-details-manifest.json",label:"armas",assign:data=>{buildWeaponDetails=data}},
