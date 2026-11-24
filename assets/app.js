@@ -873,8 +873,8 @@ function renderAccessoryReadOnlyOptions(item){
   const key=String(perk.id||perk.name||"").toLowerCase();if(!key||seen.has(key))continue;seen.add(key);
   const value=gearScoreValueMarkup(perk,score,perk.statType);
   const chance=Number.isFinite(Number(perk.chancePercentage))?'<small>'+Number(perk.chancePercentage).toLocaleString("pt-BR",{maximumFractionDigits:2})+'%</small>':"";
-  const stat=perk.statType?humanizeStat(perk.statType):"";
-  perkRows.push('<div class="accessory-inspect-option"><strong>'+escapeHtml(perk.name||"Perk")+'</strong><span>'+escapeHtml(stat)+(stat?' · ':'')+value+'</span>'+chance+'</div>');
+  
+  perkRows.push('<div class="accessory-inspect-option"><strong>'+escapeHtml(perk.name||"Perk")+'</strong><span>'+value+'</span>'+chance+'</div>');
  }
  const unique=[...perkEntries(info.uniquePerk??stats.uniquePerk),...perkEntries(info.specialPerks??stats.specialPerks)];
  for(const perk of unique){
