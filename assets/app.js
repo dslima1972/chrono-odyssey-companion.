@@ -79,7 +79,7 @@ function accessoryImageMarkup(item,extraClass=""){
  assetPath=assetPath.replace(/^\/(?:chrono-odyssey\/)?/i,"").replace(/\.(?:png|jpe?g|webp)$/i,"");
  const parts=assetPath.split("/"),file=parts.pop()||"",dot=file.lastIndexOf(".");
  const normalized=dot>0&&file.slice(0,dot)===file.slice(dot+1)?[...parts,file.slice(0,dot)].join("/"):assetPath;
- const formats=[".webp",".png",".jpg",".jpeg"],bases=[normalized,...(normalized!==assetPath?[assetPath]:[])],candidates=[];
+ const formats=[".png",".webp",".jpg",".jpeg"],bases=[normalized,...(normalized!==assetPath?[assetPath]:[])],candidates=[];
  bases.forEach(base=>formats.forEach(ext=>candidates.push("https://cdn.questlog.gg/chrono-odyssey/"+base+ext)));
  return '<img class="'+extraClass+'" src="'+escapeHtml(candidates[0])+'" data-image-candidates="'+escapeHtml(JSON.stringify(candidates))+'" data-image-index="0" alt="Imagem de '+escapeHtml(item.name||"acessório")+'" loading="lazy" decoding="async" referrerpolicy="no-referrer" onload="weaponImageLoaded(this)" onerror="accessoryImageFallback(this)">'
 }
@@ -844,9 +844,9 @@ function renderAccessoryReadOnlyOptions(item){
  return '<section class="accessory-inspect-rolls">'+suffixSection+perkSection+'</section>';
 }
 function detailedAccessoryMarkup(record,item){
- const info=record?.itemInfo||{},fields=[detailField("Nível requerido",info.requiredLevel),detailField("Peso",info.weight),detailField("Durabilidade máxima",info.maxDurability),detailField("Pode reforçar",info.canReinforce===true?"Sim":info.canReinforce===false?"Não":null)].filter(Boolean).join("");
- const extras=fields?'<section class="accessory-inspect-extra">'+fields+'</section>':"";
- return renderAccessoryStats(record)+renderAccessoryReadOnlyOptions(record)+extras+'<p class="accessory-inspect-note">Dados da ficha individual do Questlog. Campos não fornecidos pela fonte não são exibidos.</p>';
+ const info=record?.itemInfo||{},footer=[["Nível requerido",info.requiredLevel],["Peso",info.weight],["Pode reforçar",info.canReinforce===true?"Sim":info.canReinforce===false?"Não":null]].filter(([,value])=>value!==undefined&&value!==null&&value!=="");
+ const extras=footer.length?'<footer class="accessory-inspect-footer">'+footer.map(([label,value])=>'<span><b>'+escapeHtml(label)+'</b> '+escapeHtml(String(value))+'</span>').join('<i>·</i>')+'</footer>':"";
+ return renderAccessoryStats(record)+renderAccessoryReadOnlyOptions(record)+extras;
 }
 
 async function getAccessoryDetailsCatalog(){
@@ -869,7 +869,7 @@ async function loadAccessoryDetails(item,panelRoot){
    current.innerHTML=detailedAccessoryMarkup(record,item);
 
    const meta=current.closest(".detail-panel")?.querySelector(".detail-header-meta");
-   if(meta)meta.innerHTML=compactMeta("Tier",record?.itemInfo?.tier)+compactMeta("Raridade",rarity(item))+compactMeta("Tipo",accessoryType(item));
+   if(meta)meta.innerHTML=[record?.itemInfo?.tier!==undefined&&record?.itemInfo?.tier!==null?"Tier "+record.itemInfo.tier:"",rarity(item),accessoryType(item)].filter(Boolean).map(value=>'<span class="accessory-inspect-meta-value">'+escapeHtml(value)+'</span>').join("");
   }
  }catch(e){
   const current=panelRoot.querySelector(".detail-live");
