@@ -1531,3 +1531,61 @@ input.gear-score-slider::-moz-range-thumb{width:9px;height:9px;border:1px solid 
  #build-view .build-slot-icon{width:56px;height:54px;flex-basis:54px}
  #build-view .build-slot-copy strong{font-size:8px}
 }
+
+
+/* Build planner refinement: side-by-side character and two-column equipment */
+#build-view .build-workspace{display:grid;grid-template-columns:minmax(270px,.78fr) minmax(0,1.75fr);align-items:start;gap:24px;min-height:0;margin-top:22px;padding:8px 0 18px}
+#build-view .build-character-panel{position:relative;top:auto;width:100%;max-width:none;margin:0;align-self:start}
+#build-view #build-character{height:520px;min-height:520px;border-radius:16px;background:radial-gradient(ellipse at 50% 38%,rgba(132,119,85,.24),rgba(15,20,17,.08) 62%,transparent 80%)}
+#build-view #build-character img{height:520px;max-width:100%;object-fit:contain;object-position:center bottom}
+#build-view .build-equipment-panel{position:relative;inset:auto;z-index:2;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;gap:14px;min-width:0;pointer-events:auto}
+#build-view .build-equipment-panel>section{display:block;min-width:0;padding:14px;background:rgba(23,31,32,.66);border:0;border-radius:13px;box-shadow:inset 0 1px rgba(255,255,255,.035)}
+#build-view .build-equipment-panel>section:first-child{grid-column:1/-1}
+#build-view .build-equipment-panel h3{position:static;clip:auto;clip-path:none;width:auto;height:auto;overflow:visible;white-space:normal;margin:0;color:#d0b477}
+#build-view .build-slot-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:12px}
+#build-view .build-slot{position:relative;inset:auto;left:auto;right:auto;top:auto;bottom:auto;width:100%;min-width:0;min-height:140px;height:auto;padding:10px 7px;gap:7px}
+#build-view .build-slot-icon{width:86px;height:84px;flex:0 0 84px}
+#build-view .build-slot.is-empty{width:100%;height:auto;min-height:112px;min-width:0}
+#build-view .build-slot.is-empty .build-slot-icon{width:68px;height:68px;flex-basis:68px}
+#build-view .build-slot-copy strong{font-size:10px}
+#build-view .build-picker{position:fixed;z-index:10000;left:50%;top:50%;transform:translate(-50%,-50%);width:min(860px,calc(100vw - 28px));max-height:min(84vh,760px);margin:0;padding:14px;display:flex;flex-direction:column;overflow:hidden;border:1px solid rgba(199,164,93,.65);border-radius:14px;box-shadow:0 24px 90px rgba(0,0,0,.78);background:#111816}
+#build-view .build-picker[hidden]{display:none}
+.build-picker{position:fixed!important;z-index:10000!important}
+.build-picker-head{flex-wrap:wrap;flex:0 0 auto}
+.build-picker-head h3{min-width:140px}
+.build-picker-list{grid-template-columns:repeat(2,minmax(0,1fr));flex:1 1 auto;min-height:0;max-height:62vh;overflow:auto;overscroll-behavior:contain}
+.build-picker-item{min-width:0;grid-template-columns:42px minmax(0,1fr);overflow:hidden}
+.build-picker-item-head{display:flex;align-items:center;gap:7px;min-width:0}
+.build-picker-item-title{display:grid;gap:3px;min-width:0}
+.build-picker-item-title strong,.build-picker-item-title small{overflow-wrap:anywhere}
+@media(max-width:900px){
+ #build-view .build-workspace{grid-template-columns:minmax(220px,.72fr) minmax(0,1.55fr);gap:16px}
+ #build-view #build-character,#build-view #build-character img{height:440px;min-height:440px}
+ #build-view .build-equipment-panel{gap:10px}
+ #build-view .build-equipment-panel>section{padding:10px}
+ #build-view .build-slot{min-height:124px}
+ #build-view .build-slot-icon{width:72px;height:70px;flex-basis:70px}
+}
+@media(max-width:650px){
+ #build-view .build-workspace{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;padding:0}
+ #build-view .build-character-panel{width:100%;max-width:none;display:block}
+ #build-view #build-character,#build-view #build-character img{height:280px;min-height:280px}
+ #build-view .build-equipment-panel{position:relative;inset:auto;display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+ #build-view .build-equipment-panel>section{display:block;padding:12px 10px}
+ #build-view .build-equipment-panel>section:first-child{grid-column:auto}
+ #build-view .build-slot-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:11px}
+ #build-view .build-slot{position:relative;width:100%;min-width:0;min-height:148px;height:auto;padding:10px 7px;gap:8px}
+ #build-view .build-slot.is-empty{width:100%;height:auto;min-height:132px}
+ #build-view .build-slot-icon{width:92px;height:90px;flex:0 0 90px}
+ #build-view .build-slot.is-empty .build-slot-icon{width:76px;height:76px;flex-basis:76px}
+ #build-view .build-slot-copy strong{font-size:10px;line-height:1.3}
+ #build-view .build-picker{width:calc(100vw - 20px);max-height:88vh;padding:10px}
+ .build-picker-list{grid-template-columns:repeat(2,minmax(0,1fr));max-height:66vh}
+ .build-picker-item{grid-template-columns:34px minmax(0,1fr);gap:5px;padding:5px}
+ .build-picker-item span{width:34px;height:34px}
+}
+@media(max-width:390px){
+ #build-view .build-slot{min-height:136px;padding:8px 5px}
+ #build-view .build-slot-icon{width:80px;height:78px;flex-basis:78px}
+ #build-view .build-slot-copy strong{font-size:9px}
+}
