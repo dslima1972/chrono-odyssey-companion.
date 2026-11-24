@@ -2127,3 +2127,45 @@ input.gear-score-slider::-moz-range-thumb{width:9px;height:9px;border:1px solid 
  #build-picker .co-bp-stat-name{font-size:10px!important}
  #build-picker .co-bp-stat-value{font-size:11px!important}
 }
+
+
+/* Build picker v6 — janela desktop mais compacta e filtros no padrão dos demais campos */
+@media(min-width:651px){
+ #build-picker{
+  width:min(820px,calc(100vw - 40px))!important;
+  height:min(72dvh,700px)!important;
+  max-height:calc(100dvh - 48px)!important;
+ }
+}
+#build-picker .co-bp-filters{
+ display:grid!important;
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:8px!important;
+ align-items:center!important;
+}
+#build-picker .co-bp-filters>select{
+ display:block!important;
+ width:100%!important;
+ height:42px!important;
+ min-height:42px!important;
+ max-height:42px!important;
+ min-width:0!important;
+ margin:0!important;
+ padding:0 10px!important;
+ box-sizing:border-box!important;
+ font:12px Inter,system-ui,sans-serif!important;
+ line-height:normal!important;
+ color:var(--text)!important;
+ background:#0e1a24!important;
+ border:1px solid var(--border)!important;
+ border-radius:0!important;
+}
+@media(max-width:650px){
+ #build-picker .co-bp-filters>select{
+  height:40px!important;
+  min-height:40px!important;
+  max-height:40px!important;
+  padding:0 7px!important;
+  font-size:10px!important;
+ }
+}
