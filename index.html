@@ -9,9 +9,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./assets/styles.css?v=20261125buildlayout1">
+  <link rel="stylesheet" href="./assets/styles.css?v=20261125darkmane1">
   <script src="./assets/app.js?v=20261125buildlayout1" defer></script>
-  <script src="./assets/dressing-room.js?v=20261123e20" defer></script>
+  <script src="./assets/dressing-room.js?v=20261125darkmane1" defer></script>
 </head>
 <body>
   <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
@@ -222,38 +222,51 @@
   <p class="bp2-data-status" id="build-data-status">Carregando fichas detalhadas para montar as sugestões por atributos…</p>
 </section>
 <section id="provador-view" class="view">
-      <div class="section-heading"><div><div class="eyebrow left">PERSONALIZAÇÃO DE APARÊNCIA</div><h2>Provador de equipamentos</h2></div><div class="catalog-count" id="dressing-count">CARREGANDO ARMADURAS…</div></div>
-      <p class="intro-copy">Monte seu equipamento combinando as peças do catálogo. As imagens são organizadas e encaixadas para formar uma silhueta de personagem, sem avatar ou manequim ao fundo.</p>
-      <div class="dressing-room">
-        <aside class="dressing-catalog">
-          <div class="dressing-panel-title"><span>CATÁLOGO</span><strong>Armaduras</strong></div>
-          <input id="dressing-search" class="dressing-search" type="search" placeholder="Buscar peça pelo nome…" autocomplete="off">
-          <div class="dressing-filter-row"><select id="dressing-rarity"><option value="">Todas as raridades</option><option>Comum</option><option>Incomum</option><option>Raro</option><option>Épico</option><option>Lendário</option></select></div>
-          <div class="dressing-slot-tabs" id="dressing-slot-tabs">
-            <button type="button" class="active" data-slot="head">Elmo</button><button type="button" data-slot="chest">Peitoral</button><button type="button" data-slot="hands">Luvas</button><button type="button" data-slot="back">Capa</button><button type="button" data-slot="legs">Calça</button><button type="button" data-slot="feet">Botas</button>
-          </div>
-          <div class="dressing-items" id="dressing-items"><div class="loading">Carregando catálogo de armaduras…</div></div>
-        </aside>
-        <section class="dressing-preview">
-          <div class="dressing-preview-heading"><span>COMPOSIÇÃO</span><strong>Montagem de equipamento</strong></div>
-          <div class="dressing-composition-toolbar"><div class="dressing-mode-switch"><button type="button" id="dressing-mode-fixed" class="active">Encaixe fixo</button><button type="button" id="dressing-mode-free">Montagem livre</button></div><button type="button" id="dressing-layout-reset" class="secondary-action">Restaurar montagem</button></div>
-          <div class="dressing-stage dressing-composition-stage">
-            <div class="dressing-composition fixed-layout" id="dressing-composition" aria-label="Composição visual das peças selecionadas">
-              <div class="composition-piece composition-back" data-composition-slot="back"><span>Capa</span></div>
-              <div class="composition-piece composition-head" data-composition-slot="head"><span>Elmo</span></div>
-              <div class="composition-piece composition-chest" data-composition-slot="chest"><span>Peitoral</span></div>
-              <div class="composition-piece composition-hands" data-composition-slot="hands"><span>Luvas</span></div>
-              <div class="composition-piece composition-legs" data-composition-slot="legs"><span>Calça</span></div>
-              <div class="composition-piece composition-feet" data-composition-slot="feet"><span>Botas</span></div>
-            </div>
-          </div>
-          <p class="composition-note">No encaixe fixo, as peças ocupam posições de inventário. Na montagem livre, arraste e redimensione cada peça para criar sua própria composição.</p>
-          <div class="dressing-actions"><button type="button" id="dressing-clear" class="secondary-action">Limpar equipamentos</button><button type="button" id="dressing-save" class="primary-action">Salvar combinação</button></div>
-          <div class="dressing-status" id="dressing-status" aria-live="polite">Selecione as peças para montar seu equipamento.</div>
-        </section>
-        <aside class="dressing-equipped"><div class="dressing-panel-title"><span>LOADOUT</span><strong>Peças selecionadas</strong></div><div id="dressing-equipped-list" class="dressing-equipped-list"><p>Nenhuma peça selecionada.</p></div><div class="dressing-saved"><strong>Combinações salvas</strong><div id="dressing-saved-list">Nenhuma combinação salva.</div></div></aside>
+  <div class="section-heading">
+    <div><div class="eyebrow left">PERSONALIZAÇÃO DE APARÊNCIA</div><h2>Provador 2D</h2></div>
+    <div class="catalog-count" id="dressing-count">CARREGANDO PEÇAS APROVADAS…</div>
+  </div>
+  <p class="intro-copy">Monte seu visual com as seis peças aprovadas nos testes do conjunto Dark Mane. Cada equipamento é exibido em uma camada independente, alinhada ao manequim grafite.</p>
+  <div class="dressing-room dressing-room-approved">
+    <aside class="dressing-catalog">
+      <div class="dressing-panel-title"><span>CATÁLOGO INICIAL</span><strong>Peças aprovadas</strong></div>
+      <div class="dressing-slot-tabs" id="dressing-slot-tabs">
+        <button type="button" class="active" data-slot="head">Elmo</button>
+        <button type="button" data-slot="chest">Peitoral</button>
+        <button type="button" data-slot="hands">Luvas</button>
+        <button type="button" data-slot="back">Capa</button>
+        <button type="button" data-slot="legs">Calça</button>
+        <button type="button" data-slot="feet">Botas</button>
       </div>
+      <div class="dressing-items" id="dressing-items"><div class="loading">Carregando peças aprovadas…</div></div>
+    </aside>
+    <section class="dressing-preview">
+      <div class="dressing-preview-heading"><span>COMPOSIÇÃO</span><strong>Conjunto Dark Mane</strong></div>
+      <div class="dressing-stage dressing-composition-stage">
+        <div class="dressing-composition" id="dressing-composition" aria-label="Manequim grafite com camadas de equipamentos">
+          <img id="layer-back" class="composition-layer composition-cloak" src="./references/void-cloak.png" alt="Void Cloak">
+          <img class="composition-layer composition-base" src="./references/avatar-mannequin-dark.png" alt="Manequim grafite">
+          <img id="layer-legs" class="composition-layer composition-leggings" src="./references/dark-mane-steel-leggings.png" alt="Dark Mane Steel Leggings">
+          <div id="layer-chest" class="composition-layer-wrapper composition-chest-wrapper"><img src="./references/dark-mane-plate-armor.png" alt="Dark Mane Plate Armor"></div>
+          <div id="layer-feet" class="composition-layer-wrapper composition-boots-wrapper"><img src="./references/dark-mane-plate-boots.png" alt="Dark Mane Plate Boots"></div>
+          <div id="layer-hands" class="composition-layer-wrapper composition-gloves-wrapper"><img src="./references/dark-mane-gauntlets.png" alt="Dark Mane Gauntlets"></div>
+          <div id="layer-head" class="composition-layer-wrapper composition-helm-wrapper"><img src="./references/dark-mane-full-helm.png" alt="Dark Mane Full Helm"></div>
+        </div>
+      </div>
+      <p class="composition-note">As peças usam os encaixes aprovados nos previews. A capa permanece atrás do manequim; as demais camadas seguem a ordem de sobreposição validada.</p>
+      <div class="dressing-actions">
+        <button type="button" id="dressing-clear" class="secondary-action">Remover todas as peças</button>
+        <button type="button" id="dressing-save" class="primary-action">Salvar combinação</button>
+      </div>
+      <div class="dressing-status" id="dressing-status" aria-live="polite">Carregando o conjunto inicial…</div>
     </section>
+    <aside class="dressing-equipped">
+      <div class="dressing-panel-title"><span>LOADOUT</span><strong>Peças equipadas</strong></div>
+      <div id="dressing-equipped-list" class="dressing-equipped-list"><p>Nenhuma peça selecionada.</p></div>
+      <div class="dressing-saved"><strong>Combinações salvas</strong><div id="dressing-saved-list">Nenhuma combinação salva.</div></div>
+    </aside>
+  </div>
+</section>
     <footer><span>CHRONO ODYSSEY COMPANION</span><span>PROJETO COMUNITÁRIO INDEPENDENTE · NÃO OFICIAL · NÃO COMERCIAL · 2026</span></footer>
   </main>
 </body>
