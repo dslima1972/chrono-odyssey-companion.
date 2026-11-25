@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Preview — Dark Mane Plate Boots</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:22px;background:#17191d;color:#f2f2f2;font:15px/1.5 system-ui,Arial,sans-serif}
+main{max-width:900px;margin:auto}
+h1{font-size:22px;margin:0 0 8px}
+p{color:#c6c9ce;margin:0 0 16px}
+.stage{width:min(100%,720px);aspect-ratio:1;margin:0 auto 18px;position:relative;overflow:hidden;background-color:#555;background-image:linear-gradient(45deg,#777 25%,transparent 25%),linear-gradient(-45deg,#777 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#777 75%),linear-gradient(-45deg,transparent 75%,#777 75%);background-size:24px 24px;background-position:0 0,0 12px,12px -12px,-12px 0}
+.stage img{position:absolute;display:block;object-fit:contain}
+#mannequin{inset:0;width:100%;height:100%}
+#leggings{left:21%;top:36%;width:58%;height:58%;transform:scaleY(.92);transform-origin:center;pointer-events:none}
+#boots{left:21%;top:42%;width:58%;height:58%;pointer-events:none}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;max-width:720px;margin:auto;padding:14px;background:#22252a;border:1px solid #454950;border-radius:10px}
+label{display:flex;flex-direction:column;gap:5px;color:#e5e7eb}
+label span{display:flex;justify-content:space-between;gap:8px}
+input[type=range]{width:100%;accent-color:#a5c77b}
+.toggles{display:flex;flex-wrap:wrap;gap:18px;max-width:720px;margin:0 auto 12px}
+.toggles label{display:flex;flex-direction:row;align-items:center}
+button{background:#343b46;color:#fff;border:1px solid #596273;border-radius:6px;padding:8px 12px;cursor:pointer}
+.note{max-width:720px;margin:12px auto 0;font-size:13px;color:#aeb5bf}
+</style>
+</head>
+<body><main>
+<h1>Dark Mane Plate Boots — teste de encaixe</h1>
+<p>Prévia independente para ajustar as botas sobre o manequim e a calça já aprovada. Os arquivos originais não são modificados.</p>
+<div class="toggles">
+<label><input id="showLeggings" type="checkbox" checked> Mostrar calça</label>
+<label><input id="showBoots" type="checkbox" checked> Mostrar botas</label>
+<label>Opacidade das botas <input id="opacity" type="range" min="20" max="100" value="100"><output id="opacityValue">100%</output></label>
+</div>
+<div class="stage">
+<img id="mannequin" src="avatar-mannequin-dark.png" alt="Manequim grafite">
+<img id="leggings" src="dark-mane-steel-leggings.png" alt="Dark Mane Steel Leggings">
+<img id="boots" src="dark-mane-plate-boots.png" alt="Dark Mane Plate Boots">
+</div>
+<div class="controls">
+<label><span><b>Posição horizontal</b><output id="leftValue">21%</output></span><input id="left" type="range" min="0" max="42" step="0.5" value="21"></label>
+<label><span><b>Posição vertical</b><output id="topValue">42%</output></span><input id="top" type="range" min="25" max="60" step="0.5" value="42"></label>
+<label><span><b>Largura</b><output id="widthValue">58%</output></span><input id="width" type="range" min="35" max="85" step="0.5" value="58"></label>
+<label><span><b>Altura</b><output id="heightValue">58%</output></span><input id="height" type="range" min="35" max="85" step="0.5" value="58"></label>
+<div><button id="reset">Restaurar valores iniciais</button></div>
+</div>
+<p class="note">O quadriculado permite observar a transparência. Ajuste as botas até que as proteções superiores encontrem a parte inferior da calça e os pés coincidam com os pés do manequim. Os controles alteram somente esta visualização.</p>
+</main>
+<script>
+const boots=document.getElementById('boots');
+const controls=['left','top','width','height'];
+const defaults={left:21,top:42,width:58,height:58};
+function update(){
+ for(const key of controls){
+  const value=Number(document.getElementById(key).value);
+  boots.style[key]=value+'%';
+  document.getElementById(key+'Value').textContent=value+'%';
+ }
+}
+for(const key of controls) document.getElementById(key).addEventListener('input',update);
+document.getElementById('showBoots').addEventListener('change',e=>boots.hidden=!e.target.checked);
+document.getElementById('showLeggings').addEventListener('change',e=>document.getElementById('leggings').hidden=!e.target.checked);
+document.getElementById('opacity').addEventListener('input',e=>{boots.style.opacity=e.target.value/100;document.getElementById('opacityValue').textContent=e.target.value+'%'});
+document.getElementById('reset').addEventListener('click',()=>{
+ for(const key of controls)document.getElementById(key).value=defaults[key];
+ document.getElementById('showBoots').checked=true;boots.hidden=false;boots.style.opacity=1;
+ document.getElementById('showLeggings').checked=true;document.getElementById('leggings').hidden=false;
+ document.getElementById('opacity').value=100;document.getElementById('opacityValue').textContent='100%';
+ update();
+});
+update();
+</script>
+</body></html>
