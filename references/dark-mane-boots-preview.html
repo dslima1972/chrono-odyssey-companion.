@@ -41,9 +41,9 @@ button{background:#343b46;color:#fff;border:1px solid #596273;border-radius:6px;
 </div>
 <div class="controls">
 <label><span><b>Deslocamento horizontal</b><output id="offsetXValue">0%</output></span><input id="offsetX" type="range" min="-20" max="20" step="0.5" value="0"></label>
-<label><span><b>Deslocamento vertical</b><output id="offsetYValue">0%</output></span><input id="offsetY" type="range" min="-20" max="60" step="0.5" value="0"></label>
-<label><span><b>Largura da imagem</b><output id="scaleXValue">100%</output></span><input id="scaleX" type="range" min="30" max="160" step="1" value="55"></label>
-<label><span><b>Escala vertical</b><output id="scaleYValue">100%</output></span><input id="scaleY" type="range" min="30" max="140" step="1" value="55"></label>
+<label><span><b>Deslocamento vertical</b><output id="offsetYValue">0%</output></span><input id="offsetY" type="range" min="-20" max="60" step="0.5" value="32"></label>
+<label><span><b>Largura da imagem</b><output id="scaleXValue">100%</output></span><input id="scaleX" type="range" min="30" max="160" step="1" value="50"></label>
+<label><span><b>Escala vertical</b><output id="scaleYValue">100%</output></span><input id="scaleY" type="range" min="30" max="140" step="1" value="40"></label>
 <div><button id="reset">Restaurar valores iniciais</button></div>
 </div>
 <p class="note">O controle de largura agora escala somente a imagem das botas no eixo horizontal. O deslocamento horizontal apenas move a camada. Se a inclinação das botas não corresponder à das pernas, o ajuste de largura não corrigirá essa diferença geométrica; será necessário gerar uma nova camada usando o manequim como guia de alinhamento. A página não altera os PNGs originais.</p>
@@ -51,7 +51,7 @@ button{background:#343b46;color:#fff;border:1px solid #596273;border-radius:6px;
 <script>
 const layer=document.getElementById('bootsLayer');
 const ids=['offsetX','offsetY','scaleX','scaleY'];
-const defaults={offsetX:0,offsetY:0,scaleX:55,scaleY:55};
+const defaults={offsetX:0,offsetY:32,scaleX:50,scaleY:40};
 function update(){
  const v={};
  for(const id of ids){v[id]=Number(document.getElementById(id).value);document.getElementById(id+'Value').textContent=(id.startsWith('scale')?v[id]+'%':(v[id]>0?'+':'')+v[id]+'%');}
