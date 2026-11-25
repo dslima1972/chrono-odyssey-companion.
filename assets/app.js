@@ -1448,7 +1448,7 @@ function initBuildLibrary(){
  if(!$("build-save-new"))return;
  [["build-library-toggle","build-library-content"],["build-comparator-toggle","build-comparator-content"]].forEach(([toggleId,contentId])=>{
   const toggle=$(toggleId),content=$(contentId);if(!toggle||!content)return;
-  toggle.addEventListener("click",()=>{const expanded=toggle.getAttribute("aria-expanded")!=="true";toggle.setAttribute("aria-expanded",String(expanded));content.hidden=!expanded;const label=toggle.querySelector(".bp2-disclosure-label");if(label)label.textContent=expanded?"Recolher":"Expandir";});
+  toggle.addEventListener("click",()=>{const expanded=toggle.getAttribute("aria-expanded")!=="true";toggle.setAttribute("aria-expanded",String(expanded));content.hidden=!expanded;});
  });
  renderBuildLibrary();
  $("build-save-new").addEventListener("click",saveNewBuild);
