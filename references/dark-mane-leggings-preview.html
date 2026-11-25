@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Preview — Dark Mane Steel Leggings</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:24px;background:#17191d;color:#f2f2f2;font:15px/1.45 Arial,sans-serif}
+main{max-width:900px;margin:auto}h1{font-size:22px;margin:0 0 8px}p{color:#c6c9ce}
+.controls{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin:18px 0}
+label{display:flex;gap:8px;align-items:center}.stage{width:min(100%,720px);margin:auto;position:relative;aspect-ratio:1;background-color:#aaa;background-image:linear-gradient(45deg,#d8d8d8 25%,transparent 25%),linear-gradient(-45deg,#d8d8d8 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#d8d8d8 75%),linear-gradient(-45deg,transparent 75%,#d8d8d8 75%);background-size:24px 24px;background-position:0 0,0 12px,12px -12px,-12px 0;overflow:hidden}
+.stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+#garment{opacity:1}
+.status{max-width:720px;margin:14px auto;padding:12px;background:#252930;border-radius:8px;white-space:pre-wrap}
+button{background:#343b46;color:#fff;border:1px solid #596273;border-radius:6px;padding:8px 12px;cursor:pointer}
+</style>
+</head>
+<body><main>
+<h1>Dark Mane Steel Leggings — teste de sobreposição</h1>
+<p>Manequim grafite como base e calça gerada como camada independente. O quadriculado representa a transparência do preview.</p>
+<div class="controls">
+<label><input id="toggle" type="checkbox" checked> Exibir calça</label>
+<label>Opacidade <input id="opacity" type="range" min="0" max="100" value="100"><span id="value">100%</span></label>
+<button id="reset">Restaurar</button>
+</div>
+<div class="stage">
+<img src="avatar-mannequin-dark.png" alt="Manequim grafite">
+<img id="garment" src="dark-mane-steel-leggings.png" alt="Dark Mane Steel Leggings">
+</div>
+<div class="status" id="status">Analisando PNG…</div>
+</main>
+<script>
+const garment=document.getElementById('garment'),toggle=document.getElementById('toggle'),opacity=document.getElementById('opacity'),value=document.getElementById('value'),status=document.getElementById('status');
+toggle.addEventListener('change',()=>garment.style.display=toggle.checked?'block':'none');
+opacity.addEventListener('input',()=>{garment.style.opacity=opacity.value/100;value.textContent=opacity.value+'%'});
+document.getElementById('reset').addEventListener('click',()=>{toggle.checked=true;garment.style.display='block';opacity.value=100;garment.style.opacity=1;value.textContent='100%'});
+garment.addEventListener('load',()=>{
+ const c=document.createElement('canvas');c.width=garment.naturalWidth;c.height=garment.naturalHeight;
+ const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(garment,0,0);
+ try{const d=x.getImageData(0,0,c.width,c.height).data;let transparent=0,semi=0,opaque=0;
+ for(let i=3;i<d.length;i+=4){if(d[i]===0)transparent++;else if(d[i]===255)opaque++;else semi++}
+ const total=c.width*c.height;
+ status.textContent='Dimensões: '+c.width+' × '+c.height+' px\nPixels transparentes: '+transparent.toLocaleString('pt-BR')+' ('+(transparent/total*100).toFixed(2)+'%)\nPixels semitransparentes: '+semi.toLocaleString('pt-BR')+' ('+(semi/total*100).toFixed(2)+'%)\nPixels opacos: '+opaque.toLocaleString('pt-BR')+' ('+(opaque/total*100).toFixed(2)+'%)';
+ }catch(e){status.textContent='Não foi possível ler os pixels: '+e.message}
+});
+garment.addEventListener('error',()=>status.textContent='Falha ao carregar a imagem da calça.');
+</script></body></html>
