@@ -1,11 +1,19 @@
-# Equipment overlay assets
+# Camadas de equipamento do Provador
 
-This directory stores transparent equipment layers aligned to the Avatar 3 canvas.
+Esta pasta armazena camadas transparentes de equipamentos alinhadas ao avatar-base.
 
-- Keep each layer at 1024 × 1024 px.
-- Use PNG with a real alpha channel.
-- Place the equipment at its final coordinates on the full avatar canvas.
-- Do not include a body, mannequin, background, cast shadow, or UI.
-- Do not resize or crop layers independently from the avatar.
+## Padrão da prova de conceito 2D
 
-The first target is `chest/ragged-clothes-avatar3.png`. It is not present yet; create it only after suitable artwork is available and visually validated.
+- Canvas quadrado de **1024 × 1024 px**, igual ao avatar-base.
+- PNG RGBA com canal alfa real.
+- Equipamento posicionado nas coordenadas finais do canvas completo.
+- Fundo transparente.
+- Não incluir corpo, manequim, cenário, sombra projetada ou interface.
+- Não recortar, deslocar ou redimensionar uma camada isoladamente.
+- A escala e a origem devem corresponder exatamente às do avatar-base.
+
+## Primeiro item de teste
+
+O primeiro alvo é `chest/ragged-clothes-avatar3.png`, correspondente ao item Questlog **Ragged Clothes (ID 10101)**.
+
+A camada ainda não está disponível. Ela só deverá ser criada depois que a imagem de referência do item e o avatar-base estiverem preparados e visualmente validados. O ícone de inventário é referência visual, não uma textura pronta para vestir o avatar.
