@@ -502,7 +502,7 @@ function renderClasses(){
   });
  }));
 }
-async function loadData(){try{let data=null,sourceFile="";for(const file of ["./data/questlog-export.json","./data/weapons.json"]){const res=await fetch(file,{cache:"no-store"});if(res.ok){data=await res.json();sourceFile=file;break}}if(!data)throw new Error("Arquivo do catálogo não encontrado");const candidates=[data.items,data.pageData,data.records,data.registros,data?.result?.data?.json?.pageData,data?.result?.data?.pageData,data?.data?.items,data?.data?.pageData];const rawItems=Array.isArray(data)?data:(candidates.find(Array.isArray)||[]);const testItems=rawItems.filter(w=>/\(Test\)/i.test(String(w.name||"")));weapons=rawItems.filter(w=>!w.isDisabled&&!/\(Test\)/i.test(String(w.name||"")));fillFilters();renderList();const stamp=data.updatedAt?new Date(data.updatedAt).toLocaleString("pt-BR"):"data da exportação: 02/10/2026";$("data-status").textContent=rawItems.length+" registros recebidos; "+weapons.length+" armas exibidas; "+testItems.length+" registros de teste ocultados. Fonte: "+sourceFile+". "+stamp+".";if(!weapons.length)$("data-status").textContent="O arquivo foi encontrado, mas não contém uma lista de itens reconhecida. Verifique o formato do export."}catch(e){$("weapon-list").innerHTML='<div class="empty-state">Os dados locais do catálogo ainda não foram publicados. Quando os dados do catálogo forem adicionados à pasta data, as armas aparecerão aqui.</div>';$("data-status").textContent="Aguardando o arquivo local do catálogo de armas no repositório."}}
+async function loadData(){try{let data=null,sourceFile="";for(const file of ["./data/questlog-export.json","./data/weapons.json"]){const res=await fetch(file,{cache:"no-store"});if(res.ok){data=await res.json();sourceFile=file;break}}if(!data)throw new Error("Arquivo do catálogo não encontrado");const candidates=[data.items,data.pageData,data.records,data.registros,data?.result?.data?.json?.pageData,data?.result?.data?.pageData,data?.data?.items,data?.data?.pageData];const rawItems=Array.isArray(data)?data:(candidates.find(Array.isArray)||[]);const testItems=rawItems.filter(w=>/\(Test\)/i.test(String(w.name||"")));weapons=rawItems.filter(w=>!w.isDisabled&&!/\(Test\)/i.test(String(w.name||"")));fillFilters();renderList();refreshBuildAfterCatalogLoad();const stamp=data.updatedAt?new Date(data.updatedAt).toLocaleString("pt-BR"):"data da exportação: 02/10/2026";$("data-status").textContent=rawItems.length+" registros recebidos; "+weapons.length+" armas exibidas; "+testItems.length+" registros de teste ocultados. Fonte: "+sourceFile+". "+stamp+".";if(!weapons.length)$("data-status").textContent="O arquivo foi encontrado, mas não contém uma lista de itens reconhecida. Verifique o formato do export."}catch(e){$("weapon-list").innerHTML='<div class="empty-state">Os dados locais do catálogo ainda não foram publicados. Quando os dados do catálogo forem adicionados à pasta data, as armas aparecerão aqui.</div>';$("data-status").textContent="Aguardando o arquivo local do catálogo de armas no repositório."}}
 // A navegação é delegada no início do arquivo para continuar funcional mesmo se outro módulo falhar.
 
 $("search").addEventListener("input",renderList);$("class-filter").addEventListener("change",()=>{updateWeaponTypeOptions();renderList()});["type-filter","rarity-filter"].forEach(id=>$(id).addEventListener("change",renderList));
@@ -770,7 +770,7 @@ async function loadArmorData(){
   const response=await fetch("./data/armor-export.json",{cache:"no-store"});if(!response.ok)throw new Error("Catálogo ainda não enviado.");
   const data=await response.json(),items=Array.isArray(data)?data:(Array.isArray(data.items)?data.items:[]);
   armors=items.filter(x=>!x.isDisabled&&!/\(Test\)/i.test(String(x.name||"")));
-  buildArmorSetGroups();fillArmorFilters();renderArmorList();
+  buildArmorSetGroups();refreshBuildAfterCatalogLoad();fillArmorFilters();renderArmorList();
   const completeSets=armorSetGroups.filter(group=>group.complete).length,incompleteSets=armorSetGroups.filter(group=>!group.complete).length;
   $("armor-data-status").textContent=armors.length+" peças carregadas. "+completeSets+" conjuntos completos (5/5) e "+incompleteSets+" grupos candidatos incompletos; capas e itens sem identificação de conjunto ficam fora da contagem de cinco peças.";
   $("armor-catalog-count").textContent=armors.length+" PEÇAS";
@@ -935,7 +935,7 @@ async function loadAccessoryData(){
  try{
   const response=await fetch("./data/accessory-export.json?v=20261123a",{cache:"no-store"});if(!response.ok)throw new Error("Catálogo ainda não enviado.");
   const data=await response.json(),items=Array.isArray(data)?data:(Array.isArray(data.items)?data.items:[]);
-  accessories=items.filter(x=>!x.isDisabled);fillAccessoryFilters();renderAccessoryList();
+  accessories=items.filter(x=>!x.isDisabled);fillAccessoryFilters();renderAccessoryList();refreshBuildAfterCatalogLoad();
   $("accessory-data-status").textContent=accessories.length+" acessórios carregados: "+accessories.filter(x=>x.subCategory==="necklace").length+" colares, "+accessories.filter(x=>x.subCategory==="ring").length+" anéis e "+accessories.filter(x=>x.subCategory==="belt").length+" cintos. Fichas detalhadas locais do Companion.";
   $("accessory-catalog-count").textContent=accessories.length+" PEÇAS";
   renderBuildArmorSlots();buildStatsOptions("accessory",0);buildStatsOptions("accessory",1);renderBuildSelectedStats();
@@ -1346,6 +1346,115 @@ async function loadBuildLayer(kind){
  return buildLayerPromises[kind];
 }
 function closeBuildPicker(){const picker=$("build-picker");picker.hidden=true;document.querySelector(".bp2-equipment")?.classList.remove("is-picking");buildPickerAnchor=null}
+
+/* BUILD PLANNER — biblioteca local, cópias e comparação de resumos */
+const BUILD_LIBRARY_STORAGE_KEY="chronoOdysseyCompanion.builds.v1";
+let activeSavedBuildId="";
+function cloneBuildData(value){return JSON.parse(JSON.stringify(value??{}))}
+function readSavedBuilds(){try{const value=JSON.parse(localStorage.getItem(BUILD_LIBRARY_STORAGE_KEY)||"[]");return Array.isArray(value)?value.filter(item=>item&&item.id&&item.buildState):[]}catch(error){return []}}
+function writeSavedBuilds(items){try{localStorage.setItem(BUILD_LIBRARY_STORAGE_KEY,JSON.stringify(items));return true}catch(error){setBuildLibraryStatus("Não foi possível salvar. O armazenamento local pode estar cheio ou indisponível.");return false}}
+function setBuildLibraryStatus(message){const node=$("build-library-status");if(node)node.textContent=message}
+function parseBuildSummaryNumber(value){const match=String(value??"").match(/[-+]?\d[\d.]*,?\d*/);if(!match)return null;const number=Number(match[0].replace(/\./g,"").replace(",", "."));return Number.isFinite(number)?number:null}
+function captureBuildSummary(){
+ const root=$("build-selected-stats");if(!root)return {average:0,averageDisplay:"0,0",stats:[]};
+ const averageDisplay=root.querySelector(".build-summary-average strong")?.textContent?.trim()||"0,0",average=parseBuildSummaryNumber(averageDisplay)??0,stats=[];
+ root.querySelectorAll(".build-total-group").forEach(group=>{
+  const groupName=group.querySelector("header h4")?.textContent?.trim()||"Outros";
+  group.querySelectorAll(".build-total-stat").forEach(row=>{const label=row.querySelector("span")?.textContent?.trim(),display=row.querySelector("strong")?.textContent?.trim();if(label&&display)stats.push({group:groupName,label,display,value:parseBuildSummaryNumber(display)})});
+ });
+ return {average,averageDisplay,stats};
+}
+function captureCurrentBuild(name,existing){return {id:existing?.id||("build-"+Date.now()+"-"+Math.random().toString(36).slice(2,8)),name:String(name||"Build sem nome").trim(),createdAt:existing?.createdAt||new Date().toISOString(),updatedAt:new Date().toISOString(),buildState:cloneBuildData(buildState),equipmentRollState:cloneBuildData(equipmentRollState),summary:captureBuildSummary()}}
+function formatBuildDate(value){const date=new Date(value);return Number.isNaN(date.getTime())?"":date.toLocaleDateString("pt-BR")}
+function renderBuildLibrary(){
+ const builds=readSavedBuilds(),saved=$("build-saved-select"),a=$("build-compare-a"),b=$("build-compare-b");if(!saved||!a||!b)return;
+ const previousSaved=saved.value||activeSavedBuildId,previousA=a.value,previousB=b.value,options='<option value="">Selecione uma build</option>'+builds.map(item=>'<option value="'+escapeHtml(item.id)+'">'+escapeHtml(item.name)+' · '+formatBuildDate(item.updatedAt||item.createdAt)+'</option>').join("");
+ saved.innerHTML=options;a.innerHTML=options;b.innerHTML=options;
+ if(builds.some(item=>item.id===previousSaved))saved.value=previousSaved;
+ if(builds.some(item=>item.id===previousA))a.value=previousA;else if(builds.length)a.value=builds[0].id;
+ if(builds.some(item=>item.id===previousB))b.value=previousB;else if(builds.length>1)b.value=builds[1].id;
+ const hasSelected=!!saved.value;
+ ["build-load-selected","build-duplicate-selected","build-update-selected","build-delete-selected"].forEach(id=>{const button=$(id);if(button)button.disabled=!hasSelected});
+ const compare=$("build-compare-run");if(compare)compare.disabled=builds.length<2||!a.value||!b.value||a.value===b.value;
+ if(!builds.length){saved.innerHTML='<option value="">Nenhuma build salva</option>';a.innerHTML='<option value="">Nenhuma build salva</option>';b.innerHTML='<option value="">Nenhuma build salva</option>'}
+}
+function hydrateBuildDetails(){
+ const tasks=[];buildSelectedEquipment().forEach(entry=>{
+  if(entry.kind==="weapon"&&buildLayerState.weapon!=="ready")tasks.push(loadBuildLayer("weapon"));
+  else if(entry.kind==="accessory"&&buildLayerState.accessory!=="ready")tasks.push(loadBuildLayer("accessory"));
+  else if(entry.kind==="armor")tasks.push(loadBuildArmorSlot(entry.slot));
+ });
+ return Promise.all(tasks).then(()=>renderBuildSelectedStats());
+}
+function refreshBuildAfterCatalogLoad(){
+ if(!$("build-class"))return;renderBuildScreen();
+ if(buildState.weapons.some(Boolean)||Object.values(buildState.armor||{}).some(Boolean)||Object.values(buildState.accessories||{}).some(Boolean))hydrateBuildDetails();
+}
+function applySavedBuild(record){
+ if(!record?.buildState)return false;
+ const state=cloneBuildData(record.buildState);Object.keys(buildState).forEach(key=>{if(!(key in state))delete buildState[key]});Object.assign(buildState,state);
+ if(!Array.isArray(buildState.weapons))buildState.weapons=["",""];
+ if(!buildState.armor||typeof buildState.armor!=="object")buildState.armor={};
+ if(!buildState.accessories||typeof buildState.accessories!=="object")buildState.accessories={};
+ if(!Array.isArray(buildState.weaponStats))buildState.weaponStats=["",""];
+ if(!Array.isArray(buildState.armorStats))buildState.armorStats=["",""];
+ if(!Array.isArray(buildState.accessoryStats))buildState.accessoryStats=["",""];
+ Object.keys(equipmentRollState).forEach(key=>delete equipmentRollState[key]);Object.assign(equipmentRollState,cloneBuildData(record.equipmentRollState||{}));
+ activeSavedBuildId=record.id;const name=$("build-name-input");if(name)name.value=record.name||"";
+ selectedBuildSlot="";closeBuildPicker();renderBuildScreen();renderBuildLibrary();
+ setBuildLibraryStatus('Build "'+(record.name||"Sem nome")+'" carregada. Edite a configuração e use Atualizar para salvar as alterações.');
+ hydrateBuildDetails();return true;
+}
+function saveNewBuild(){
+ const name=$("build-name-input")?.value.trim();if(!name){setBuildLibraryStatus("Informe um nome para salvar a build.");$("build-name-input")?.focus();return}
+ const builds=readSavedBuilds(),record=captureCurrentBuild(name);builds.push(record);if(!writeSavedBuilds(builds))return;
+ activeSavedBuildId=record.id;renderBuildLibrary();setBuildLibraryStatus('Build "'+name+'" salva neste navegador.');
+}
+function updateSelectedBuild(){
+ const id=$("build-saved-select")?.value;if(!id){setBuildLibraryStatus("Selecione uma build salva para atualizar.");return}
+ const builds=readSavedBuilds(),index=builds.findIndex(item=>item.id===id);if(index<0){setBuildLibraryStatus("A build selecionada não foi encontrada.");renderBuildLibrary();return}
+ const record=captureCurrentBuild($("build-name-input")?.value.trim()||builds[index].name,builds[index]);builds[index]=record;
+ if(!writeSavedBuilds(builds))return;activeSavedBuildId=id;renderBuildLibrary();setBuildLibraryStatus('Build "'+record.name+'" atualizada.');
+}
+function duplicateSelectedBuild(){
+ const id=$("build-saved-select")?.value,source=readSavedBuilds().find(item=>item.id===id);if(!source){setBuildLibraryStatus("Selecione uma build salva para criar uma cópia.");return}
+ const builds=readSavedBuilds(),copy=cloneBuildData(source);copy.id="build-"+Date.now()+"-"+Math.random().toString(36).slice(2,8);copy.name=(source.name||"Build")+" - Cópia";copy.createdAt=new Date().toISOString();copy.updatedAt=copy.createdAt;
+ builds.push(copy);if(!writeSavedBuilds(builds))return;applySavedBuild(copy);setBuildLibraryStatus('Cópia "'+copy.name+'" criada. As alterações nela não modificam a build original.');
+}
+function deleteSelectedBuild(){
+ const id=$("build-saved-select")?.value,builds=readSavedBuilds(),record=builds.find(item=>item.id===id);if(!record){setBuildLibraryStatus("Selecione uma build salva para excluir.");return}
+ if(!window.confirm('Excluir a build "'+record.name+'"? Esta ação não pode ser desfeita.'))return;
+ if(!writeSavedBuilds(builds.filter(item=>item.id!==id)))return;if(activeSavedBuildId===id)activeSavedBuildId="";renderBuildLibrary();setBuildLibraryStatus('Build "'+record.name+'" excluída do armazenamento local.');
+}
+function renderBuildComparison(){
+ const idA=$("build-compare-a")?.value,idB=$("build-compare-b")?.value,builds=readSavedBuilds(),left=builds.find(item=>item.id===idA),right=builds.find(item=>item.id===idB),target=$("build-comparison-results");if(!target)return;
+ if(!left||!right||left.id===right.id){target.hidden=true;target.innerHTML="";setBuildLibraryStatus("Selecione duas builds diferentes para comparar.");return}
+ const sa=left.summary||{average:0,averageDisplay:"0,0",stats:[]},sb=right.summary||{average:0,averageDisplay:"0,0",stats:[]};
+ const cls=(x,y)=>x>y?"is-higher":x<y?"is-lower":"is-equal";
+ const mapA=new Map((sa.stats||[]).map(stat=>[stat.group+"::"+stat.label,stat])),mapB=new Map((sb.stats||[]).map(stat=>[stat.group+"::"+stat.label,stat])),keys=[...new Set([...mapA.keys(),...mapB.keys()])],groupNames=[...new Set(keys.map(key=>key.split("::")[0]))];
+ const groups=groupNames.map(group=>{
+  const rows=keys.filter(key=>key.startsWith(group+"::")).map(key=>{
+   const x=mapA.get(key),y=mapB.get(key),vx=x?.value??0,vy=y?.value??0;
+   return '<div class="bp2-compare-row"><span class="bp2-compare-stat-name">'+escapeHtml(x?.label||y?.label||"Atributo")+'</span><strong class="bp2-compare-value '+(x&&y?cls(vx,vy):"")+'">'+(x?escapeHtml(x.display):"—")+'</strong><strong class="bp2-compare-value '+(x&&y?cls(vy,vx):"")+'">'+(y?escapeHtml(y.display):"—")+'</strong></div>';
+  }).join("");
+  return '<section class="bp2-compare-group"><h5>'+escapeHtml(group)+'</h5>'+rows+'</section>';
+ }).join("");
+ target.innerHTML='<div class="bp2-compare-result-heading"><div><span>COMPARAÇÃO DE RESUMOS</span><strong>'+escapeHtml(left.name)+' <small>vs.</small> '+escapeHtml(right.name)+'</strong></div><button type="button" class="bp2-compare-close" data-build-compare-close aria-label="Fechar comparação">×</button></div><div class="bp2-compare-average"><span>Gear Score médio</span><strong class="'+cls(Number(sa.average)||0,Number(sb.average)||0)+'">'+escapeHtml(sa.averageDisplay||"0,0")+'</strong><strong class="'+cls(Number(sb.average)||0,Number(sa.average)||0)+'">'+escapeHtml(sb.averageDisplay||"0,0")+'</strong></div><div class="bp2-compare-column-head"><span></span><strong>'+escapeHtml(left.name)+'</strong><strong>'+escapeHtml(right.name)+'</strong></div>'+groups;
+ target.hidden=false;setBuildLibraryStatus("Comparação atualizada. Verde indica o valor numericamente maior; vermelho, o menor.");
+}
+function initBuildLibrary(){
+ if(!$("build-save-new"))return;renderBuildLibrary();
+ $("build-save-new").addEventListener("click",saveNewBuild);
+ $("build-load-selected").addEventListener("click",()=>{const record=readSavedBuilds().find(item=>item.id===$("build-saved-select").value);if(record)applySavedBuild(record)});
+ $("build-duplicate-selected").addEventListener("click",duplicateSelectedBuild);
+ $("build-update-selected").addEventListener("click",updateSelectedBuild);
+ $("build-delete-selected").addEventListener("click",deleteSelectedBuild);
+ $("build-saved-select").addEventListener("change",()=>{const record=readSavedBuilds().find(item=>item.id===$("build-saved-select").value);if(record&&$("build-name-input"))$("build-name-input").value=record.name||"";renderBuildLibrary()});
+ ["build-compare-a","build-compare-b"].forEach(id=>$(id).addEventListener("change",()=>{const run=$("build-compare-run");if(run)run.disabled=!$("build-compare-a").value||!$("build-compare-b").value||$("build-compare-a").value===$("build-compare-b").value}));
+ $("build-compare-run").addEventListener("click",renderBuildComparison);
+ $("build-comparison-results").addEventListener("click",event=>{if(event.target.closest("[data-build-compare-close]"))$("build-comparison-results").hidden=true});
+}
+
 function initBuildPlanner(){
  document.addEventListener("click",e=>{
   const choice=e.target.closest("[data-build-weapon-choice]");
@@ -1375,7 +1484,7 @@ function initBuildPlanner(){
  $("build-picker-rarity").addEventListener("change",e=>{buildPickerRarity=e.target.value;buildPickerLimit=30;const anchor=buildPickerAnchor;const slot=anchor?.dataset.buildPick??("weapon"+(anchor?.dataset.buildWeaponPick||"0"));buildPickList(slot,anchor)});
  $("build-picker-close").addEventListener("click",closeBuildPicker);
  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("build-item-config").hidden){selectedBuildSlot="";renderBuildItemConfig();return}if((e.key==="Enter"||e.key===" ")&&e.target.matches(".build-slot-clickable")){e.preventDefault();const el=e.target;if(el.dataset.buildPick)buildPickList(el.dataset.buildPick,el);else buildPickList("weapon"+el.dataset.buildWeaponPick,el)}});
- renderBuildScreen();updateBuildLayerStatus();
+ renderBuildScreen();updateBuildLayerStatus();initBuildLibrary();
 }
 
 document.addEventListener("click",event=>{
