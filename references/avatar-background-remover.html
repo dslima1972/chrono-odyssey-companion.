@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Remover fundo — Manequim</title><style>
+*{box-sizing:border-box}body{margin:0;padding:22px;background:#171b22;color:#e8edf2;font:15px/1.5 system-ui,sans-serif}main{max-width:960px;margin:auto}p{color:#bac4d0}.panel{background:#222936;border:1px solid #394454;border-radius:12px;padding:16px;margin:14px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}.preview{min-height:280px;display:grid;place-items:center;border-radius:8px;overflow:hidden;background-color:#ddd;background-image:linear-gradient(45deg,#bbb 25%,transparent 25%),linear-gradient(-45deg,#bbb 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#bbb 75%),linear-gradient(-45deg,transparent 75%,#bbb 75%);background-size:24px 24px;background-position:0 0,0 12px,12px -12px,-12px 0}.preview img{max-width:100%;max-height:65vh;object-fit:contain}label{display:block;margin:12px 0}input{width:100%}button{padding:10px 15px;border:0;border-radius:8px;background:#75a7ff;color:#101722;font-weight:700;cursor:pointer;margin:8px 8px 0 0}button:disabled{opacity:.45;cursor:not-allowed}#msg{font-weight:650}small{color:#aeb9c7}
+</style></head><body><main><h1>Remoção experimental do fundo</h1>
+<p>O processamento acontece somente no seu navegador. O método remove pixels semelhantes às cores encontradas nos cantos, começando pelas bordas, para reduzir o risco de apagar partes internas do manequim.</p>
+<section class="panel"><div id="msg">Carregando avatar-mannequin.png…</div><label for="tol">Tolerância de cor: <strong id="tv">35</strong> <input id="tol" type="range" min="5" max="120" value="35"></label><small>Comece em 35. Aumente gradualmente se ainda houver fundo; reduza se partes do manequim desaparecerem.</small><div><button id="process" disabled>Processar fundo</button><button id="download" disabled>Baixar PNG transparente</button></div></section>
+<div class="grid"><section class="panel"><h2>Original</h2><div class="preview"><img id="original" alt="Imagem original"></div></section><section class="panel"><h2>Resultado</h2><div class="preview"><canvas id="out"></canvas></div></section></div>
+<section class="panel"><small id="stats">Aguardando processamento.</small></section></main>
+<script>
+(()=>{const img=document.getElementById('original'),canvas=document.getElementById('out'),ctx=canvas.getContext('2d'),tol=document.getElementById('tol'),tv=document.getElementById('tv'),processBtn=document.getElementById('process'),downloadBtn=document.getElementById('download'),msg=document.getElementById('msg'),stats=document.getElementById('stats');let source=null;
+tol.addEventListener('input',()=>tv.textContent=tol.value);
+img.onload=()=>{const c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;c.getContext('2d').drawImage(img,0,0);source=c.getContext('2d').getImageData(0,0,c.width,c.height);canvas.width=c.width;canvas.height=c.height;ctx.putImageData(source,0,0);processBtn.disabled=false;msg.textContent='Imagem carregada: '+c.width+' × '+c.height+' px.'};
+img.onerror=()=>msg.textContent='Não foi possível carregar avatar-mannequin.png.';
+img.src='avatar-mannequin.png';
+processBtn.onclick=()=>{if(!source)return;const w=source.width,h=source.height,d=new Uint8ClampedArray(source.data),seen=new Uint8Array(w*h),q=new Int32Array(w*h),corners=[0,(w-1)*4,(h-1)*w*4,(h*w-1)*4].map(i=>[source.data[i],source.data[i+1],source.data[i+2]]),threshold=Number(tol.value),limit=threshold*threshold*3;let head=0,tail=0,removed=0;
+const similar=(p)=>{const r=source.data[p*4],g=source.data[p*4+1],b=source.data[p*4+2];for(const c of corners){const dr=r-c[0],dg=g-c[1],db=b-c[2];if(dr*dr+dg*dg+db*db<=limit)return true}return false};
+const add=(p)=>{if(p<0||p>=w*h||seen[p])return;seen[p]=1;if(similar(p))q[tail++]=p};
+for(let x=0;x<w;x++){add(x);add((h-1)*w+x)}for(let y=0;y<h;y++){add(y*w);add(y*w+w-1)}
+while(head<tail){const p=q[head++];d[p*4+3]=0;removed++;const x=p%w,y=(p/w)|0;if(x)add(p-1);if(x<w-1)add(p+1);if(y)add(p-w);if(y<h-1)add(p+w)}
+const result=new ImageData(d,w,h);ctx.putImageData(result,0,0);downloadBtn.disabled=false;stats.textContent='Pixels removidos: '+removed.toLocaleString('pt-BR')+' ('+(100*removed/(w*h)).toLocaleString('pt-BR',{maximumFractionDigits:2})+'%). Revise cuidadosamente o contorno e as áreas próximas ao fundo antes de usar.';
+msg.textContent='Processamento concluído. Se necessário, ajuste a tolerância e processe novamente.'};
+downloadBtn.onclick=()=>{canvas.toBlob(blob=>{if(!blob)return;const a=document.createElement('a'),u=URL.createObjectURL(blob);a.href=u;a.download='avatar-mannequin-transparent.png';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)},'image/png')};
+})();
+</script></body></html>
