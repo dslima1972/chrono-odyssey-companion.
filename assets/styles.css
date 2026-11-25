@@ -4281,6 +4281,9 @@ footer{color:#7890a0}
 #build-view.build-planner-v2 .bp2-compare-value.is-higher{color:#79c99a}
 #build-view.build-planner-v2 .bp2-compare-value.is-lower{color:#df8585}
 #build-view.build-planner-v2 .bp2-compare-value.is-equal{color:#cbd5db}
+#build-view.build-planner-v2 .bp2-compare-arrow{display:inline-block;margin-left:4px;font-size:1.15em;font-weight:800;line-height:1;vertical-align:baseline}
+#build-view.build-planner-v2 .bp2-compare-arrow.is-higher{color:#79c99a}
+#build-view.build-planner-v2 .bp2-compare-arrow.is-lower{color:#df8585}
 @media(max-width:900px){#build-view.build-planner-v2 .bp2-library-controls{grid-template-columns:repeat(4,minmax(0,1fr))}#build-view.build-planner-v2 .bp2-library-controls label{grid-column:span 2}}
 @media(max-width:650px){
  #build-view.build-planner-v2 .bp2-build-library{padding:11px;gap:10px}
