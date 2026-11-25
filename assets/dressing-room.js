@@ -16,7 +16,7 @@ const esc=s=>String(s??"").replace(/[&<>\"']/g,c=>({"&":"&amp;","<":"&lt;",">":"
 const rarity=item=>({0:"Comum",1:"Incomum",2:"Raro",3:"Épico",4:"Lendário"})[Number(item?.grade)]||"Camada aprovada";
 const rarityKey=item=>item?.grade===undefined||item?.grade===null?"special":String(item.grade);
 const rarityClass=item=>"rarity-"+rarityKey(item);
-const setName=item=>item?.setName||(item?.name&&/\\bDark Mane\\b/i.test(item.name)?"Dark Mane":"Sem conjunto");
+const setName=item=>item?.setName||(item?.name&&/\bDark Mane\b/i.test(item.name)?"Dark Mane":"Sem conjunto");
 function readSaved(){try{const v=JSON.parse(localStorage.getItem(storageKey)||"[]");return Array.isArray(v)?v:[]}catch(e){return[]}}
 function writeSaved(value){try{localStorage.setItem(storageKey,JSON.stringify(value));return true}catch(e){return false}}
 function renderComposition(){
