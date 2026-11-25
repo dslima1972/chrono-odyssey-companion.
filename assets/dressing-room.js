@@ -8,7 +8,7 @@ const definitions=[
  {slot:"hands",id:"11273504",imagePath:"./references/dark-mane-gauntlets.png"},
  {slot:"legs",id:"11274504",imagePath:"./references/dark-mane-steel-leggings.png"},
  {slot:"feet",id:"11275504",imagePath:"./references/dark-mane-plate-boots.png"},
- {slot:"back",id:"void-cloak",name:"Void Cloak",subCategory:"back",imagePath:"./references/void-cloak.png",isApprovedLayer:true}
+ {slot:"back",id:"void-cloak",name:"Void Cloak",subCategory:"back",grade:4,imagePath:"./references/void-cloak.png",isApprovedLayer:true}
 ];
 const storageKey="chronoDressingLooksV2";
 let activeSlot="head",approvedBySlot={},approvedById=new Map(),equipped={};
@@ -35,7 +35,7 @@ function renderItems(){
   return;
  }
  const selected=!!equipped[activeSlot],grade=rarityKey(item),set=setName(item);
- $("dressing-items").innerHTML='<button type="button" class="dressing-item dressing-approved-item '+rarityClass(item)+' '+(selected?"selected":"")+'" data-rarity="'+esc(grade)+'" data-set="'+esc(set)+'" data-toggle-approved="'+esc(activeSlot)+'" aria-pressed="'+selected+'"><img src="'+esc(item.imagePath)+'" alt="'+esc(item.name)+'" loading="lazy"><strong>'+esc(item.name)+'</strong><small>'+(item.isApprovedLayer?"Camada aprovada · "+esc(set):rarity(item)+" · "+esc(set))+'</small><span class="dressing-item-action">'+(selected?"Remover da composição":"Equipar peça")+'</span></button>';
+ $("dressing-items").innerHTML='<button type="button" class="dressing-item dressing-approved-item '+rarityClass(item)+' '+(selected?"selected":"")+'" data-rarity="'+esc(grade)+'" data-set="'+esc(set)+'" data-toggle-approved="'+esc(activeSlot)+'" aria-pressed="'+selected+'"><img src="'+esc(item.imagePath)+'" alt="'+esc(item.name)+'" loading="lazy"><strong>'+esc(item.name)+'</strong><small>'+rarity(item)+" · "+esc(set)+'</small><span class="dressing-item-action">'+(selected?"Remover da composição":"Equipar peça")+'</span></button>';
  $("dressing-items").querySelector("[data-toggle-approved]").addEventListener("click",()=>{
   if(equipped[activeSlot]){delete equipped[activeSlot];$("dressing-status").textContent=item.name+" removido da composição."}
   else{equipped[activeSlot]=item;$("dressing-status").textContent=item.name+" adicionado à composição."}
@@ -44,7 +44,7 @@ function renderItems(){
 }
 function renderEquipped(){
  const entries=Object.entries(equipped);
- $("dressing-equipped-list").innerHTML=entries.length?entries.map(([slot,item])=>'<div class="dressing-equipped-row '+rarityClass(item)+'" data-rarity="'+esc(rarityKey(item))+'"><img src="'+esc(item.imagePath)+'" alt=""><div><strong>'+esc(item.name)+'</strong><small>'+slots[slot]+' · '+(item.isApprovedLayer?"Camada aprovada":rarity(item))+'</small></div><button type="button" data-remove-approved="'+slot+'" aria-label="Remover '+slots[slot]+'">×</button></div>').join(""):'<p class="dressing-empty">Nenhuma peça selecionada.</p>';
+ $("dressing-equipped-list").innerHTML=entries.length?entries.map(([slot,item])=>'<div class="dressing-equipped-row '+rarityClass(item)+'" data-rarity="'+esc(rarityKey(item))+'"><img src="'+esc(item.imagePath)+'" alt=""><div><strong>'+esc(item.name)+'</strong><small>'+slots[slot]+' · '+rarity(item)+'</small></div><button type="button" data-remove-approved="'+slot+'" aria-label="Remover '+slots[slot]+'">×</button></div>').join(""):'<p class="dressing-empty">Nenhuma peça selecionada.</p>';
  $("dressing-equipped-list").querySelectorAll("[data-remove-approved]").forEach(button=>button.addEventListener("click",()=>{
   const slot=button.dataset.removeApproved,name=equipped[slot]?.name;delete equipped[slot];renderAll();$("dressing-status").textContent=(name||slots[slot])+" removido da composição.";
  }));
