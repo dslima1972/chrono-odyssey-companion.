@@ -14,8 +14,9 @@ p{color:#c6c9ce;margin:0 0 16px}
 .stage img{position:absolute;display:block;object-fit:contain}
 #mannequin{inset:0;width:100%;height:100%}
 #leggings{left:21%;top:36%;width:58%;height:58%;transform:scaleY(.92);transform-origin:center;pointer-events:none}
-#boots{left:21%;top:42%;width:58%;height:58%;pointer-events:none}
-.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;max-width:720px;margin:auto;padding:14px;background:#22252a;border:1px solid #454950;border-radius:10px}
+#bootsLayer{position:absolute;inset:0;width:100%;height:100%;transform-origin:center center;pointer-events:none}
+#boots{inset:0;width:100%;height:100%;object-fit:contain}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;max-width:720px;margin:auto;padding:14px;background:#22252a;border:1px solid #454950;border-radius:10px}
 label{display:flex;flex-direction:column;gap:5px;color:#e5e7eb}
 label span{display:flex;justify-content:space-between;gap:8px}
 input[type=range]{width:100%;accent-color:#a5c77b}
@@ -26,8 +27,8 @@ button{background:#343b46;color:#fff;border:1px solid #596273;border-radius:6px;
 </style>
 </head>
 <body><main>
-<h1>Dark Mane Plate Boots — teste de encaixe</h1>
-<p>Prévia independente para ajustar as botas sobre o manequim e a calça já aprovada. Os arquivos originais não são modificados.</p>
+<h1>Dark Mane Plate Boots — ajuste independente</h1>
+<p>Agora os controles atuam separadamente: deslocamento move o conjunto; abertura horizontal afasta as botas entre si sem mudar sua posição vertical; escala vertical ajusta o comprimento.</p>
 <div class="toggles">
 <label><input id="showLeggings" type="checkbox" checked> Mostrar calça</label>
 <label><input id="showBoots" type="checkbox" checked> Mostrar botas</label>
@@ -36,38 +37,35 @@ button{background:#343b46;color:#fff;border:1px solid #596273;border-radius:6px;
 <div class="stage">
 <img id="mannequin" src="avatar-mannequin-dark.png" alt="Manequim grafite">
 <img id="leggings" src="dark-mane-steel-leggings.png" alt="Dark Mane Steel Leggings">
-<img id="boots" src="dark-mane-plate-boots.png" alt="Dark Mane Plate Boots">
+<div id="bootsLayer"><img id="boots" src="dark-mane-plate-boots.png" alt="Dark Mane Plate Boots"></div>
 </div>
 <div class="controls">
-<label><span><b>Posição horizontal</b><output id="leftValue">21%</output></span><input id="left" type="range" min="0" max="42" step="0.5" value="21"></label>
-<label><span><b>Posição vertical</b><output id="topValue">42%</output></span><input id="top" type="range" min="25" max="60" step="0.5" value="42"></label>
-<label><span><b>Largura</b><output id="widthValue">58%</output></span><input id="width" type="range" min="35" max="85" step="0.5" value="58"></label>
-<label><span><b>Altura</b><output id="heightValue">58%</output></span><input id="height" type="range" min="35" max="85" step="0.5" value="58"></label>
+<label><span><b>Deslocamento horizontal</b><output id="offsetXValue">0%</output></span><input id="offsetX" type="range" min="-10" max="10" step="0.5" value="0"></label>
+<label><span><b>Deslocamento vertical</b><output id="offsetYValue">0%</output></span><input id="offsetY" type="range" min="-10" max="10" step="0.5" value="0"></label>
+<label><span><b>Abertura horizontal</b><output id="scaleXValue">100%</output></span><input id="scaleX" type="range" min="70" max="160" step="1" value="100"></label>
+<label><span><b>Escala vertical</b><output id="scaleYValue">100%</output></span><input id="scaleY" type="range" min="70" max="130" step="1" value="100"></label>
 <div><button id="reset">Restaurar valores iniciais</button></div>
 </div>
-<p class="note">O quadriculado permite observar a transparência. Ajuste as botas até que as proteções superiores encontrem a parte inferior da calça e os pés coincidam com os pés do manequim. Os controles alteram somente esta visualização.</p>
+<p class="note">Abertura horizontal amplia ou comprime a distância entre as duas botas em torno do centro do canvas. Use-a para aproximar a separação das botas da largura das pernas do manequim. A página não altera os PNGs originais.</p>
 </main>
 <script>
-const boots=document.getElementById('boots');
-const controls=['left','top','width','height'];
-const defaults={left:21,top:42,width:58,height:58};
+const layer=document.getElementById('bootsLayer');
+const ids=['offsetX','offsetY','scaleX','scaleY'];
+const defaults={offsetX:0,offsetY:0,scaleX:100,scaleY:100};
 function update(){
- for(const key of controls){
-  const value=Number(document.getElementById(key).value);
-  boots.style[key]=value+'%';
-  document.getElementById(key+'Value').textContent=value+'%';
- }
+ const v={};
+ for(const id of ids){v[id]=Number(document.getElementById(id).value);document.getElementById(id+'Value').textContent=(id.startsWith('scale')?v[id]+'%':(v[id]>0?'+':'')+v[id]+'%');}
+ layer.style.transform='translate('+v.offsetX+'%, '+v.offsetY+'%) scale('+v.scaleX/100+', '+v.scaleY/100+')';
 }
-for(const key of controls) document.getElementById(key).addEventListener('input',update);
-document.getElementById('showBoots').addEventListener('change',e=>boots.hidden=!e.target.checked);
+ids.forEach(id=>document.getElementById(id).addEventListener('input',update));
+document.getElementById('showBoots').addEventListener('change',e=>layer.hidden=!e.target.checked);
 document.getElementById('showLeggings').addEventListener('change',e=>document.getElementById('leggings').hidden=!e.target.checked);
-document.getElementById('opacity').addEventListener('input',e=>{boots.style.opacity=e.target.value/100;document.getElementById('opacityValue').textContent=e.target.value+'%'});
+document.getElementById('opacity').addEventListener('input',e=>{layer.style.opacity=e.target.value/100;document.getElementById('opacityValue').textContent=e.target.value+'%'});
 document.getElementById('reset').addEventListener('click',()=>{
- for(const key of controls)document.getElementById(key).value=defaults[key];
- document.getElementById('showBoots').checked=true;boots.hidden=false;boots.style.opacity=1;
+ ids.forEach(id=>document.getElementById(id).value=defaults[id]);
+ document.getElementById('showBoots').checked=true;layer.hidden=false;layer.style.opacity=1;
  document.getElementById('showLeggings').checked=true;document.getElementById('leggings').hidden=false;
- document.getElementById('opacity').value=100;document.getElementById('opacityValue').textContent='100%';
- update();
+ document.getElementById('opacity').value=100;document.getElementById('opacityValue').textContent='100%';update();
 });
 update();
 </script>
