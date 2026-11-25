@@ -3,12 +3,12 @@
 const $=id=>document.getElementById(id);
 const slots={head:"Elmo",chest:"Peitoral",hands:"Luvas",back:"Capa",legs:"Calça",feet:"Botas"};
 const definitions=[
- {slot:"head",id:"11271504",overlayPath:"./references/dark-mane-full-helm.png"},
- {slot:"chest",id:"11272504",overlayPath:"./references/dark-mane-plate-armor.png"},
- {slot:"hands",id:"11273504",overlayPath:"./references/dark-mane-gauntlets.png"},
- {slot:"legs",id:"11274504",overlayPath:"./references/dark-mane-steel-leggings.png"},
- {slot:"feet",id:"11275504",overlayPath:"./references/dark-mane-plate-boots.png"},
- {slot:"back",id:"11277503",overlayPath:"./references/void-cloak.png"}
+ {slot:"head",id:"11271504",overlayPath:"./assets/images/dressing-room/overlays/dark-mane-full-helm.png"},
+ {slot:"chest",id:"11272504",overlayPath:"./assets/images/dressing-room/overlays/dark-mane-plate-armor.png"},
+ {slot:"hands",id:"11273504",overlayPath:"./assets/images/dressing-room/overlays/dark-mane-gauntlets.png"},
+ {slot:"legs",id:"11274504",overlayPath:"./assets/images/dressing-room/overlays/dark-mane-steel-leggings.png"},
+ {slot:"feet",id:"11275504",overlayPath:"./assets/images/dressing-room/overlays/dark-mane-plate-boots.png"},
+ {slot:"back",id:"11277503",overlayPath:"./assets/images/dressing-room/overlays/void-cloak.png"}
 ];
 const storageKey="chronoDressingLooksV2";
 let activeSlot="head",approvedBySlot={},approvedById=new Map(),equipped={};

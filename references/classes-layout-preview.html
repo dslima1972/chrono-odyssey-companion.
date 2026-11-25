@@ -52,11 +52,11 @@ const classes=[
 const slug=s=>s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
 let active=0,activePanel="combat";
 const $=id=>document.getElementById(id);
-function artPath(c){return "../assets/classes/"+slug(c.name)+".jpg"}
-function weaponPath(c,w){return "../assets/classes/weapons/"+slug(c.name)+"-"+slug(w)+".png.png"}
-function iconPath(c,w){return "../assets/classes/buttons/weapons/"+slug(c.name)+"-"+slug(w)+".png"}
+function artPath(c){return "../assets/images/classes/characters/"+slug(c.name)+".jpg"}
+function weaponPath(c,w){return "../assets/images/classes/weapons/details/"+slug(c.name)+"-"+slug(w)+".png"}
+function iconPath(c,w){return "../assets/images/classes/weapons/cards/"+slug(c.name)+"-"+slug(w)+".png"}
 function renderGrid(){
- $("classGrid").innerHTML=classes.map((c,i)=>'<button class="class-card" data-index="'+i+'"><div class="card-art"><img src="../assets/classes/buttons/'+slug(c.name)+'.jpg" alt="" loading="lazy"><span class="card-number">0'+(i+1)+'</span><span class="card-art-label">CAMINHO DE COMBATE</span></div><div class="card-body"><div class="card-name">'+c.name+'</div><div class="card-role">'+c.role+'</div><div class="card-weapons">'+c.weapons.map(w=>'<span class="weapon-mini"><img src="'+iconPath(c,w[0])+'" alt="" title="'+w[0]+'"></span>').join("")+'<span class="weapons-caption">3 ARMAS</span></div></div></button>').join("");
+ $("classGrid").innerHTML=classes.map((c,i)=>'<button class="class-card" data-index="'+i+'"><div class="card-art"><img src="../assets/images/classes/selection/'+slug(c.name)+'.jpg" alt="" loading="lazy"><span class="card-number">0'+(i+1)+'</span><span class="card-art-label">CAMINHO DE COMBATE</span></div><div class="card-body"><div class="card-name">'+c.name+'</div><div class="card-role">'+c.role+'</div><div class="card-weapons">'+c.weapons.map(w=>'<span class="weapon-mini"><img src="'+iconPath(c,w[0])+'" alt="" title="'+w[0]+'"></span>').join("")+'<span class="weapons-caption">3 ARMAS</span></div></div></button>').join("");
  $("classGrid").querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>openClass(+b.dataset.index)));
 }
 function openClass(i){
