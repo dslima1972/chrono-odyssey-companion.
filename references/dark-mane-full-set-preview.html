@@ -32,11 +32,11 @@ button{background:#343b46;color:#fff;border:1px solid #596273;border-radius:6px;
 </div>
 <div class="controls">
 <label><span><b>Deslocamento horizontal do capacete</b><output id="helmXValue">0%</output></span><input id="helmX" type="range" min="-20" max="20" step=".5" value="0"></label>
-<label><span><b>Deslocamento vertical do capacete</b><output id="helmYValue">0%</output></span><input id="helmY" type="range" min="-20" max="20" step=".5" value="0"></label>
+<label><span><b>Deslocamento vertical do capacete</b><output id="helmYValue">0%</output></span><input id="helmY" type="range" min="-80" max="20" step=".5" value="0"></label>
 <label><span><b>Escala do capacete</b><output id="helmScaleValue">100%</output></span><input id="helmScale" type="range" min="30" max="150" step="1" value="100"></label>
 <div><button id="reset">Restaurar valores iniciais</button></div>
 </div>
-<p class="note">Ordem das camadas: manequim, calça, peitoral, botas, luvas e capacete. Os controles do capacete começam neutros, sem presumir ajustes antes da validação visual. O preview não altera os arquivos originais nem os valores aprovados das outras peças.</p>
+<p class="note">Ordem das camadas: manequim, calça, peitoral, botas, luvas e capacete. O deslocamento vertical agora permite subir o capacete até -80%. Os controles das outras peças permanecem inalterados.</p>
 </main><script>
 const layer=document.getElementById('helmLayer'),helm=document.getElementById('helm');
 function update(){const x=Number(helmX.value),y=Number(helmY.value),s=Number(helmScale.value);helmXValue.textContent=(x>0?'+':'')+x+'%';helmYValue.textContent=(y>0?'+':'')+y+'%';helmScaleValue.textContent=s+'%';layer.style.transform='translate('+x+'%, '+y+'%)';helm.style.transform='scale('+s/100+')'}
