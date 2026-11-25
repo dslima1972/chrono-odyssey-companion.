@@ -18,7 +18,7 @@ label{display:flex;flex-direction:column;gap:5px;color:#e5e7eb}label span{displa
 button{background:#343b46;color:#fff;border:1px solid #596273;border-radius:6px;padding:8px 12px;cursor:pointer}.note{max-width:720px;margin:12px auto 0;font-size:13px;color:#aeb5bf}
 </style></head><body><main>
 <h1>Dark Mane Full Set — teste de sobreposição</h1>
-<p>Preview independente com o Dark Mane Full Helm acima das camadas aprovadas. Ajuste apenas o capacete; as configurações anteriores permanecem preservadas.</p>
+<p>Preview independente com o Dark Mane Full Helm e as configurações aprovadas. Os ajustes das outras peças permanecem preservados.</p>
 <div class="toggles">
 <label><input id="showHelm" type="checkbox" checked> Mostrar capacete</label><label><input id="showChest" type="checkbox" checked> Mostrar peitoral</label><label><input id="showLeggings" type="checkbox" checked> Mostrar calça</label><label><input id="showBoots" type="checkbox" checked> Mostrar botas</label><label><input id="showGloves" type="checkbox" checked> Mostrar luvas</label>
 </div>
@@ -32,15 +32,15 @@ button{background:#343b46;color:#fff;border:1px solid #596273;border-radius:6px;
 </div>
 <div class="controls">
 <label><span><b>Deslocamento horizontal do capacete</b><output id="helmXValue">0%</output></span><input id="helmX" type="range" min="-20" max="20" step=".5" value="0"></label>
-<label><span><b>Deslocamento vertical do capacete</b><output id="helmYValue">0%</output></span><input id="helmY" type="range" min="-80" max="20" step=".5" value="0"></label>
-<label><span><b>Escala do capacete</b><output id="helmScaleValue">100%</output></span><input id="helmScale" type="range" min="30" max="150" step="1" value="100"></label>
-<div><button id="reset">Restaurar valores iniciais</button></div>
+<label><span><b>Deslocamento vertical do capacete</b><output id="helmYValue">-42.5%</output></span><input id="helmY" type="range" min="-80" max="20" step=".5" value="-42.5"></label>
+<label><span><b>Escala do capacete</b><output id="helmScaleValue">37%</output></span><input id="helmScale" type="range" min="30" max="150" step="1" value="37"></label>
+<div><button id="reset">Restaurar valores aprovados</button></div>
 </div>
-<p class="note">Ordem das camadas: manequim, calça, peitoral, botas, luvas e capacete. O deslocamento vertical agora permite subir o capacete até -80%. Os controles das outras peças permanecem inalterados.</p>
+<p class="note">Configuração aprovada do capacete: horizontal 0%, vertical -42,5% e escala 37%. Ordem das camadas: manequim, calça, peitoral, botas, luvas e capacete.</p>
 </main><script>
 const layer=document.getElementById('helmLayer'),helm=document.getElementById('helm');
 function update(){const x=Number(helmX.value),y=Number(helmY.value),s=Number(helmScale.value);helmXValue.textContent=(x>0?'+':'')+x+'%';helmYValue.textContent=(y>0?'+':'')+y+'%';helmScaleValue.textContent=s+'%';layer.style.transform='translate('+x+'%, '+y+'%)';helm.style.transform='scale('+s/100+')'}
 ['helmX','helmY','helmScale'].forEach(id=>document.getElementById(id).addEventListener('input',update));
 [['showHelm','helmLayer'],['showChest','chestLayer'],['showLeggings','leggings'],['showBoots','bootsLayer'],['showGloves','glovesLayer']].forEach(([c,l])=>document.getElementById(c).addEventListener('change',e=>document.getElementById(l).hidden=!e.target.checked));
-document.getElementById('reset').addEventListener('click',()=>{helmX.value=0;helmY.value=0;helmScale.value=100;['showHelm','showChest','showLeggings','showBoots','showGloves'].forEach(id=>document.getElementById(id).checked=true);['helmLayer','chestLayer','leggings','bootsLayer','glovesLayer'].forEach(id=>document.getElementById(id).hidden=false);update()});update();
+document.getElementById('reset').addEventListener('click',()=>{helmX.value=0;helmY.value=-42.5;helmScale.value=37;['showHelm','showChest','showLeggings','showBoots','showGloves'].forEach(id=>document.getElementById(id).checked=true);['helmLayer','chestLayer','leggings','bootsLayer','glovesLayer'].forEach(id=>document.getElementById(id).hidden=false);update()});update();
 </script></body></html>
