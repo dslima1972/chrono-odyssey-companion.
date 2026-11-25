@@ -9,8 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./assets/styles.css?v=20261124buildlibrary3">
-  <script src="./assets/app.js?v=20261124buildlibrary3" defer></script>
+  <link rel="stylesheet" href="./assets/styles.css?v=20261125buildlayout1">
+  <script src="./assets/app.js?v=20261125buildlayout1" defer></script>
   <script src="./assets/dressing-room.js?v=20261123e20" defer></script>
 </head>
 <body>
@@ -160,23 +160,29 @@
     <div><span class="bp2-eyebrow">PERSONAGEM · EQUIPAMENTOS · ATRIBUTOS</span><h2>Build Planner</h2></div>
     <span class="bp2-status">PLANEJADOR DE BUILD</span>
   </header>
-  <section class="bp2-build-library" aria-label="Biblioteca de builds">
-    <div class="bp2-library-heading"><div><span class="bp2-library-kicker">SUAS CONFIGURAÇÕES</span><h3>Biblioteca de builds</h3><p>Salve configurações neste navegador, retome uma build ou crie uma cópia independente.</p></div><button type="button" class="bp2-disclosure-button" id="build-library-toggle" aria-expanded="false" aria-controls="build-library-content"><span class="bp2-disclosure-label">Expandir</span><span class="bp2-disclosure-icon" aria-hidden="true">⌄</span></button></div>
-    <div id="build-library-content" class="bp2-disclosure-content" hidden>
-    <div class="bp2-library-controls">
-      <label class="bp2-build-name-field">Nome da build<input id="build-name-input" type="text" maxlength="70" placeholder="Ex.: Guerreiro · PvE"></label>
-      <button type="button" class="bp2-library-button is-primary" id="build-save-new">Salvar nova</button>
-      <label class="bp2-saved-select-field">Builds salvas<select id="build-saved-select"><option value="">Nenhuma build salva</option></select></label>
-      <button type="button" class="bp2-library-button" id="build-load-selected" disabled>Carregar</button>
-      <button type="button" class="bp2-library-button" id="build-duplicate-selected" disabled>Criar cópia</button>
-      <button type="button" class="bp2-library-button" id="build-update-selected" disabled>Atualizar</button>
-      <button type="button" class="bp2-library-button is-danger" id="build-delete-selected" disabled>Excluir</button>
-    </div>
-    <p class="bp2-library-status" id="build-library-status" role="status" aria-live="polite">As builds ficam armazenadas somente neste navegador e dispositivo.</p>
-    </div>
-    <div class="bp2-comparator">
-      <div class="bp2-comparator-heading"><div><span class="bp2-library-kicker">ANÁLISE LADO A LADO</span><h4>Comparador de builds</h4><p>Compare Gear Score médio e estatísticas do resumo. Verde indica valor maior; vermelho, valor menor.</p></div><button type="button" class="bp2-disclosure-button" id="build-comparator-toggle" aria-expanded="false" aria-controls="build-comparator-content"><span class="bp2-disclosure-label">Expandir</span><span class="bp2-disclosure-icon" aria-hidden="true">⌄</span></button></div>
-      <div id="build-comparator-content" class="bp2-disclosure-content" hidden>
+  <div class="bp2-config" aria-label="Configuração e gerenciamento da build">
+    <label>Classe<select id="build-class"><option value="">Selecione uma classe</option></select></label>
+    <label>Arma principal<div class="build-weapon-choice-list" data-build-weapon-choices="0" role="group" aria-label="Tipo de arma principal"><span class="build-weapon-choice-empty">Selecione uma classe</span></div><select class="build-native-select" id="build-weapon-type" disabled><option value="">Selecione a classe primeiro</option></select></label>
+    <label>Arma secundária<div class="build-weapon-choice-list" data-build-weapon-choices="1" role="group" aria-label="Tipo de arma secundária"><span class="build-weapon-choice-empty">Selecione uma classe</span></div><select class="build-native-select" id="build-weapon-type2" disabled><option value="">Selecione a classe primeiro</option></select></label>
+    <section class="bp2-build-library" aria-label="Biblioteca de builds">
+      <button type="button" class="bp2-disclosure-button bp2-library-disclosure" id="build-library-toggle" aria-expanded="false" aria-controls="build-library-content"><span>Biblioteca de builds</span><span class="bp2-disclosure-icon" aria-hidden="true">⌄</span></button>
+      <div id="build-library-content" class="bp2-disclosure-content" hidden>
+        <div class="bp2-library-controls">
+          <label class="bp2-build-name-field">Nome da build<input id="build-name-input" type="text" maxlength="70" placeholder="Ex.: Guerreiro · PvE"></label>
+          <button type="button" class="bp2-library-button is-primary" id="build-save-new">Salvar nova</button>
+          <label class="bp2-saved-select-field">Builds salvas<select id="build-saved-select"><option value="">Nenhuma build salva</option></select></label>
+          <button type="button" class="bp2-library-button" id="build-load-selected" disabled>Carregar</button>
+          <button type="button" class="bp2-library-button" id="build-duplicate-selected" disabled>Criar cópia</button>
+          <button type="button" class="bp2-library-button" id="build-update-selected" disabled>Atualizar</button>
+          <button type="button" class="bp2-library-button is-danger" id="build-delete-selected" disabled>Excluir</button>
+        </div>
+        <p class="bp2-library-status" id="build-library-status" role="status" aria-live="polite">As builds ficam armazenadas somente neste navegador e dispositivo.</p>
+      </div>
+    </section>
+  </div>
+  <section class="bp2-comparator" aria-label="Comparador de builds">
+    <button type="button" class="bp2-disclosure-button bp2-comparator-disclosure" id="build-comparator-toggle" aria-expanded="false" aria-controls="build-comparator-content"><span>Comparador de builds</span><span class="bp2-disclosure-icon" aria-hidden="true">⌄</span></button>
+    <div id="build-comparator-content" class="bp2-disclosure-content" hidden>
       <div class="bp2-compare-controls">
         <label>Build A<select id="build-compare-a"><option value="">Selecione uma build</option></select></label>
         <span class="bp2-compare-versus">VS</span>
@@ -184,14 +190,8 @@
         <button type="button" class="bp2-library-button" id="build-compare-run" disabled>Comparar</button>
       </div>
       <div id="build-comparison-results" class="bp2-comparison-results" hidden></div>
-      </div>
     </div>
   </section>
-  <div class="bp2-config" aria-label="Configuração da build">
-    <label>Classe<select id="build-class"><option value="">Selecione uma classe</option></select></label>
-    <label>Arma principal<div class="build-weapon-choice-list" data-build-weapon-choices="0" role="group" aria-label="Tipo de arma principal"><span class="build-weapon-choice-empty">Selecione uma classe</span></div><select class="build-native-select" id="build-weapon-type" disabled><option value="">Selecione a classe primeiro</option></select></label>
-    <label>Arma secundária<div class="build-weapon-choice-list" data-build-weapon-choices="1" role="group" aria-label="Tipo de arma secundária"><span class="build-weapon-choice-empty">Selecione uma classe</span></div><select class="build-native-select" id="build-weapon-type2" disabled><option value="">Selecione a classe primeiro</option></select></label>
-  </div>
   <div class="bp2-workspace">
     <section class="bp2-equipment" aria-label="Equipamentos da build">
       <header class="bp2-panel-heading"><span>EQUIPAMENTO</span><strong>Peças equipadas</strong></header>
