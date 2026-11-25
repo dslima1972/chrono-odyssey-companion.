@@ -2,18 +2,23 @@
 
 Esta pasta armazena as imagens-base dos personagens usados no Provador de Equipamentos do Chrono Odyssey Companion.
 
-## Avatar masculino
+## Avatar masculino — padrão da prova de conceito 2D
 
-Quando estiver pronto, envie o arquivo PNG com transparência para este caminho:
+O arquivo-base final deverá ser:
 
-`assets/images/avatars/avatar-male-base.jpg`
+`avatar-male-base.png`
 
-Requisitos recomendados:
-- PNG com canal alfa (fundo realmente transparente)
-- 1024 × 2048 px ou resolução superior, em formato vertical
-- Personagem masculino adulto, corpo inteiro, visto de frente
-- Pose A, com os braços ligeiramente afastados do tronco
-- Corpo e mãos totalmente visíveis, sem cortes
-- Sem armaduras, armas, capas ou acessórios
+Requisitos:
+- PNG RGBA com canal alfa real; fundo totalmente transparente.
+- Canvas quadrado de **1024 × 1024 px** (ou múltiplo proporcional, mantendo 1:1).
+- Personagem masculino adulto, corpo inteiro, visto de frente.
+- Pose A, com braços ligeiramente afastados do tronco.
+- Corpo, mãos, pernas e pés totalmente visíveis, sem cortes.
+- Sem armaduras, armas, capas ou acessórios.
+- Personagem centralizado e em escala consistente.
 
-Mantenha o personagem centralizado e com proporções anatômicas consistentes. A imagem será usada como camada-base para sobrepor visualmente as peças de equipamento.
+## Alinhamento das peças
+
+Todas as camadas de equipamento devem usar exatamente o mesmo canvas, proporção, escala e origem do avatar. Não recortar nem redimensionar uma peça isoladamente.
+
+Os JPGs existentes são referências legadas e não atendem ao requisito de transparência. Não devem ser tratados como avatar-base final da prova até serem preparados e validados.
