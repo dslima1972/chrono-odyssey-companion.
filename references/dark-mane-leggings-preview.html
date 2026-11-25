@@ -21,6 +21,7 @@ button{background:#343b46;color:#fff;border:1px solid #596273;border-radius:6px;
 <div class="controls">
 <label><input id="toggle" type="checkbox" checked> Exibir calça</label>
 <label>Opacidade <input id="opacity" type="range" min="0" max="100" value="100"><span id="value">100%</span></label>
+<label>Altura da calça <input id="vertical" type="range" min="30" max="40" step="0.5" value="36"><span id="verticalValue">36%</span></label>
 <button id="reset">Restaurar</button>
 </div>
 <div class="stage">
@@ -30,10 +31,12 @@ button{background:#343b46;color:#fff;border:1px solid #596273;border-radius:6px;
 <div class="status" id="status">Analisando PNG…</div>
 </main>
 <script>
-const garment=document.getElementById('garment'),toggle=document.getElementById('toggle'),opacity=document.getElementById('opacity'),value=document.getElementById('value'),status=document.getElementById('status');
+const garment=document.getElementById('garment'),toggle=document.getElementById('toggle'),opacity=document.getElementById('opacity'),value=document.getElementById('value'),vertical=document.getElementById('vertical'),verticalValue=document.getElementById('verticalValue'),status=document.getElementById('status');
+const defaultTop=36;
+vertical.addEventListener('input',()=>{garment.style.top=vertical.value+'%';verticalValue.textContent=vertical.value+'%'});
 toggle.addEventListener('change',()=>garment.style.display=toggle.checked?'block':'none');
 opacity.addEventListener('input',()=>{garment.style.opacity=opacity.value/100;value.textContent=opacity.value+'%'});
-document.getElementById('reset').addEventListener('click',()=>{toggle.checked=true;garment.style.display='block';opacity.value=100;garment.style.opacity=1;value.textContent='100%'});
+document.getElementById('reset').addEventListener('click',()=>{toggle.checked=true;garment.style.display='block';opacity.value=100;garment.style.opacity=1;value.textContent='100%';vertical.value=defaultTop;garment.style.top=defaultTop+'%';verticalValue.textContent=defaultTop+'%'});
 garment.addEventListener('load',()=>{
  const c=document.createElement('canvas');c.width=garment.naturalWidth;c.height=garment.naturalHeight;
  const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(garment,0,0);
