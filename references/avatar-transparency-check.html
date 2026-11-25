@@ -16,16 +16,16 @@ code{overflow-wrap:anywhere}
 </style>
 </head>
 <body><main>
-<h1>Diagnóstico de transparência do avatar</h1>
+<h1>Diagnóstico de transparência — manequim grafite</h1>
 <p>Esta página lê os pixels do PNG diretamente no seu navegador. A imagem não é enviada para nenhum servidor.</p>
-<section class="panel"><div id="status">Carregando imagem…</div><div class="preview"><img id="avatar" src="avatar-mannequin.png" alt="Prévia do manequim"></div></section>
+<section class="panel"><div id="status">Carregando imagem…</div><div class="preview"><img id="avatar" src="avatar-mannequin-dark.png" alt="Prévia do manequim"></div></section>
 <section class="panel"><h2>Resultado da análise</h2><div id="details">Aguardando leitura dos pixels…</div></section>
 <script>
 (async()=>{
  const img=document.getElementById('avatar'),status=document.getElementById('status'),details=document.getElementById('details');
  const fmt=n=>n.toLocaleString('pt-BR');
  try{
-  await new Promise((ok,fail)=>{img.onload=ok;img.onerror=()=>fail(new Error('Não foi possível carregar avatar-mannequin.png.'))});
+  await new Promise((ok,fail)=>{img.onload=ok;img.onerror=()=>fail(new Error('Não foi possível carregar avatar-mannequin-dark.png.'))});
   const c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;
   const ctx=c.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,0);
   const d=ctx.getImageData(0,0,c.width,c.height).data;let transparent=0,partial=0,opaque=0;
@@ -47,7 +47,7 @@ code{overflow-wrap:anywhere}
    '<tr><td>Pixels opacos (alfa 255)</td><td>'+fmt(opaque)+' — '+pct(opaque)+'</td></tr>'+
    '<tr><td>Amostras transparentes nas bordas/cantos</td><td>'+edgeTransparent+' de '+samples.length+'</td></tr></table>'+
    '<h3>Amostras do fundo nas bordas</h3><p><code>'+samples.map(s=>'('+s.x+','+s.y+') RGBA '+s.r+','+s.g+','+s.b+','+s.a).join('<br>')+'</code></p>';
- }catch(e){status.className='bad';status.textContent='Falha na análise';details.textContent=e.message+' Confirme se avatar-mannequin.png está na mesma pasta desta página.'}
+ }catch(e){status.className='bad';status.textContent='Falha na análise';details.textContent=e.message+' Confirme se avatar-mannequin-dark.png está na mesma pasta desta página.'}
 })();
 </script>
 </main></body></html>
