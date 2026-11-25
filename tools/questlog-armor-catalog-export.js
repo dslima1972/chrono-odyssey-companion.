@@ -70,7 +70,15 @@
       addRows(data.pageData);
       show("Percorrendo catálogo...","Página "+page+"/"+pageCount+" · Itens únicos: "+byId.size,page,pageCount);
     }
-    const items=[...byId.values()];
+    // Ragged Clothes (head, grade 1) possui 180 IDs duplicados no Questlog.
+    // Mantemos somente o registro canônico ID 100 para evitar duplicações no app
+    // e em processos futuros que reutilizem este catálogo.
+    const items=[...byId.values()].filter(item=>{
+      const id=String(item.id??item.compoundId??"").replace(/^item-/,"");
+      const duplicateRaggedHelm=String(item.name||"").trim().toLowerCase()==="ragged clothes" &&
+        String(item.subCategory||"").trim().toLowerCase()==="head" && Number(item.grade)===1;
+      return !duplicateRaggedHelm || id==="100";
+    });
     if(!items.length)throw new Error("A API retornou pageData vazio em todas as páginas.");
     const wrongCategory=items.filter(x=>String(x.mainCategory||"").toLowerCase()!=="armor");
     if(wrongCategory.length===items.length)throw new Error("A API retornou registros, mas nenhum está identificado com mainCategory=armor. Não vou salvar um catálogo possivelmente incorreto.");
