@@ -1,105 +1,95 @@
 (function(){
 "use strict";
 const $=id=>document.getElementById(id);
-const slots={head:"Cabeça",chest:"Peitoral",hands:"Mãos",back:"Costas",legs:"Pernas",feet:"Pés"};
-const slotAliases={head:["head","helmet"],chest:["chest","body"],hands:["hands","gloves"],back:["back","cloak"],legs:["legs","pants"],feet:["feet","boots"]};
-let items=[],activeSlot="head",equipped={};
-const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const rarity=item=>({0:"Comum",1:"Incomum",2:"Raro",3:"Épico",4:"Lendário"})[Number(item.grade)]||"Não identificada";
-const image=item=>{let p=String(item.icon||"").replace(/^\//,"").replace(/\.(png|jpe?g|webp)$/i,"");return p?"https://cdn.questlog.gg/chrono-odyssey/"+p+".webp":""};
-const tier=item=>{const raw=String(item.itemInfo?.tier??item.tier??"");const m=raw.match(/[1-5]/);return m?m[0]:""};
-const layoutDefaults={head:{x:38,y:2,w:24,h:19},chest:{x:30,y:24,w:40,h:31},hands:{x:5,y:27,w:22,h:27},back:{x:73,y:27,w:22,h:27},legs:{x:32,y:57,w:36,h:27},feet:{x:35,y:83,w:30,h:15}};
-let freeLayout=readLayout();
-let compositionMode="fixed",activePiece=null;
-function readLayout(){try{return {...layoutDefaults,...JSON.parse(localStorage.getItem("chronoDressingLayout")||"{}")}}catch(e){return {...layoutDefaults}}}
-function saveLayout(){try{localStorage.setItem("chronoDressingLayout",JSON.stringify(freeLayout))}catch(e){}}
-function applyFreeLayout(){
- const root=$("dressing-composition");
- root.classList.toggle("free-layout",compositionMode==="free");
- root.classList.toggle("fixed-layout",compositionMode==="fixed");
- root.querySelectorAll("[data-composition-slot]").forEach(node=>{
-  const slot=node.dataset.compositionSlot,p=freeLayout[slot]||layoutDefaults[slot];
-  if(compositionMode==="free"){
-   Object.assign(node.style,{left:p.x+"%",top:p.y+"%",width:p.w+"%",height:p.h+"%",zIndex:""+(p.z??(slot==="chest"?4:slot==="head"?5:3))});
-   if(!node.querySelector(".composition-front"))node.insertAdjacentHTML("beforeend",'<button type="button" class="composition-front" data-bring-front="' + slot + '" aria-label="Trazer peça para frente" title="Trazer para frente">↥</button>');
-   if(!node.querySelector(".composition-resize"))node.insertAdjacentHTML("beforeend",'<button type="button" class="composition-resize" data-resize-piece="' + slot + '" aria-label="Redimensionar peça" title="Arraste para redimensionar">⤢</button>');
-   node.classList.toggle("is-active-piece",activePiece===slot);
-  }else{
-   ["left","top","width","height","zIndex"].forEach(k=>node.style[k]="");
-   node.querySelector(".composition-resize")?.remove();
-   node.querySelector(".composition-front")?.remove();
-  }
- });
-}
+const slots={head:"Elmo",chest:"Peitoral",hands:"Luvas",back:"Capa",legs:"Calça",feet:"Botas"};
+const definitions=[
+ {slot:"head",id:"11271504",imagePath:"./references/dark-mane-full-helm.png"},
+ {slot:"chest",id:"11272504",imagePath:"./references/dark-mane-plate-armor.png"},
+ {slot:"hands",id:"11273504",imagePath:"./references/dark-mane-gauntlets.png"},
+ {slot:"legs",id:"11274504",imagePath:"./references/dark-mane-steel-leggings.png"},
+ {slot:"feet",id:"11275504",imagePath:"./references/dark-mane-plate-boots.png"},
+ {slot:"back",id:"void-cloak",name:"Void Cloak",subCategory:"back",imagePath:"./references/void-cloak.png",isApprovedLayer:true}
+];
+const storageKey="chronoDressingLooksV2";
+let activeSlot="head",approvedBySlot={},approvedById=new Map(),equipped={};
+const esc=s=>String(s??"").replace(/[&<>\"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const rarity=item=>({0:"Comum",1:"Incomum",2:"Raro",3:"Épico",4:"Lendário"})[Number(item?.grade)]||"Camada aprovada";
+function readSaved(){try{const v=JSON.parse(localStorage.getItem(storageKey)||"[]");return Array.isArray(v)?v:[]}catch(e){return[]}}
+function writeSaved(value){try{localStorage.setItem(storageKey,JSON.stringify(value));return true}catch(e){return false}}
 function renderComposition(){
- const root=$("dressing-composition");if(!root)return;
- const labels={head:"Cabeça",chest:"Peitoral",hands:"Mãos",back:"Capa",legs:"Calça",feet:"Pés"};
- root.querySelectorAll("[data-composition-slot]").forEach(node=>{
-  const slot=node.dataset.compositionSlot,item=equipped[slot];
-  node.innerHTML=item?(image(item)?'<img src="'+esc(image(item))+'" alt="'+esc(item.name||labels[slot])+'" loading="lazy">':''):'<span>'+labels[slot]+'</span>';
-  node.classList.toggle("is-equipped",!!item);
- });
- applyFreeLayout();
-}
-function setCompositionMode(mode){
- compositionMode=mode;
- $("dressing-mode-fixed").classList.toggle("active",mode==="fixed");
- $("dressing-mode-free").classList.toggle("active",mode==="free");
- $("dressing-status").textContent=mode==="free"?"Arraste as peças para mover. Use a alça no canto para redimensionar.":"Visualização em posições fixas de inventário.";
- applyFreeLayout();
-}
-function initCompositionEditor(){
- const root=$("dressing-composition");
- if(root.dataset.editorInitialized==="true")return;
- root.dataset.editorInitialized="true";
- root.addEventListener("click",ev=>{const front=ev.target.closest("[data-bring-front]");if(front){const slot=front.dataset.bringFront;const maxZ=Math.max(0,...Object.values(freeLayout).map(p=>Number(p.z)||0));freeLayout[slot]={...freeLayout[slot],z:maxZ+1};applyFreeLayout();saveLayout();$("dressing-status").textContent=slots[slot]+" trazida para frente.";return}const node=ev.target.closest("[data-composition-slot]");if(node&&equipped[node.dataset.compositionSlot]){activePiece=node.dataset.compositionSlot;applyFreeLayout()}});
- root.addEventListener("pointerdown",ev=>{
-  if(compositionMode!=="free"||ev.target.closest("[data-bring-front]"))return;
-  const node=ev.target.closest("[data-composition-slot]");if(!node||!equipped[node.dataset.compositionSlot])return;
-  const slot=node.dataset.compositionSlot,p=freeLayout[slot]||{...layoutDefaults[slot]},rect=root.getBoundingClientRect();
-  const resizing=!!ev.target.closest("[data-resize-piece]");activePiece=slot;applyFreeLayout();
-  const startX=ev.clientX,startY=ev.clientY,start={...p};
-  ev.preventDefault();root.setPointerCapture(ev.pointerId);
-  const move=e=>{
-   const dx=(e.clientX-startX)/rect.width*100,dy=(e.clientY-startY)/rect.height*100;
-   if(resizing){const scale=Math.max(.15,Math.min(3,1+Math.max(dx/start.w,dy/start.h)));p.w=Math.max(7,Math.min(80,start.w*scale));p.h=Math.max(7,Math.min(80,start.h*scale))}
-   else{p.x=Math.max(0,Math.min(100-p.w,start.x+dx));p.y=Math.max(0,Math.min(100-p.h,start.y+dy))}
-   freeLayout[slot]={...p};applyFreeLayout();
-  };
-  const end=()=>{root.removeEventListener("pointermove",move);root.removeEventListener("pointerup",end);root.removeEventListener("pointercancel",end);saveLayout()};
-  root.addEventListener("pointermove",move);root.addEventListener("pointerup",end);root.addEventListener("pointercancel",end);
- });
- $("dressing-mode-fixed").addEventListener("click",()=>setCompositionMode("fixed"));
- $("dressing-mode-free").addEventListener("click",()=>setCompositionMode("free"));
- $("dressing-layout-reset").addEventListener("click",()=>{freeLayout={...layoutDefaults};saveLayout();applyFreeLayout();$("dressing-status").textContent="Posições e tamanhos da montagem livre restaurados."});
+ Object.keys(slots).forEach(slot=>{const layer=$("layer-"+slot);if(layer)layer.hidden=!equipped[slot]});
 }
 function renderItems(){
- const q=$("dressing-search").value.trim().toLowerCase(),r=$("dressing-rarity").value,allowed=slotAliases[activeSlot]||[];
- const list=items.filter(x=>allowed.includes(String(x.subCategory||"").toLowerCase())&&(!q||String(x.name||"").toLowerCase().includes(q)||String(x.id||"").includes(q))&&(!r||rarity(x)===r));
- $("dressing-items").innerHTML=list.length?list.map(x=>{const id=String(x.id||x.compoundId),selected=String(equipped[activeSlot]?.id||equipped[activeSlot]?.compoundId||"")===id;return '<button type="button" class="dressing-item '+(selected?"selected":"")+'" data-id="'+esc(id)+'">'+(image(x)?'<img src="'+esc(image(x))+'" alt="" loading="lazy">':'<span>✧</span>')+'<strong>'+esc(x.name||"Armadura")+'</strong><small>'+rarity(x)+(tier(x)?" · Tier "+tier(x):"")+'</small></button>'}).join(""):'<div class="dressing-empty">Nenhuma peça encontrada nesta categoria.</div>';
- $("dressing-count").textContent=list.length+" PEÇAS DISPONÍVEIS";
- $("dressing-items").querySelectorAll("[data-id]").forEach(btn=>btn.addEventListener("click",()=>{const item=list.find(x=>String(x.id||x.compoundId)===btn.dataset.id);if(item){equipped[activeSlot]=item;renderAll();$("dressing-status").textContent=item.name+" adicionado à composição."}}));
+ document.querySelectorAll("#dressing-slot-tabs [data-slot]").forEach(b=>{
+  const active=b.dataset.slot===activeSlot;b.classList.toggle("active",active);b.setAttribute("aria-pressed",String(active));
+ });
+ const item=approvedBySlot[activeSlot];
+ if(!item){$("dressing-items").innerHTML='<div class="dressing-empty">Esta camada ainda não está disponível.</div>';return}
+ const selected=!!equipped[activeSlot];
+ $("dressing-items").innerHTML='<button type="button" class="dressing-item dressing-approved-item '+(selected?"selected":"")+'" data-toggle-approved="'+esc(activeSlot)+'" aria-pressed="'+selected+'"><img src="'+esc(item.imagePath)+'" alt="'+esc(item.name)+'" loading="lazy"><strong>'+esc(item.name)+'</strong><small>'+(item.isApprovedLayer?"Capa · camada aprovada":rarity(item)+" · Dark Mane")+'</small><span class="dressing-item-action">'+(selected?"Remover da composição":"Equipar peça")+'</span></button>';
+ $("dressing-items").querySelector("[data-toggle-approved]").addEventListener("click",()=>{
+  if(equipped[activeSlot]){delete equipped[activeSlot];$("dressing-status").textContent=item.name+" removido da composição."}
+  else{equipped[activeSlot]=item;$("dressing-status").textContent=item.name+" adicionado à composição."}
+  renderAll();
+ });
 }
-function readSaved(){try{return JSON.parse(localStorage.getItem("chronoDressingLooks")||"[]")}catch(e){return []}}
+function renderEquipped(){
+ const entries=Object.entries(equipped);
+ $("dressing-equipped-list").innerHTML=entries.length?entries.map(([slot,item])=>'<div class="dressing-equipped-row"><img src="'+esc(item.imagePath)+'" alt=""><div><strong>'+esc(item.name)+'</strong><small>'+slots[slot]+' · '+(item.isApprovedLayer?"Camada aprovada":rarity(item))+'</small></div><button type="button" data-remove-approved="'+slot+'" aria-label="Remover '+slots[slot]+'">×</button></div>').join(""):'<p class="dressing-empty">Nenhuma peça selecionada.</p>';
+ $("dressing-equipped-list").querySelectorAll("[data-remove-approved]").forEach(button=>button.addEventListener("click",()=>{
+  const slot=button.dataset.removeApproved,name=equipped[slot]?.name;delete equipped[slot];renderAll();$("dressing-status").textContent=(name||slots[slot])+" removido da composição.";
+ }));
+}
 function renderSaved(){
  const saved=readSaved();
- $("dressing-saved-list").innerHTML=saved.length?saved.map((x,i)=>'<div class="dressing-saved-row"><strong>'+esc(x.name)+'</strong><small>'+Object.keys(x.items||{}).length+' peças</small><div class="dressing-saved-actions"><button type="button" data-load="'+i+'">Carregar</button><button type="button" data-rename="'+i+'">Renomear</button><button type="button" data-update="'+i+'">Atualizar</button><button type="button" data-delete="'+i+'">Excluir</button></div></div>').join(""):'<span class="dressing-empty">Nenhuma combinação salva.</span>';
- $("dressing-saved-list").querySelectorAll("[data-load]").forEach(b=>b.addEventListener("click",()=>{const x=saved[Number(b.dataset.load)];equipped=x.items||{};if(x.layout)freeLayout={...layoutDefaults,...x.layout};saveLayout();renderAll();$("dressing-status").textContent="Combinação carregada: "+x.name}));
- $("dressing-saved-list").querySelectorAll("[data-rename]").forEach(b=>b.addEventListener("click",()=>{const n=Number(b.dataset.rename),name=prompt("Novo nome da combinação:",saved[n].name);if(name&&name.trim()){saved[n].name=name.trim();localStorage.setItem("chronoDressingLooks",JSON.stringify(saved));renderSaved()}}));
- $("dressing-saved-list").querySelectorAll("[data-update]").forEach(b=>b.addEventListener("click",()=>{const n=Number(b.dataset.update);if(!Object.keys(equipped).length){$("dressing-status").textContent="Monte um equipamento antes de atualizar a combinação.";return}if(!confirm("Substituir as peças e a montagem salvas por sua composição atual?"))return;saved[n].items={...equipped};saved[n].layout={...freeLayout};localStorage.setItem("chronoDressingLooks",JSON.stringify(saved));renderSaved();$("dressing-status").textContent="Combinação atualizada."}));
- $("dressing-saved-list").querySelectorAll("[data-delete]").forEach(b=>b.addEventListener("click",()=>{const n=Number(b.dataset.delete);if(!confirm("Excluir a combinação \""+saved[n].name+"\"?"))return;saved.splice(n,1);localStorage.setItem("chronoDressingLooks",JSON.stringify(saved));renderSaved();$("dressing-status").textContent="Combinação excluída."}));
+ $("dressing-saved-list").innerHTML=saved.length?saved.map((item,index)=>'<div class="dressing-saved-row"><strong>'+esc(item.name)+'</strong><small>'+Object.keys(item.items||{}).length+' peças</small><div class="dressing-saved-actions"><button type="button" data-load-approved="'+index+'">Carregar</button><button type="button" data-rename-approved="'+index+'">Renomear</button><button type="button" data-update-approved="'+index+'">Atualizar</button><button type="button" data-delete-approved="'+index+'">Excluir</button></div></div>').join(""):'<span class="dressing-empty">Nenhuma combinação salva.</span>';
+ $("dressing-saved-list").querySelectorAll("[data-load-approved]").forEach(button=>button.addEventListener("click",()=>{
+  const record=saved[Number(button.dataset.loadApproved)],restored={};
+  Object.entries(record.items||{}).forEach(([slot,id])=>{const item=approvedById.get(String(id));if(item)restored[slot]=item});
+  equipped=restored;renderAll();$("dressing-status").textContent="Combinação carregada: "+record.name;
+ }));
+ $("dressing-saved-list").querySelectorAll("[data-rename-approved]").forEach(button=>button.addEventListener("click",()=>{
+  const index=Number(button.dataset.renameApproved),name=prompt("Novo nome da combinação:",saved[index].name);
+  if(name&&name.trim()){saved[index].name=name.trim();if(writeSaved(saved))renderSaved()}
+ }));
+ $("dressing-saved-list").querySelectorAll("[data-update-approved]").forEach(button=>button.addEventListener("click",()=>{
+  const index=Number(button.dataset.updateApproved);
+  if(!Object.keys(equipped).length){$("dressing-status").textContent="Monte uma composição antes de atualizar a combinação.";return}
+  if(!confirm("Substituir as peças salvas pela composição atual?"))return;
+  saved[index].items=Object.fromEntries(Object.entries(equipped).map(([slot,item])=>[slot,String(item.id)]));
+  if(writeSaved(saved)){renderSaved();$("dressing-status").textContent="Combinação atualizada."}
+ }));
+ $("dressing-saved-list").querySelectorAll("[data-delete-approved]").forEach(button=>button.addEventListener("click",()=>{
+  const index=Number(button.dataset.deleteApproved);
+  if(!confirm('Excluir a combinação "'+saved[index].name+'"?'))return;
+  saved.splice(index,1);if(writeSaved(saved)){renderSaved();$("dressing-status").textContent="Combinação excluída."}
+ }));
 }
-function renderAll(){
- renderComposition();
- initCompositionEditor();
-document.querySelectorAll("#dressing-slot-tabs [data-slot]").forEach(b=>b.classList.toggle("active",b.dataset.slot===activeSlot));
- $("dressing-equipped-list").innerHTML=Object.entries(equipped).length?Object.entries(equipped).map(([slot,item])=>'<div class="dressing-equipped-row">'+(image(item)?'<img src="'+esc(image(item))+'" alt="">':'<span>✧</span>')+'<div><strong>'+esc(item.name)+'</strong><small>'+slots[slot]+' · '+rarity(item)+'</small></div><button type="button" data-remove="'+slot+'" aria-label="Remover '+slots[slot]+'">×</button></div>').join(""):'<p class="dressing-empty">Nenhuma peça selecionada.</p>';
- $("dressing-equipped-list").querySelectorAll("[data-remove]").forEach(b=>b.addEventListener("click",()=>{delete equipped[b.dataset.remove];renderAll()}));
- renderItems();renderSaved();
-}
-document.querySelectorAll("#dressing-slot-tabs [data-slot]").forEach(b=>b.addEventListener("click",()=>{activeSlot=b.dataset.slot;renderAll()}));
-["dressing-search","dressing-rarity"].forEach(id=>$(id).addEventListener(id==="dressing-search"?"input":"change",renderItems));
-$("dressing-clear").addEventListener("click",()=>{equipped={};renderAll();$("dressing-status").textContent="Todos os espaços foram limpos."});
-$("dressing-save").addEventListener("click",()=>{if(!Object.keys(equipped).length){$("dressing-status").textContent="Selecione pelo menos uma peça antes de salvar.";return}const name=prompt("Nome desta combinação:","Meu visual");if(!name)return;const saved=readSaved();saved.push({name:name.trim(),items:{...equipped},layout:{...freeLayout}});try{localStorage.setItem("chronoDressingLooks",JSON.stringify(saved));renderSaved();$("dressing-status").textContent="Combinação salva neste navegador."}catch(e){$("dressing-status").textContent="Não foi possível salvar a combinação neste navegador."}});
-fetch("./data/armor-export.json",{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error("Catálogo indisponível");return r.json()}).then(data=>{items=(Array.isArray(data.items)?data.items:data).filter(x=>!x.isDisabled&&!/\(Test\)/i.test(String(x.name||"")));$("dressing-status").textContent="Catálogo carregado. Escolha as peças para montar seu equipamento.";renderAll()}).catch(()=>$("dressing-count").textContent="CATÁLOGO INDISPONÍVEL");
+function renderAll(){renderComposition();renderItems();renderEquipped();renderSaved()}
+document.querySelectorAll("#dressing-slot-tabs [data-slot]").forEach(button=>button.addEventListener("click",()=>{activeSlot=button.dataset.slot;renderItems()}));
+$("dressing-clear").addEventListener("click",()=>{equipped={};renderAll();$("dressing-status").textContent="Todas as peças foram removidas."});
+$("dressing-save").addEventListener("click",()=>{
+ if(!Object.keys(equipped).length){$("dressing-status").textContent="Equipe pelo menos uma peça antes de salvar.";return}
+ const name=prompt("Nome desta combinação:","Meu visual Dark Mane");if(!name||!name.trim())return;
+ const saved=readSaved();saved.push({name:name.trim(),items:Object.fromEntries(Object.entries(equipped).map(([slot,item])=>[slot,String(item.id)]))});
+ if(writeSaved(saved)){renderSaved();$("dressing-status").textContent="Combinação salva neste navegador."}
+ else $("dressing-status").textContent="Não foi possível salvar a combinação neste navegador.";
+});
+fetch("./data/armor-export.json",{cache:"no-store"}).then(response=>{if(!response.ok)throw new Error("Catálogo indisponível");return response.json()}).then(data=>{
+ const rows=Array.isArray(data)?data:(Array.isArray(data.items)?data.items:[]);
+ definitions.forEach(def=>{
+  let item=def.slot==="back"?{...def}:rows.find(row=>String(row.id)===def.id);
+  if(!item)throw new Error("Não foi possível localizar o item "+def.id+" no catálogo de armaduras.");
+  item={...item,...def,name:def.name||item.name};
+  approvedBySlot[def.slot]=item;approvedById.set(String(item.id),item);
+ });
+ equipped={...approvedBySlot};
+ $("dressing-count").textContent="6 CAMADAS APROVADAS";
+ $("dressing-status").textContent="Conjunto Dark Mane carregado. Selecione uma categoria para equipar ou remover sua peça.";
+ renderAll();
+}).catch(error=>{
+ $("dressing-count").textContent="ERRO AO CARREGAR CAMADAS";
+ $("dressing-status").textContent="Não foi possível carregar o conjunto inicial: "+error.message;
+ $("dressing-items").innerHTML='<div class="dressing-empty">Verifique o catálogo de armaduras e os arquivos das camadas aprovadas.</div>';
+});
 })();
