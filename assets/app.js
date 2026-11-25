@@ -1368,7 +1368,7 @@ function captureCurrentBuild(name,existing){return {id:existing?.id||("build-"+D
 function formatBuildDate(value){const date=new Date(value);return Number.isNaN(date.getTime())?"":date.toLocaleDateString("pt-BR")}
 function renderBuildLibrary(){
  const builds=readSavedBuilds(),saved=$("build-saved-select"),a=$("build-compare-a"),b=$("build-compare-b");if(!saved||!a||!b)return;
- const previousSaved=saved.value||activeSavedBuildId,previousA=a.value,previousB=b.value,options='<option value="">Selecione uma build</option>'+builds.map(item=>'<option value="'+escapeHtml(item.id)+'">'+escapeHtml(item.name)+' · '+formatBuildDate(item.updatedAt||item.createdAt)+'</option>').join("");
+ const previousSaved=activeSavedBuildId||saved.value,previousA=a.value,previousB=b.value,options='<option value="">Selecione uma build</option>'+builds.map(item=>'<option value="'+escapeHtml(item.id)+'">'+escapeHtml(item.name)+' · '+formatBuildDate(item.updatedAt||item.createdAt)+'</option>').join("");
  saved.innerHTML=options;a.innerHTML=options;b.innerHTML=options;
  if(builds.some(item=>item.id===previousSaved))saved.value=previousSaved;
  if(builds.some(item=>item.id===previousA))a.value=previousA;else if(builds.length)a.value=builds[0].id;
@@ -1449,7 +1449,7 @@ function initBuildLibrary(){
  $("build-duplicate-selected").addEventListener("click",duplicateSelectedBuild);
  $("build-update-selected").addEventListener("click",updateSelectedBuild);
  $("build-delete-selected").addEventListener("click",deleteSelectedBuild);
- $("build-saved-select").addEventListener("change",()=>{const record=readSavedBuilds().find(item=>item.id===$("build-saved-select").value);if(record&&$("build-name-input"))$("build-name-input").value=record.name||"";renderBuildLibrary()});
+ $("build-saved-select").addEventListener("change",()=>{activeSavedBuildId=$("build-saved-select").value;const record=readSavedBuilds().find(item=>item.id===activeSavedBuildId);if(record&&$("build-name-input"))$("build-name-input").value=record.name||"";renderBuildLibrary()});
  ["build-compare-a","build-compare-b"].forEach(id=>$(id).addEventListener("change",()=>{const run=$("build-compare-run");if(run)run.disabled=!$("build-compare-a").value||!$("build-compare-b").value||$("build-compare-a").value===$("build-compare-b").value}));
  $("build-compare-run").addEventListener("click",renderBuildComparison);
  $("build-comparison-results").addEventListener("click",event=>{if(event.target.closest("[data-build-compare-close]"))$("build-comparison-results").hidden=true});
