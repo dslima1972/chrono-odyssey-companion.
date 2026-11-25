@@ -4402,7 +4402,7 @@ footer{color:#7890a0}
 
 
 /* Provador 2D — composição Dark Mane com encaixes aprovados */
-.dressing-room-approved{grid-template-columns:minmax(205px,.72fr) minmax(330px,1.35fr) minmax(205px,.72fr);align-items:start}
+.dressing-room-approved{grid-template-columns:minmax(205px,.72fr) minmax(330px,1.35fr) minmax(205px,.72fr);align-items:stretch}
 .dressing-room-approved .dressing-catalog,.dressing-room-approved .dressing-preview,.dressing-room-approved .dressing-equipped{min-width:0}
 .dressing-room-approved .dressing-slot-tabs{gap:6px}
 .dressing-room-approved .dressing-slot-tabs button{flex:1 1 auto}
@@ -4426,7 +4426,7 @@ footer{color:#7890a0}
 .composition-boots-wrapper{z-index:4;transform:translate(0,25%)}
 .composition-boots-wrapper img{object-fit:fill;transform:scale(.5,.4)}
 .composition-gloves-wrapper{z-index:5;transform:translate(0,-3.5%)}
-.composition-gloves-wrapper img{object-fit:fill;transform:scale(.675,.675)}
+.composition-gloves-wrapper img{object-fit:fill;transform:scale(.655,.655)}
 .composition-helm-wrapper{z-index:6;transform:translate(0,-34.5%)}
 .composition-helm-wrapper img{object-fit:contain;transform:scale(.37)}
 .composition-layer[hidden],.composition-layer-wrapper[hidden]{display:none!important}
@@ -4438,19 +4438,27 @@ footer{color:#7890a0}
 @media(max-width:1100px){.dressing-room-approved{grid-template-columns:minmax(190px,.7fr) minmax(300px,1.3fr)}.dressing-room-approved .dressing-equipped{grid-column:1/-1}.dressing-room-approved .dressing-equipped-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:14px}}
 @media(max-width:700px){.dressing-room-approved{grid-template-columns:minmax(0,1fr)}.dressing-room-approved .dressing-equipped{grid-column:auto}.dressing-room-approved .dressing-equipped-list{grid-template-columns:1fr}.dressing-room-approved .dressing-stage.dressing-composition-stage{width:min(100%,560px);margin:auto}.dressing-room-approved .dressing-actions button{flex:1 1 100%}}
 
-/* Provador 2D — controles experimentais de encaixe das luvas */
-.glove-adjustment-panel{margin:16px 0 18px;padding:14px;border:1px solid #655437;border-radius:8px;background:rgba(13,19,26,.78)}
-.glove-adjustment-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
-.glove-adjustment-heading>div{display:grid;gap:4px}
-.glove-adjustment-heading>div>span{font-size:9px;letter-spacing:1.1px;color:#c4a46d}
-.glove-adjustment-heading strong{font-family:Cinzel,serif;font-size:14px;color:#eee1c7}
-.glove-experiment-tag{font-size:9px;letter-spacing:.45px;color:#d4bd91;border:1px solid #665333;border-radius:4px;padding:5px 7px;text-align:center}
-.glove-adjustment-control{display:block;min-width:0;margin:10px 0}
-.glove-adjustment-control>span{display:flex;justify-content:space-between;gap:12px;margin-bottom:5px;color:#c8cbd0;font-size:11px}
-.glove-adjustment-control output{color:#e7c98f;font-variant-numeric:tabular-nums;font-weight:700}
-.glove-adjustment-control input[type=range]{display:block;width:100%;accent-color:#c6a36a;cursor:pointer}
-.glove-adjustment-axis{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.glove-adjustment-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-.glove-adjustment-actions button{flex:1 1 180px;min-height:36px;padding:7px 10px;font-size:10px}
-.glove-adjustment-panel>p{margin:10px 0 0;color:#929ba6;font-size:10px;line-height:1.5}
-@media(max-width:700px){.glove-adjustment-heading{align-items:flex-start;flex-direction:column}.glove-adjustment-axis{grid-template-columns:1fr}}
+
+/* Provador 2D — fundos de visualização e painéis com altura padronizada */
+.dressing-room-approved{align-items:stretch}
+.dressing-room-approved>.dressing-catalog,.dressing-room-approved>.dressing-preview,.dressing-room-approved>.dressing-equipped{display:flex;flex-direction:column;height:100%;min-height:100%;box-sizing:border-box}
+.dressing-room-approved .dressing-items{flex:1 1 auto}
+.dressing-background-picker{margin:14px 0 16px;padding:12px;border:1px solid #39414b;border-radius:8px;background:rgba(10,14,19,.5)}
+.dressing-background-heading{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.dressing-background-heading strong{font-family:Cinzel,serif;font-size:12px;color:#e5d4b5}
+.dressing-background-heading span{font-size:10px;color:#9da6b1;line-height:1.4}
+.dressing-background-swatches{display:flex;flex-wrap:wrap;gap:8px}
+.stage-bg-swatch{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:48px;padding:5px 6px;border:1px solid transparent;border-radius:6px;background:transparent;color:#bfc4ca;cursor:pointer}
+.stage-bg-swatch>span{display:block;width:27px;height:27px;border-radius:50%;border:1px solid #9299a2;background:#343a43}
+.stage-bg-swatch[data-stage-background="black"]>span{background:#080a0e}
+.stage-bg-swatch[data-stage-background="navy"]>span{background:#1b293b}
+.stage-bg-swatch[data-stage-background="gray"]>span{background:#747b84}
+.stage-bg-swatch[data-stage-background="silver"]>span{background:#c7cbd0}
+.stage-bg-swatch[data-stage-background="sand"]>span{background:#d8cdb8}
+.stage-bg-swatch[data-stage-background="white"]>span{background:#f4f4f1}
+.stage-bg-swatch small{font-size:9px;line-height:1.2}
+.stage-bg-swatch.active{border-color:#c6a36a;background:rgba(198,163,106,.1);color:#f0d7a8}
+.stage-bg-swatch:focus-visible{outline:2px solid #e0c28e;outline-offset:2px}
+.dressing-room-approved .dressing-stage.dressing-composition-stage{transition:background .18s ease}
+@media(max-width:1100px){.dressing-room-approved>.dressing-catalog,.dressing-room-approved>.dressing-preview,.dressing-room-approved>.dressing-equipped{height:auto;min-height:100%}}
+@media(max-width:700px){.dressing-room-approved>.dressing-catalog,.dressing-room-approved>.dressing-preview,.dressing-room-approved>.dressing-equipped{min-height:0}.dressing-background-swatches{gap:5px}.stage-bg-swatch{min-width:42px;padding:5px 3px}}
