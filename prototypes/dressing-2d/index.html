@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Protótipo 2D · Chrono Odyssey Companion</title>
+<style>
+:root{color-scheme:dark;--bg:#111318;--panel:#1a1d24;--line:#343945;--text:#f0eee8;--muted:#a9a8a2;--accent:#b69a69}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,sans-serif}
+main{width:min(1100px,100%);margin:auto;padding:24px}
+header{margin-bottom:20px}
+.eyebrow{color:var(--accent);font-size:11px;letter-spacing:.16em;font-weight:700}
+h1{font-size:clamp(24px,4vw,36px);margin:5px 0}
+p{color:var(--muted);margin:6px 0}
+.layout{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(260px,.8fr);gap:18px;align-items:start}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;min-width:0}
+.stage{width:min(100%,620px);margin:auto;aspect-ratio:1;background:radial-gradient(ellipse at center,#30333b,#17191f 72%);display:grid;place-items:center;overflow:hidden;border-radius:10px}
+canvas{display:block;width:100%;height:100%;object-fit:contain}
+.status{padding:10px 12px;border:1px solid var(--line);border-radius:9px;margin:8px 0;color:var(--muted);font-size:13px}
+.status.ok{border-color:#466b54;color:#b6d8bd}
+.status.warn{border-color:#79643d;color:#e1c68e}
+ul{padding-left:18px;color:var(--muted)}
+code{color:#e4d1aa;overflow-wrap:anywhere}
+@media(max-width:760px){main{padding:16px}.layout{grid-template-columns:1fr}.panel{padding:12px}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<div class="eyebrow">CHRONO ODYSSEY COMPANION · PROVA DE CONCEITO</div>
+<h1>Provador 2D — teste de sobreposição</h1>
+<p>Ambiente isolado para validar o avatar e a primeira camada de equipamento. Esta página não altera nem substitui o Provador atual.</p>
+</header>
+<div class="layout">
+<section class="panel">
+<div class="stage"><canvas id="preview" width="1024" height="1024" aria-label="Prévia do avatar com camada de peitoral"></canvas></div>
+<div id="render-status" class="status warn" role="status" aria-live="polite">Verificando os arquivos de imagem…</div>
+</section>
+<aside class="panel">
+<h2>Validação dos assets</h2>
+<p>As duas imagens devem compartilhar o mesmo canvas 1024 × 1024, escala e origem. A camada do equipamento é desenhada sem transformação independente.</p>
+<div id="avatar-status" class="status">Avatar: aguardando leitura</div>
+<div id="chest-status" class="status">Peitoral: aguardando leitura</div>
+<h3>Arquivos esperados</h3>
+<ul>
+<li><code>assets/images/avatars/avatar-male-base.png</code></li>
+<li><code>assets/images/equipment/chest/ragged-clothes-avatar3.png</code></li>
+</ul>
+<h3>Critérios do teste</h3>
+<ul>
+<li>Alinhamento de gola, ombros e cintura.</li>
+<li>Proporção natural sem arrastar ou redimensionar.</li>
+<li>Transparência real nas áreas externas à peça.</li>
+<li>Avatar e camada permanecem na mesma escala responsiva.</li>
+</ul>
+<p>O teste só será considerado aprovado após os dois arquivos reais serem inseridos e avaliados visualmente.</p>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+"use strict";
+const canvas=document.getElementById("preview");
+const ctx=canvas.getContext("2d");
+const avatarPath="../../assets/images/avatars/avatar-male-base.png";
+const chestPath="../../assets/images/equipment/chest/ragged-clothes-avatar3.png";
+const avatarState=document.getElementById("avatar-status");
+const chestState=document.getElementById("chest-status");
+const renderState=document.getElementById("render-status");
+function loadImage(src){
+ return new Promise((resolve,reject)=>{
+  const img=new Image();
+  img.onload=()=>resolve(img);
+  img.onerror=()=>reject(new Error("Arquivo não encontrado ou indisponível: "+src));
+  img.src=src;
+ });
+}
+function describe(img,label,node){
+ const valid=img.naturalWidth===1024&&img.naturalHeight===1024;
+ node.className="status "+(valid?"ok":"warn");
+ node.textContent=label+": "+img.naturalWidth+" × "+img.naturalHeight+" px"+(valid?" · dimensão correta":" · esperado 1024 × 1024");
+ return valid;
+}
+async function init(){
+ ctx.clearRect(0,0,1024,1024);
+ const [avatarResult,chestResult]=await Promise.allSettled([loadImage(avatarPath),loadImage(chestPath)]);
+ let avatar=null,chest=null,errors=[];
+ if(avatarResult.status==="fulfilled"){
+  avatar=avatarResult.value;
+  if(!describe(avatar,"Avatar",avatarState))errors.push("O avatar não está no canvas esperado.");
+ }else{
+  avatarState.className="status warn";
+  avatarState.textContent="Avatar: imagem ainda não adicionada ao repositório.";
+  errors.push("Falta o avatar PNG transparente.");
+ }
+ if(chestResult.status==="fulfilled"){
+  chest=chestResult.value;
+  if(!describe(chest,"Peitoral",chestState))errors.push("A camada não está no canvas esperado.");
+ }else{
+  chestState.className="status warn";
+  chestState.textContent="Peitoral: camada ainda não criada.";
+  errors.push("Falta a camada PNG do Ragged Clothes.");
+ }
+ if(avatar&&avatar.naturalWidth===1024&&avatar.naturalHeight===1024){
+  ctx.drawImage(avatar,0,0,1024,1024);
+  if(chest&&chest.naturalWidth===1024&&chest.naturalHeight===1024)ctx.drawImage(chest,0,0,1024,1024);
+ }
+ if(errors.length){
+  renderState.className="status warn";
+  renderState.textContent="Protótipo preparado, aguardando assets: "+errors.join(" ");
+ }else{
+  renderState.className="status ok";
+  renderState.textContent="Duas camadas carregadas no mesmo canvas, sem ajustes independentes.";
+ }
+}
+init();
+})();
+</script>
+</body>
+</html>
