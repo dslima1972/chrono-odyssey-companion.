@@ -3,17 +3,18 @@
 const $=id=>document.getElementById(id);
 const slots={head:"Elmo",chest:"Peitoral",hands:"Luvas",back:"Capa",legs:"Calça",feet:"Botas"};
 const definitions=[
- {slot:"head",id:"11271504",imagePath:"./references/dark-mane-full-helm.png"},
- {slot:"chest",id:"11272504",imagePath:"./references/dark-mane-plate-armor.png"},
- {slot:"hands",id:"11273504",imagePath:"./references/dark-mane-gauntlets.png"},
- {slot:"legs",id:"11274504",imagePath:"./references/dark-mane-steel-leggings.png"},
- {slot:"feet",id:"11275504",imagePath:"./references/dark-mane-plate-boots.png"},
- {slot:"back",id:"void-cloak",name:"Void Cloak",subCategory:"back",grade:4,imagePath:"./references/void-cloak.png",isApprovedLayer:true}
+ {slot:"head",id:"11271504",overlayPath:"./references/dark-mane-full-helm.png"},
+ {slot:"chest",id:"11272504",overlayPath:"./references/dark-mane-plate-armor.png"},
+ {slot:"hands",id:"11273504",overlayPath:"./references/dark-mane-gauntlets.png"},
+ {slot:"legs",id:"11274504",overlayPath:"./references/dark-mane-steel-leggings.png"},
+ {slot:"feet",id:"11275504",overlayPath:"./references/dark-mane-plate-boots.png"},
+ {slot:"back",id:"11277503",overlayPath:"./references/void-cloak.png"}
 ];
 const storageKey="chronoDressingLooksV2";
 let activeSlot="head",approvedBySlot={},approvedById=new Map(),equipped={};
 const esc=s=>String(s??"").replace(/[&<>\"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const rarity=item=>({0:"Comum",1:"Incomum",2:"Raro",3:"Épico",4:"Lendário"})[Number(item?.grade)]||"Camada aprovada";
+const rarity=item=>({0:"Comum",1:"Incomum",2:"Raro",3:"Épico",4:"Lendário"})[Number(item?.grade)]||"Não identificada";
+function questlogImage(item){const path=String(item?.icon||"").trim();if(!path)return "";let assetPath=path;if(/^https?:\\/\\//i.test(assetPath)){try{assetPath=new URL(assetPath).pathname}catch(e){return ""}}assetPath=assetPath.replace(/^\\/(?:chrono-odyssey\\/)?/i,"").replace(/\\.(?:png|jpe?g|webp)$/i,"");return assetPath?"https://cdn.questlog.gg/chrono-odyssey/"+assetPath+".webp":"";}
 const rarityKey=item=>item?.grade===undefined||item?.grade===null?"special":String(item.grade);
 const rarityClass=item=>"rarity-"+rarityKey(item);
 const setName=item=>item?.setName||(item?.name&&/\bDark Mane\b/i.test(item.name)?"Dark Mane":"Sem conjunto");
@@ -35,7 +36,7 @@ function renderItems(){
   return;
  }
  const selected=!!equipped[activeSlot],grade=rarityKey(item),set=setName(item);
- $("dressing-items").innerHTML='<button type="button" class="dressing-item dressing-approved-item '+rarityClass(item)+' '+(selected?"selected":"")+'" data-rarity="'+esc(grade)+'" data-set="'+esc(set)+'" data-toggle-approved="'+esc(activeSlot)+'" aria-pressed="'+selected+'"><img src="'+esc(item.imagePath)+'" alt="'+esc(item.name)+'" loading="lazy"><strong>'+esc(item.name)+'</strong><small>'+rarity(item)+" · "+esc(set)+'</small><span class="dressing-item-action">'+(selected?"Remover da composição":"Equipar peça")+'</span></button>';
+ $("dressing-items").innerHTML='<button type="button" class="dressing-item dressing-approved-item '+rarityClass(item)+' '+(selected?"selected":"")+'" data-rarity="'+esc(grade)+'" data-set="'+esc(set)+'" data-toggle-approved="'+esc(activeSlot)+'" aria-pressed="'+selected+'"><img src="'+esc(questlogImage(item))+'" alt="'+esc(item.name)+'" loading="lazy"><strong>'+esc(item.name)+'</strong><small>'+rarity(item)+" · "+esc(set)+'</small><span class="dressing-item-action">'+(selected?"Remover da composição":"Equipar peça")+'</span></button>';
  $("dressing-items").querySelector("[data-toggle-approved]").addEventListener("click",()=>{
   if(equipped[activeSlot]){delete equipped[activeSlot];$("dressing-status").textContent=item.name+" removido da composição."}
   else{equipped[activeSlot]=item;$("dressing-status").textContent=item.name+" adicionado à composição."}
@@ -107,9 +108,9 @@ $("dressing-save").addEventListener("click",()=>{
 fetch("./data/armor-export.json",{cache:"no-store"}).then(response=>{if(!response.ok)throw new Error("Catálogo indisponível");return response.json()}).then(data=>{
  const rows=Array.isArray(data)?data:(Array.isArray(data.items)?data.items:[]);
  definitions.forEach(def=>{
-  let item=def.slot==="back"?{...def}:rows.find(row=>String(row.id)===def.id);
+  let item=rows.find(row=>String(row.id)===def.id);
   if(!item)throw new Error("Não foi possível localizar o item "+def.id+" no catálogo de armaduras.");
-  item={...item,...def,name:def.name||item.name};
+  item={...item,slot:def.slot,overlayPath:def.overlayPath};
   approvedBySlot[def.slot]=item;approvedById.set(String(item.id),item);
  });
  equipped={...approvedBySlot};
