@@ -14,6 +14,9 @@ const storageKey="chronoDressingLooksV2";
 let activeSlot="head",approvedBySlot={},approvedById=new Map(),equipped={};
 const esc=s=>String(s??"").replace(/[&<>\"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const rarity=item=>({0:"Comum",1:"Incomum",2:"Raro",3:"Épico",4:"Lendário"})[Number(item?.grade)]||"Camada aprovada";
+const rarityKey=item=>item?.grade===undefined||item?.grade===null?"special":String(item.grade);
+const rarityClass=item=>"rarity-"+rarityKey(item);
+const setName=item=>item?.setName||(item?.name&&/\\bDark Mane\\b/i.test(item.name)?"Dark Mane":"Sem conjunto");
 function readSaved(){try{const v=JSON.parse(localStorage.getItem(storageKey)||"[]");return Array.isArray(v)?v:[]}catch(e){return[]}}
 function writeSaved(value){try{localStorage.setItem(storageKey,JSON.stringify(value));return true}catch(e){return false}}
 function renderComposition(){
@@ -24,9 +27,15 @@ function renderItems(){
   const active=b.dataset.slot===activeSlot;b.classList.toggle("active",active);b.setAttribute("aria-pressed",String(active));
  });
  const item=approvedBySlot[activeSlot];
+ const rarityFilter=$("dressing-rarity-filter")?.value||"";
+ const setFilter=$("dressing-set-filter")?.value||"";
  if(!item){$("dressing-items").innerHTML='<div class="dressing-empty">Esta camada ainda não está disponível.</div>';return}
- const selected=!!equipped[activeSlot];
- $("dressing-items").innerHTML='<button type="button" class="dressing-item dressing-approved-item '+(selected?"selected":"")+'" data-toggle-approved="'+esc(activeSlot)+'" aria-pressed="'+selected+'"><img src="'+esc(item.imagePath)+'" alt="'+esc(item.name)+'" loading="lazy"><strong>'+esc(item.name)+'</strong><small>'+(item.isApprovedLayer?"Capa · camada aprovada":rarity(item)+" · Dark Mane")+'</small><span class="dressing-item-action">'+(selected?"Remover da composição":"Equipar peça")+'</span></button>';
+ if((rarityFilter&&rarityKey(item)!==rarityFilter)||(setFilter&&setName(item)!==setFilter)){
+  $("dressing-items").innerHTML='<div class="dressing-empty">Nenhuma peça desta categoria corresponde aos filtros selecionados.</div>';
+  return;
+ }
+ const selected=!!equipped[activeSlot],grade=rarityKey(item),set=setName(item);
+ $("dressing-items").innerHTML='<button type="button" class="dressing-item dressing-approved-item '+rarityClass(item)+' '+(selected?"selected":"")+'" data-rarity="'+esc(grade)+'" data-set="'+esc(set)+'" data-toggle-approved="'+esc(activeSlot)+'" aria-pressed="'+selected+'"><img src="'+esc(item.imagePath)+'" alt="'+esc(item.name)+'" loading="lazy"><strong>'+esc(item.name)+'</strong><small>'+(item.isApprovedLayer?"Camada aprovada · "+esc(set):rarity(item)+" · "+esc(set))+'</small><span class="dressing-item-action">'+(selected?"Remover da composição":"Equipar peça")+'</span></button>';
  $("dressing-items").querySelector("[data-toggle-approved]").addEventListener("click",()=>{
   if(equipped[activeSlot]){delete equipped[activeSlot];$("dressing-status").textContent=item.name+" removido da composição."}
   else{equipped[activeSlot]=item;$("dressing-status").textContent=item.name+" adicionado à composição."}
@@ -35,7 +44,7 @@ function renderItems(){
 }
 function renderEquipped(){
  const entries=Object.entries(equipped);
- $("dressing-equipped-list").innerHTML=entries.length?entries.map(([slot,item])=>'<div class="dressing-equipped-row"><img src="'+esc(item.imagePath)+'" alt=""><div><strong>'+esc(item.name)+'</strong><small>'+slots[slot]+' · '+(item.isApprovedLayer?"Camada aprovada":rarity(item))+'</small></div><button type="button" data-remove-approved="'+slot+'" aria-label="Remover '+slots[slot]+'">×</button></div>').join(""):'<p class="dressing-empty">Nenhuma peça selecionada.</p>';
+ $("dressing-equipped-list").innerHTML=entries.length?entries.map(([slot,item])=>'<div class="dressing-equipped-row '+rarityClass(item)+'" data-rarity="'+esc(rarityKey(item))+'"><img src="'+esc(item.imagePath)+'" alt=""><div><strong>'+esc(item.name)+'</strong><small>'+slots[slot]+' · '+(item.isApprovedLayer?"Camada aprovada":rarity(item))+'</small></div><button type="button" data-remove-approved="'+slot+'" aria-label="Remover '+slots[slot]+'">×</button></div>').join(""):'<p class="dressing-empty">Nenhuma peça selecionada.</p>';
  $("dressing-equipped-list").querySelectorAll("[data-remove-approved]").forEach(button=>button.addEventListener("click",()=>{
   const slot=button.dataset.removeApproved,name=equipped[slot]?.name;delete equipped[slot];renderAll();$("dressing-status").textContent=(name||slots[slot])+" removido da composição.";
  }));
@@ -86,6 +95,7 @@ document.querySelectorAll("[data-stage-background]").forEach(button=>button.addE
 }));
 function renderAll(){renderComposition();renderItems();renderEquipped();renderSaved()}
 document.querySelectorAll("#dressing-slot-tabs [data-slot]").forEach(button=>button.addEventListener("click",()=>{activeSlot=button.dataset.slot;renderItems()}));
+["dressing-rarity-filter","dressing-set-filter"].forEach(id=>$(id)?.addEventListener("change",renderItems));
 $("dressing-clear").addEventListener("click",()=>{equipped={};renderAll();$("dressing-status").textContent="Todas as peças foram removidas."});
 $("dressing-save").addEventListener("click",()=>{
  if(!Object.keys(equipped).length){$("dressing-status").textContent="Equipe pelo menos uma peça antes de salvar.";return}
