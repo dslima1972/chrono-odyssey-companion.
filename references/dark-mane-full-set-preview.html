@@ -6,13 +6,13 @@
 <style>
 *{box-sizing:border-box}body{margin:0;padding:22px;background:#17191d;color:#f2f2f2;font:15px/1.5 system-ui,Arial,sans-serif}main{max-width:900px;margin:auto}h1{font-size:22px;margin:0 0 8px}p{color:#c6c9ce;margin:0 0 16px}
 .stage{width:min(92vw,650px);aspect-ratio:1;margin:0 auto 18px;position:relative;overflow:hidden;background-color:#555;background-image:linear-gradient(45deg,#777 25%,transparent 25%),linear-gradient(-45deg,#777 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#777 75%),linear-gradient(-45deg,transparent 75%,#777 75%);background-size:24px 24px;background-position:0 0,0 12px,12px -12px,-12px 0}
-.stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block}#mannequin{z-index:0}
-#leggings{inset:auto;left:21%;top:36%;width:58%;height:58%;object-fit:contain;transform:scaleY(.92);pointer-events:none;z-index:1}
+.stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block}#mannequin{z-index:1}\n#cloakLayer{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}\n#cloak{object-fit:contain}
+#leggings{z-index:2;inset:auto;left:21%;top:36%;width:58%;height:58%;object-fit:contain;transform:scaleY(.92);pointer-events:none;z-index:1}
 #chestLayer,#bootsLayer,#glovesLayer,#helmLayer{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;transform-origin:center center}
-#chestLayer{z-index:2;transform:translate(0,-14%)}#chest{transform:scale(.6)}
-#bootsLayer{z-index:3;transform:translate(0,32%)}#boots{object-fit:fill;transform:scale(.5,.4)}
-#glovesLayer{z-index:4;transform:translate(0,-3.5%)}#gloves{object-fit:fill;transform:scale(.7,.7)}
-#helmLayer{z-index:5}#helm{object-fit:contain}
+#chestLayer{z-index:3;transform:translate(0,-14%)}#chest{transform:scale(.6)}
+#bootsLayer{z-index:4;transform:translate(0,32%)}#boots{object-fit:fill;transform:scale(.5,.4)}
+#glovesLayer{z-index:5;transform:translate(0,-3.5%)}#gloves{object-fit:fill;transform:scale(.7,.7)}
+#helmLayer{z-index:6}#helm{object-fit:contain}
 .controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;max-width:720px;margin:14px auto;padding:14px;background:#22252a;border:1px solid #454950;border-radius:10px}
 label{display:flex;flex-direction:column;gap:5px;color:#e5e7eb}label span{display:flex;justify-content:space-between;gap:8px}input[type=range]{width:100%;accent-color:#a5c77b}.toggles{display:flex;flex-wrap:wrap;gap:18px;max-width:720px;margin:0 auto 12px}.toggles label{display:flex;flex-direction:row;align-items:center}
 button{background:#343b46;color:#fff;border:1px solid #596273;border-radius:6px;padding:8px 12px;cursor:pointer}.note{max-width:720px;margin:12px auto 0;font-size:13px;color:#aeb5bf}
@@ -20,10 +20,10 @@ button{background:#343b46;color:#fff;border:1px solid #596273;border-radius:6px;
 <h1>Dark Mane Full Set — teste de sobreposição</h1>
 <p>Preview independente com o Dark Mane Full Helm e as configurações aprovadas. Os ajustes das outras peças permanecem preservados.</p>
 <div class="toggles">
-<label><input id="showHelm" type="checkbox" checked> Mostrar capacete</label><label><input id="showChest" type="checkbox" checked> Mostrar peitoral</label><label><input id="showLeggings" type="checkbox" checked> Mostrar calça</label><label><input id="showBoots" type="checkbox" checked> Mostrar botas</label><label><input id="showGloves" type="checkbox" checked> Mostrar luvas</label>
+<label><input id="showCloak" type="checkbox" checked> Mostrar capa</label><label><input id="showHelm" type="checkbox" checked> Mostrar capacete</label><label><input id="showChest" type="checkbox" checked> Mostrar peitoral</label><label><input id="showLeggings" type="checkbox" checked> Mostrar calça</label><label><input id="showBoots" type="checkbox" checked> Mostrar botas</label><label><input id="showGloves" type="checkbox" checked> Mostrar luvas</label>
 </div>
 <div class="stage">
-<img id="mannequin" src="avatar-mannequin-dark.png" alt="Manequim grafite">
+<div id="cloakLayer"><img id="cloak" src="void-cloak.png?v=1" alt="Void Cloak"></div>\n<img id="mannequin" src="avatar-mannequin-dark.png" alt="Manequim grafite">
 <img id="leggings" src="https://raw.githubusercontent.com/dslima1972/chrono-odyssey-companion./16f169bc6ce9de22fd6409f90c4dbfe81567c44c/references/dark-mane-steel-leggings.png" alt="Dark Mane Steel Leggings">
 <div id="chestLayer"><img id="chest" src="dark-mane-plate-armor.png?v=2" alt="Dark Mane Plate Armor"></div>
 <div id="bootsLayer"><img id="boots" src="dark-mane-plate-boots.png?v=20261125-3" alt="Dark Mane Plate Boots"></div>
@@ -36,11 +36,11 @@ button{background:#343b46;color:#fff;border:1px solid #596273;border-radius:6px;
 <label><span><b>Escala do capacete</b><output id="helmScaleValue">37%</output></span><input id="helmScale" type="range" min="30" max="150" step="1" value="37"></label>
 <div><button id="reset">Restaurar valores aprovados</button></div>
 </div>
-<p class="note">Configuração aprovada do capacete: horizontal 0%, vertical -42,5% e escala 37%. Ordem das camadas: manequim, calça, peitoral, botas, luvas e capacete.</p>
+<p class="note">Configuração aprovada do capacete: horizontal 0%, vertical -42,5% e escala 37%. Ordem das camadas: Void Cloak (atrás), manequim, calça, peitoral, botas, luvas e capacete.</p>
 </main><script>
 const layer=document.getElementById('helmLayer'),helm=document.getElementById('helm');
 function update(){const x=Number(helmX.value),y=Number(helmY.value),s=Number(helmScale.value);helmXValue.textContent=(x>0?'+':'')+x+'%';helmYValue.textContent=(y>0?'+':'')+y+'%';helmScaleValue.textContent=s+'%';layer.style.transform='translate('+x+'%, '+y+'%)';helm.style.transform='scale('+s/100+')'}
 ['helmX','helmY','helmScale'].forEach(id=>document.getElementById(id).addEventListener('input',update));
-[['showHelm','helmLayer'],['showChest','chestLayer'],['showLeggings','leggings'],['showBoots','bootsLayer'],['showGloves','glovesLayer']].forEach(([c,l])=>document.getElementById(c).addEventListener('change',e=>document.getElementById(l).hidden=!e.target.checked));
-document.getElementById('reset').addEventListener('click',()=>{helmX.value=0;helmY.value=-42.5;helmScale.value=37;['showHelm','showChest','showLeggings','showBoots','showGloves'].forEach(id=>document.getElementById(id).checked=true);['helmLayer','chestLayer','leggings','bootsLayer','glovesLayer'].forEach(id=>document.getElementById(id).hidden=false);update()});update();
+[['showCloak','cloakLayer'],['showHelm','helmLayer'],['showChest','chestLayer'],['showLeggings','leggings'],['showBoots','bootsLayer'],['showGloves','glovesLayer']].forEach(([c,l])=>document.getElementById(c).addEventListener('change',e=>document.getElementById(l).hidden=!e.target.checked));
+document.getElementById('reset').addEventListener('click',()=>{helmX.value=0;helmY.value=-42.5;helmScale.value=37;['showCloak','showHelm','showChest','showLeggings','showBoots','showGloves'].forEach(id=>document.getElementById(id).checked=true);['cloakLayer','helmLayer','chestLayer','leggings','bootsLayer','glovesLayer'].forEach(id=>document.getElementById(id).hidden=false);update()});update();
 </script></body></html>
