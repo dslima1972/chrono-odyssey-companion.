@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Diagnóstico de transparência — Chrono Odyssey Companion</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:24px;font:15px/1.5 system-ui,sans-serif;color:#e8edf2;background:#171b22}
+main{max-width:900px;margin:auto}h1{font-size:1.45rem}p{color:#b9c3cf}
+.panel{background:#222936;border:1px solid #394454;border-radius:12px;padding:16px;margin:16px 0}
+.preview{display:grid;place-items:center;min-height:320px;border-radius:8px;overflow:hidden;background-color:#ddd;background-image:linear-gradient(45deg,#bbb 25%,transparent 25%),linear-gradient(-45deg,#bbb 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#bbb 75%),linear-gradient(-45deg,transparent 75%,#bbb 75%);background-size:24px 24px;background-position:0 0,0 12px,12px -12px,-12px 0}
+.preview img{display:block;max-width:min(100%,600px);max-height:70vh;object-fit:contain}
+#status{font-weight:700;font-size:1.1rem}table{width:100%;border-collapse:collapse}td{padding:8px;border-bottom:1px solid #394454}td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.good{color:#65d69a}.warn{color:#ffca70}.bad{color:#ff8585}
+code{overflow-wrap:anywhere}
+</style>
+</head>
+<body><main>
+<h1>Diagnóstico de transparência do avatar</h1>
+<p>Esta página lê os pixels do PNG diretamente no seu navegador. A imagem não é enviada para nenhum servidor.</p>
+<section class="panel"><div id="status">Carregando imagem…</div><div class="preview"><img id="avatar" src="avatar-mannequin.png" alt="Prévia do manequim"></div></section>
+<section class="panel"><h2>Resultado da análise</h2><div id="details">Aguardando leitura dos pixels…</div></section>
+<script>
+(async()=>{
+ const img=document.getElementById('avatar'),status=document.getElementById('status'),details=document.getElementById('details');
+ const fmt=n=>n.toLocaleString('pt-BR');
+ try{
+  await new Promise((ok,fail)=>{img.onload=ok;img.onerror=()=>fail(new Error('Não foi possível carregar avatar-mannequin.png.'))});
+  const c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;
+  const ctx=c.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,0);
+  const d=ctx.getImageData(0,0,c.width,c.height).data;let transparent=0,partial=0,opaque=0;
+  const samples=[];
+  for(let i=0;i<d.length;i+=4){const a=d[i+3];if(a===0)transparent++;else if(a<255)partial++;else opaque++}
+  const coords=[[0,0],[c.width-1,0],[0,c.height-1],[c.width-1,c.height-1],[Math.floor(c.width/2),0],[0,Math.floor(c.height/2)],[c.width-1,Math.floor(c.height/2)],[Math.floor(c.width/2),c.height-1]];
+  for(const [x,y] of coords){const i=(y*c.width+x)*4;samples.push({x,y,r:d[i],g:d[i+1],b:d[i+2],a:d[i+3]})}
+  const total=c.width*c.height,pct=n=>(100*n/total).toLocaleString('pt-BR',{maximumFractionDigits:2})+'%';
+  const edgeTransparent=samples.filter(s=>s.a===0).length;
+  let verdict,cls;
+  if(transparent>total*.05){verdict='Há transparência real';cls='good'}
+  else if(transparent>0||partial>total*.001){verdict='Há transparência, mas pode ser limitada ou parcial';cls='warn'}
+  else{verdict='A imagem está praticamente toda opaca';cls='bad'}
+  status.className=cls;status.textContent=verdict;
+  details.innerHTML='<table>'+
+   '<tr><td>Dimensões</td><td>'+c.width+' × '+c.height+' px</td></tr>'+
+   '<tr><td>Pixels totalmente transparentes (alfa 0)</td><td>'+fmt(transparent)+' — '+pct(transparent)+'</td></tr>'+
+   '<tr><td>Pixels semitransparentes (alfa 1–254)</td><td>'+fmt(partial)+' — '+pct(partial)+'</td></tr>'+
+   '<tr><td>Pixels opacos (alfa 255)</td><td>'+fmt(opaque)+' — '+pct(opaque)+'</td></tr>'+
+   '<tr><td>Amostras transparentes nas bordas/cantos</td><td>'+edgeTransparent+' de '+samples.length+'</td></tr></table>'+
+   '<h3>Amostras do fundo nas bordas</h3><p><code>'+samples.map(s=>'('+s.x+','+s.y+') RGBA '+s.r+','+s.g+','+s.b+','+s.a).join('<br>')+'</code></p>';
+ }catch(e){status.className='bad';status.textContent='Falha na análise';details.textContent=e.message+' Confirme se avatar-mannequin.png está na mesma pasta desta página.'}
+})();
+</script>
+</main></body></html>
