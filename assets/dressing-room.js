@@ -14,7 +14,7 @@ const storageKey="chronoDressingLooksV2";
 let activeSlot="head",approvedBySlot={},approvedById=new Map(),equipped={};
 const esc=s=>String(s??"").replace(/[&<>\"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const rarity=item=>({0:"Comum",1:"Incomum",2:"Raro",3:"Épico",4:"Lendário"})[Number(item?.grade)]||"Não identificada";
-function questlogImage(item){const path=String(item?.icon||"").trim();if(!path)return "";let assetPath=path;if(/^https?:\\/\\//i.test(assetPath)){try{assetPath=new URL(assetPath).pathname}catch(e){return ""}}assetPath=assetPath.replace(/^\\/(?:chrono-odyssey\\/)?/i,"").replace(/\\.(?:png|jpe?g|webp)$/i,"");return assetPath?"https://cdn.questlog.gg/chrono-odyssey/"+assetPath+".webp":"";}
+function questlogImage(item){const path=String(item?.icon||"").trim();if(!path)return "";let assetPath=path;if(/^https?:\/\//i.test(assetPath)){try{assetPath=new URL(assetPath).pathname}catch(e){return ""}}assetPath=assetPath.replace(/^\/(?:chrono-odyssey\/)?/i,"").replace(/\.(?:png|jpe?g|webp)$/i,"");return assetPath?"https://cdn.questlog.gg/chrono-odyssey/"+assetPath+".webp":"";}
 const rarityKey=item=>item?.grade===undefined||item?.grade===null?"special":String(item.grade);
 const rarityClass=item=>"rarity-"+rarityKey(item);
 const setName=item=>item?.setName||(item?.name&&/\bDark Mane\b/i.test(item.name)?"Dark Mane":"Sem conjunto");
