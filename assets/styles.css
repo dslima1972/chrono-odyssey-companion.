@@ -4325,3 +4325,77 @@ footer{color:#7890a0}
  #build-view.build-planner-v2 .bp2-compare-controls select,
  #build-view.build-planner-v2 .bp2-library-button{height:36px;min-height:36px}
 }
+
+
+/* BUILD PLANNER — integrated configuration and minimal section disclosures */
+#build-view.build-planner-v2 .bp2-config{
+ grid-template-columns:minmax(150px,.85fr) minmax(0,1.25fr) minmax(0,1.25fr);
+ row-gap:9px;
+}
+#build-view.build-planner-v2 .bp2-build-library{
+ grid-column:1/-1;
+ display:grid;
+ gap:0;
+ min-width:0;
+ margin:0;
+ padding:0;
+ border:0;
+ border-top:1px solid rgba(120,144,160,.16);
+ background:transparent;
+}
+#build-view.build-planner-v2 .bp2-disclosure-button{
+ width:100%;
+ min-width:0;
+ height:30px;
+ min-height:30px;
+ justify-content:space-between;
+ padding:0 2px;
+ border:0;
+ border-radius:0;
+ background:transparent;
+ color:#cbd5db;
+ font:600 10px Inter,sans-serif;
+ text-align:left;
+}
+#build-view.build-planner-v2 .bp2-disclosure-button:hover{
+ border:0;
+ background:rgba(120,144,160,.045);
+ color:#e4d4b3;
+}
+#build-view.build-planner-v2 .bp2-disclosure-icon{
+ color:#9aabb6;
+ font-size:14px;
+}
+#build-view.build-planner-v2 .bp2-library-disclosure{letter-spacing:.15px}
+#build-view.build-planner-v2 .bp2-library-controls{
+ grid-template-columns:minmax(150px,1.2fr) auto minmax(160px,1.2fr) repeat(4,auto);
+ padding:7px 0 2px;
+}
+#build-view.build-planner-v2 .bp2-comparator{
+ display:grid;
+ gap:5px;
+ margin:0;
+ padding:0 12px;
+ border:1px solid var(--bp2-line);
+ background:rgba(17,25,35,.42);
+}
+#build-view.build-planner-v2 .bp2-comparator-disclosure{
+ height:32px;
+ min-height:32px;
+}
+#build-view.build-planner-v2 .bp2-comparator .bp2-disclosure-content{padding:2px 0 10px}
+#build-view.build-planner-v2 .bp2-library-status{padding-top:4px}
+@media(max-width:900px){
+ #build-view.build-planner-v2 .bp2-library-controls{grid-template-columns:repeat(4,minmax(0,1fr))}
+ #build-view.build-planner-v2 .bp2-library-controls label{grid-column:span 2}
+}
+@media(max-width:760px){
+ #build-view.build-planner-v2 .bp2-config{grid-template-columns:minmax(0,1fr)}
+ #build-view.build-planner-v2 .bp2-build-library{grid-column:1}
+}
+@media(max-width:650px){
+ #build-view.build-planner-v2 .bp2-library-controls{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+ #build-view.build-planner-v2 .bp2-library-controls label{grid-column:span 2}
+ #build-view.build-planner-v2 .bp2-library-controls .bp2-library-button{width:100%;font-size:8px}
+ #build-view.build-planner-v2 .bp2-comparator{padding:0 10px}
+}
