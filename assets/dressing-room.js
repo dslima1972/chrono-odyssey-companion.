@@ -65,6 +65,33 @@ function renderSaved(){
   saved.splice(index,1);if(writeSaved(saved)){renderSaved();$("dressing-status").textContent="Combinação excluída."}
  }));
 }
+
+const gloveApproved={scale:0.675,x:0,y:-3.5};
+function applyGloveAdjustment(){
+ const scale=Number($("glove-scale").value),x=Number($("glove-x").value),y=Number($("glove-y").value);
+ const wrapper=$("layer-hands"),image=wrapper?.querySelector("img");
+ if(wrapper)wrapper.style.transform="translate("+x+"%,"+y+"%)";
+ if(image)image.style.transform="scale("+scale+","+scale+")";
+ $("glove-scale-value").textContent=(scale*100).toFixed(1).replace(".",",")+"%";
+ $("glove-x-value").textContent=(x>0?"+":"")+x.toFixed(1).replace(".",",")+"%";
+ $("glove-y-value").textContent=(y>0?"+":"")+y.toFixed(1).replace(".",",")+"%";
+}
+function resetGloveAdjustment(){
+ $("glove-scale").value=gloveApproved.scale;
+ $("glove-x").value=gloveApproved.x;
+ $("glove-y").value=gloveApproved.y;
+ applyGloveAdjustment();
+ $("dressing-status").textContent="Ajuste aprovado das luvas restaurado: 67,5%, X 0%, Y -3,5%.";
+}
+["glove-scale","glove-x","glove-y"].forEach(id=>$(id).addEventListener("input",applyGloveAdjustment));
+$("glove-reset").addEventListener("click",resetGloveAdjustment);
+$("glove-copy").addEventListener("click",async()=>{
+ const values="Luvas — tamanho: "+$("glove-scale-value").textContent+"; X: "+$("glove-x-value").textContent+"; Y: "+$("glove-y-value").textContent;
+ try{await navigator.clipboard.writeText(values);$("dressing-status").textContent="Configuração copiada: "+values}
+ catch(e){$("dressing-status").textContent=values}
+});
+applyGloveAdjustment();
+
 function renderAll(){renderComposition();renderItems();renderEquipped();renderSaved()}
 document.querySelectorAll("#dressing-slot-tabs [data-slot]").forEach(button=>button.addEventListener("click",()=>{activeSlot=button.dataset.slot;renderItems()}));
 $("dressing-clear").addEventListener("click",()=>{equipped={};renderAll();$("dressing-status").textContent="Todas as peças foram removidas."});
