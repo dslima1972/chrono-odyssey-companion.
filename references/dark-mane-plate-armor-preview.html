@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Preview — Dark Mane Plate Armor</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:22px;background:#17191d;color:#f2f2f2;font:15px/1.5 system-ui,Arial,sans-serif}
+main{max-width:900px;margin:auto}
+h1{font-size:22px;margin:0 0 8px}
+p{color:#c6c9ce;margin:0 0 16px}
+.stage{width:min(100%,720px);aspect-ratio:1;margin:0 auto 18px;position:relative;overflow:hidden;background-color:#555;background-image:linear-gradient(45deg,#777 25%,transparent 25%),linear-gradient(-45deg,#777 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#777 75%),linear-gradient(-45deg,transparent 75%,#777 75%);background-size:24px 24px;background-position:0 0,0 12px,12px -12px,-12px 0}
+.stage img{position:absolute;display:block;object-fit:contain}
+#mannequin{inset:0;width:100%;height:100%;z-index:0}
+#leggings{left:21%;top:36%;width:58%;height:58%;transform:scaleY(.92);transform-origin:center;pointer-events:none;z-index:1}
+#chest{inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
+#bootsLayer{position:absolute;inset:0;width:100%;height:100%;transform:translate(0,32%);transform-origin:center;pointer-events:none;z-index:3}
+#boots{inset:0;width:100%;height:100%;object-fit:fill;transform:scale(.5,.4);transform-origin:center}
+#glovesLayer{position:absolute;inset:0;width:100%;height:100%;transform:translate(0,-3.5%);transform-origin:center;pointer-events:none;z-index:4}
+#gloves{inset:0;width:100%;height:100%;object-fit:fill;transform:scale(.7,.7);transform-origin:center}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;max-width:720px;margin:auto;padding:14px;background:#22252a;border:1px solid #454950;border-radius:10px}
+label{display:flex;flex-direction:column;gap:5px;color:#e5e7eb}
+label span{display:flex;justify-content:space-between;gap:8px}
+input[type=range]{width:100%;accent-color:#a5c77b}
+.toggles{display:flex;flex-wrap:wrap;gap:18px;max-width:720px;margin:0 auto 12px}
+.toggles label{display:flex;flex-direction:row;align-items:center}
+button{background:#343b46;color:#fff;border:1px solid #596273;border-radius:6px;padding:8px 12px;cursor:pointer}
+.note{max-width:720px;margin:12px auto 0;font-size:13px;color:#aeb5bf}
+</style>
+</head>
+<body><main>
+<h1>Dark Mane Plate Armor — teste de sobreposição</h1>
+<p>Preview independente para avaliar o peitoral de mangas compridas com as peças já aprovadas. A ordem visual mantém o peitoral à frente da calça e as luvas à frente das mangas.</p>
+<div class="toggles">
+<label><input id="showChest" type="checkbox" checked> Mostrar peitoral</label>
+<label><input id="showLeggings" type="checkbox" checked> Mostrar calça</label>
+<label><input id="showBoots" type="checkbox" checked> Mostrar botas</label>
+<label><input id="showGloves" type="checkbox" checked> Mostrar luvas</label>
+<label>Opacidade do peitoral <input id="chestOpacity" type="range" min="20" max="100" value="100"><output id="chestOpacityValue">100%</output></label>
+<label>Opacidade das luvas <input id="gloveOpacity" type="range" min="20" max="100" value="100"><output id="gloveOpacityValue">100%</output></label>
+</div>
+<div class="stage">
+<img id="mannequin" src="avatar-mannequin-dark.png" alt="Manequim grafite">
+<img id="leggings" src="dark-mane-steel-leggings.png" alt="Dark Mane Steel Leggings">
+<img id="chest" src="dark-mane-plate-armor.png?v=1" alt="Dark Mane Plate Armor">
+<div id="bootsLayer"><img id="boots" src="dark-mane-plate-boots.png?v=20261125-3" alt="Dark Mane Plate Boots"></div>
+<div id="glovesLayer"><img id="gloves" src="dark-mane-gauntlets.png?v=3" alt="Dark Mane Gauntlets"></div>
+</div>
+<div class="controls">
+<label><span><b>Deslocamento horizontal das luvas</b><output id="offsetXValue">0%</output></span><input id="offsetX" type="range" min="-30" max="30" step="0.5" value="0"></label>
+<label><span><b>Deslocamento vertical das luvas</b><output id="offsetYValue">-3.5%</output></span><input id="offsetY" type="range" min="-30" max="30" step="0.5" value="-3.5"></label>
+<label><span><b>Largura das luvas</b><output id="scaleXValue">70%</output></span><input id="scaleX" type="range" min="20" max="180" step="1" value="70"></label>
+<label><span><b>Escala vertical das luvas</b><output id="scaleYValue">70%</output></span><input id="scaleY" type="range" min="20" max="180" step="1" value="70"></label>
+<div><button id="reset">Restaurar valores aprovados</button></div>
+</div>
+<p class="note">Camadas: manequim (0), calça (1), peitoral (2), botas (3), luvas (4). Assim, as luvas ficam sempre à frente das mangas. Os ajustes aprovados de calça, botas e luvas foram preservados; esta página não modifica os PNGs originais. Use a opacidade para conferir as áreas de contato e a sobreposição dos punhos.</p>
+</main>
+<script>
+const gloveLayer=document.getElementById('glovesLayer');
+const ids=['offsetX','offsetY','scaleX','scaleY'];
+const defaults={offsetX:0,offsetY:-3.5,scaleX:70,scaleY:70};
+function update(){
+ const v={};
+ for(const id of ids){v[id]=Number(document.getElementById(id).value);document.getElementById(id+'Value').textContent=(id.startsWith('scale')?v[id]+'%':(v[id]>0?'+':'')+v[id]+'%');}
+ gloveLayer.style.transform='translate('+v.offsetX+'%, '+v.offsetY+'%)';
+ document.getElementById('gloves').style.transform='scale('+v.scaleX/100+', '+v.scaleY/100+')';
+}
+ids.forEach(id=>document.getElementById(id).addEventListener('input',update));
+document.getElementById('showGloves').addEventListener('change',e=>gloveLayer.hidden=!e.target.checked);
+document.getElementById('showBoots').addEventListener('change',e=>document.getElementById('bootsLayer').hidden=!e.target.checked);
+document.getElementById('showChest').addEventListener('change',e=>document.getElementById('chest').hidden=!e.target.checked);
+document.getElementById('showLeggings').addEventListener('change',e=>document.getElementById('leggings').hidden=!e.target.checked);
+document.getElementById('chestOpacity').addEventListener('input',e=>{document.getElementById('chest').style.opacity=e.target.value/100;document.getElementById('chestOpacityValue').textContent=e.target.value+'%'});
+document.getElementById('gloveOpacity').addEventListener('input',e=>{gloveLayer.style.opacity=e.target.value/100;document.getElementById('gloveOpacityValue').textContent=e.target.value+'%'});
+document.getElementById('reset').addEventListener('click',()=>{
+ ids.forEach(id=>document.getElementById(id).value=defaults[id]);
+ for(const id of ['showGloves','showBoots','showLeggings','showChest'])document.getElementById(id).checked=true;
+ gloveLayer.hidden=false;gloveLayer.style.opacity=1;
+ document.getElementById('bootsLayer').hidden=false;
+ document.getElementById('leggings').hidden=false;
+ document.getElementById('chest').hidden=false;document.getElementById('chest').style.opacity=1;
+ document.getElementById('chestOpacity').value=100;document.getElementById('chestOpacityValue').textContent='100%';
+ document.getElementById('gloveOpacity').value=100;document.getElementById('gloveOpacityValue').textContent='100%';update();
+});
+update();
+</script>
+</body></html>
