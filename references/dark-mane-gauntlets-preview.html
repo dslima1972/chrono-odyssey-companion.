@@ -13,6 +13,7 @@ p{color:#c6c9ce;margin:0 0 16px}
 .stage{width:min(100%,720px);aspect-ratio:1;margin:0 auto 18px;position:relative;overflow:hidden;background-color:#555;background-image:linear-gradient(45deg,#777 25%,transparent 25%),linear-gradient(-45deg,#777 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#777 75%),linear-gradient(-45deg,transparent 75%,#777 75%);background-size:24px 24px;background-position:0 0,0 12px,12px -12px,-12px 0}
 .stage img{position:absolute;display:block;object-fit:contain}
 #mannequin{inset:0;width:100%;height:100%}
+#chest{inset:0;width:100%;height:100%;pointer-events:none}
 #leggings{left:21%;top:36%;width:58%;height:58%;transform:scaleY(.92);transform-origin:center;pointer-events:none}
 #bootsLayer{position:absolute;inset:0;width:100%;height:100%;transform:translate(0,32%);transform-origin:center;pointer-events:none}
 #boots{inset:0;width:100%;height:100%;object-fit:fill;transform:scale(.5,.4);transform-origin:center}
@@ -32,6 +33,7 @@ button{background:#343b46;color:#fff;border:1px solid #596273;border-radius:6px;
 <h1>Dark Mane Gauntlets — teste de sobreposição</h1>
 <p>As camadas já aprovadas de calça e botas permanecem com os ajustes registrados. Use os controles abaixo somente para posicionar e dimensionar as luvas.</p>
 <div class="toggles">
+<label><input id="showChest" type="checkbox" checked> Mostrar peitoral</label>
 <label><input id="showLeggings" type="checkbox" checked> Mostrar calça</label>
 <label><input id="showBoots" type="checkbox" checked> Mostrar botas</label>
 <label><input id="showGloves" type="checkbox" checked> Mostrar luvas</label>
@@ -39,6 +41,7 @@ button{background:#343b46;color:#fff;border:1px solid #596273;border-radius:6px;
 </div>
 <div class="stage">
 <img id="mannequin" src="avatar-mannequin-dark.png" alt="Manequim grafite">
+<img id="chest" src="ragged-clothes-v2.png?v=1" alt="Peitoral aprovado">
 <img id="leggings" src="dark-mane-steel-leggings.png" alt="Dark Mane Steel Leggings">
 <div id="bootsLayer"><img id="boots" src="dark-mane-plate-boots.png?v=20261125-3" alt="Dark Mane Plate Boots"></div>
 <div id="glovesLayer"><img id="gloves" src="dark-mane-gauntlets.png?v=2" alt="Dark Mane Gauntlets"></div>
@@ -65,14 +68,16 @@ function update(){
 ids.forEach(id=>document.getElementById(id).addEventListener('input',update));
 document.getElementById('showGloves').addEventListener('change',e=>layer.hidden=!e.target.checked);
 document.getElementById('showBoots').addEventListener('change',e=>document.getElementById('bootsLayer').hidden=!e.target.checked);
+document.getElementById('showChest').addEventListener('change',e=>document.getElementById('chest').hidden=!e.target.checked);
 document.getElementById('showLeggings').addEventListener('change',e=>document.getElementById('leggings').hidden=!e.target.checked);
 document.getElementById('opacity').addEventListener('input',e=>{layer.style.opacity=e.target.value/100;document.getElementById('opacityValue').textContent=e.target.value+'%'});
 document.getElementById('reset').addEventListener('click',()=>{
  ids.forEach(id=>document.getElementById(id).value=defaults[id]);
- for(const id of ['showGloves','showBoots','showLeggings'])document.getElementById(id).checked=true;
+ for(const id of ['showGloves','showBoots','showLeggings','showChest'])document.getElementById(id).checked=true;
  layer.hidden=false;layer.style.opacity=1;
  document.getElementById('bootsLayer').hidden=false;
  document.getElementById('leggings').hidden=false;
+ document.getElementById('chest').hidden=false;
  document.getElementById('opacity').value=100;document.getElementById('opacityValue').textContent='100%';update();
 });
 update();
