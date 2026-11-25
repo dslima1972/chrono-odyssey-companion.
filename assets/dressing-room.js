@@ -66,32 +66,24 @@ function renderSaved(){
  }));
 }
 
-const gloveApproved={scale:0.675,x:0,y:-3.5};
-function applyGloveAdjustment(){
- const scale=Number($("glove-scale").value),x=Number($("glove-x").value),y=Number($("glove-y").value);
- const wrapper=$("layer-hands"),image=wrapper?.querySelector("img");
- if(wrapper)wrapper.style.transform="translate("+x+"%,"+y+"%)";
- if(image)image.style.transform="scale("+scale+","+scale+")";
- $("glove-scale-value").textContent=(scale*100).toFixed(1).replace(".",",")+"%";
- $("glove-x-value").textContent=(x>0?"+":"")+x.toFixed(1).replace(".",",")+"%";
- $("glove-y-value").textContent=(y>0?"+":"")+y.toFixed(1).replace(".",",")+"%";
-}
-function resetGloveAdjustment(){
- $("glove-scale").value=gloveApproved.scale;
- $("glove-x").value=gloveApproved.x;
- $("glove-y").value=gloveApproved.y;
- applyGloveAdjustment();
- $("dressing-status").textContent="Ajuste aprovado das luvas restaurado: 67,5%, X 0%, Y -3,5%.";
-}
-["glove-scale","glove-x","glove-y"].forEach(id=>$(id).addEventListener("input",applyGloveAdjustment));
-$("glove-reset").addEventListener("click",resetGloveAdjustment);
-$("glove-copy").addEventListener("click",async()=>{
- const values="Luvas — tamanho: "+$("glove-scale-value").textContent+"; X: "+$("glove-x-value").textContent+"; Y: "+$("glove-y-value").textContent;
- try{await navigator.clipboard.writeText(values);$("dressing-status").textContent="Configuração copiada: "+values}
- catch(e){$("dressing-status").textContent=values}
-});
-applyGloveAdjustment();
-
+const stageBackgrounds={
+ graphite:"radial-gradient(ellipse at 50% 38%,#343a43 0,#1b2028 58%,#101318 100%)",
+ black:"#080a0e",
+ navy:"linear-gradient(145deg,#24364b,#111a28)",
+ gray:"#747b84",
+ silver:"#c7cbd0",
+ sand:"#d8cdb8",
+ white:"#f4f4f1"
+};
+document.querySelectorAll("[data-stage-background]").forEach(button=>button.addEventListener("click",()=>{
+ const key=button.dataset.stageBackground,stage=$("dressing-composition-stage");
+ if(!stage||!stageBackgrounds[key])return;
+ stage.style.background=stageBackgrounds[key];
+ document.querySelectorAll("[data-stage-background]").forEach(item=>{
+  const active=item===button;item.classList.toggle("active",active);item.setAttribute("aria-pressed",String(active));
+ });
+ $("dressing-status").textContent="Fundo de visualização alterado: "+button.querySelector("small").textContent+".";
+}));
 function renderAll(){renderComposition();renderItems();renderEquipped();renderSaved()}
 document.querySelectorAll("#dressing-slot-tabs [data-slot]").forEach(button=>button.addEventListener("click",()=>{activeSlot=button.dataset.slot;renderItems()}));
 $("dressing-clear").addEventListener("click",()=>{equipped={};renderAll();$("dressing-status").textContent="Todas as peças foram removidas."});
