@@ -9,9 +9,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./assets/styles.css?v=20261125glovefinal1">
+  <link rel="stylesheet" href="./assets/styles.css?v=20261125rarityfilters1">
   <script src="./assets/app.js?v=20261125buildlayout1" defer></script>
-  <script src="./assets/dressing-room.js?v=20261125glovefinal1" defer></script>
+  <script src="./assets/dressing-room.js?v=20261125rarityfilters1" defer></script>
 </head>
 <body>
   <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
@@ -237,6 +237,10 @@
         <button type="button" data-slot="back">Capa</button>
         <button type="button" data-slot="legs">Calça</button>
         <button type="button" data-slot="feet">Botas</button>
+      </div>
+      <div class="dressing-selection-filters" aria-label="Filtros das peças">
+        <label>Raridade<select id="dressing-rarity-filter"><option value="">Todas as raridades</option><option value="0">Comum</option><option value="1">Incomum</option><option value="2">Raro</option><option value="3">Épico</option><option value="4">Lendário</option><option value="special">Camada aprovada</option></select></label>
+        <label>Conjunto<select id="dressing-set-filter"><option value="">Todos os conjuntos</option><option value="Dark Mane">Dark Mane</option><option value="Sem conjunto">Sem conjunto</option></select></label>
       </div>
       <div class="dressing-items" id="dressing-items"><div class="loading">Carregando peças aprovadas…</div></div>
     </aside>
