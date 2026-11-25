@@ -10,16 +10,17 @@ body{margin:0;padding:22px;background:#17191d;color:#f2f2f2;font:15px/1.5 system
 main{max-width:900px;margin:auto}
 h1{font-size:22px;margin:0 0 8px}
 p{color:#c6c9ce;margin:0 0 16px}
-.stage{width:min(100%,720px);aspect-ratio:1;margin:0 auto 18px;position:relative;overflow:hidden;background-color:#555;background-image:linear-gradient(45deg,#777 25%,transparent 25%),linear-gradient(-45deg,#777 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#777 75%),linear-gradient(-45deg,transparent 75%,#777 75%);background-size:24px 24px;background-position:0 0,0 12px,12px -12px,-12px 0}
-.stage img{position:absolute;display:block;object-fit:contain}
-#mannequin{inset:0;width:100%;height:100%;z-index:0}
-#leggings{left:21%;top:36%;width:58%;height:58%;transform:scaleY(.92);transform-origin:center;pointer-events:none;z-index:1}
-#chestLayer{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;transform-origin:center}\n#chest{inset:0;width:100%;height:100%;pointer-events:none;object-fit:contain}
+.stage{width:min(92vw,650px);aspect-ratio:1;margin:0 auto 18px;position:relative;overflow:hidden;background-color:#555;background-image:linear-gradient(45deg,#777 25%,transparent 25%),linear-gradient(-45deg,#777 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#777 75%),linear-gradient(-45deg,transparent 75%,#777 75%);background-size:24px 24px;background-position:0 0,0 12px,12px -12px,-12px 0}
+.stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block}
+#mannequin{z-index:0}
+#leggings{left:21%;top:36%;width:58%;height:58%;inset:auto;transform:scaleY(.92);transform-origin:center;pointer-events:none;z-index:1}
+#chestLayer{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;transform-origin:center}
+#chest{inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none}
 #bootsLayer{position:absolute;inset:0;width:100%;height:100%;transform:translate(0,32%);transform-origin:center;pointer-events:none;z-index:3}
 #boots{inset:0;width:100%;height:100%;object-fit:fill;transform:scale(.5,.4);transform-origin:center}
 #glovesLayer{position:absolute;inset:0;width:100%;height:100%;transform:translate(0,-3.5%);transform-origin:center;pointer-events:none;z-index:4}
 #gloves{inset:0;width:100%;height:100%;object-fit:fill;transform:scale(.7,.7);transform-origin:center}
-.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;max-width:720px;margin:auto;padding:14px;background:#22252a;border:1px solid #454950;border-radius:10px}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;max-width:720px;margin:14px auto;padding:14px;background:#22252a;border:1px solid #454950;border-radius:10px}
 label{display:flex;flex-direction:column;gap:5px;color:#e5e7eb}
 label span{display:flex;justify-content:space-between;gap:8px}
 input[type=range]{width:100%;accent-color:#a5c77b}
@@ -48,41 +49,59 @@ button{background:#343b46;color:#fff;border:1px solid #596273;border-radius:6px;
 <div id="glovesLayer"><img id="gloves" src="dark-mane-gauntlets.png?v=3" alt="Dark Mane Gauntlets"></div>
 </div>
 <div class="controls">
+<label><span><b>Deslocamento horizontal do peitoral</b><output id="chestXValue">50%</output></span><input id="chestX" type="range" min="35" max="65" step="0.5" value="50"></label>
+<label><span><b>Deslocamento vertical do peitoral</b><output id="chestYValue">16%</output></span><input id="chestY" type="range" min="10" max="32" step="0.5" value="16"></label>
+<label><span><b>Largura do peitoral</b><output id="chestWidthValue">50%</output></span><input id="chestWidth" type="range" min="25" max="60" step="1" value="50"></label>
 <label><span><b>Deslocamento horizontal das luvas</b><output id="offsetXValue">0%</output></span><input id="offsetX" type="range" min="-30" max="30" step="0.5" value="0"></label>
 <label><span><b>Deslocamento vertical das luvas</b><output id="offsetYValue">-3.5%</output></span><input id="offsetY" type="range" min="-30" max="30" step="0.5" value="-3.5"></label>
 <label><span><b>Largura das luvas</b><output id="scaleXValue">70%</output></span><input id="scaleX" type="range" min="20" max="180" step="1" value="70"></label>
 <label><span><b>Escala vertical das luvas</b><output id="scaleYValue">70%</output></span><input id="scaleY" type="range" min="20" max="180" step="1" value="70"></label>
 <div><button id="reset">Restaurar valores aprovados</button></div>
 </div>
-<p class="note">Camadas: manequim (0), calça (1), peitoral (2), botas (3), luvas (4). Assim, as luvas ficam sempre à frente das mangas. Os ajustes aprovados de calça, botas e luvas foram preservados; esta página não modifica os PNGs originais. Os controles do peitoral reutilizam os valores aprovados no Ragged Clothes: horizontal 50%, vertical 16% e largura 50%. Use a opacidade para conferir as áreas de contato e a sobreposição dos punhos.</p>
+<p class="note">Os controles iniciais do peitoral reutilizam a referência aprovada no teste Ragged Clothes: horizontal 50%, vertical 16% e largura 50%. Os ajustes aprovados de calça, botas e luvas foram preservados. As luvas permanecem à frente das mangas. Esta página não modifica os PNGs originais.</p>
 </main>
 <script>
+const chestLayer=document.getElementById('chestLayer');
 const gloveLayer=document.getElementById('glovesLayer');
-const ids=['offsetX','offsetY','scaleX','scaleY'];
-const defaults={offsetX:0,offsetY:-3.5,scaleX:70,scaleY:70};
-function update(){
- const v={};
- for(const id of ids){v[id]=Number(document.getElementById(id).value);document.getElementById(id+'Value').textContent=(id.startsWith('scale')?v[id]+'%':(v[id]>0?'+':'')+v[id]+'%');}
- gloveLayer.style.transform='translate('+v.offsetX+'%, '+v.offsetY+'%)';
- document.getElementById('gloves').style.transform='scale('+v.scaleX/100+', '+v.scaleY/100+')';
+const chestIds=['chestX','chestY','chestWidth'];
+const gloveIds=['offsetX','offsetY','scaleX','scaleY'];
+const chestDefaults={chestX:50,chestY:16,chestWidth:50};
+const gloveDefaults={offsetX:0,offsetY:-3.5,scaleX:70,scaleY:70};
+function updateChest(){
+ const x=Number(document.getElementById('chestX').value);
+ const y=Number(document.getElementById('chestY').value);
+ const width=Number(document.getElementById('chestWidth').value);
+ document.getElementById('chestXValue').textContent=x+'%';
+ document.getElementById('chestYValue').textContent=y+'%';
+ document.getElementById('chestWidthValue').textContent=width+'%';
+ chestLayer.style.transform='translate('+(x-50)+'%, '+(y-16)+'%) scale('+(width/50)+')';
 }
-ids.forEach(id=>document.getElementById(id).addEventListener('input',update));
+function updateGloves(){
+ const v={};
+ for(const id of gloveIds){v[id]=Number(document.getElementById(id).value);document.getElementById(id+'Value').textContent=(id.startsWith('scale')?v[id]+'%':(v[id]>0?'+':'')+v[id]+'%');}
+ gloveLayer.style.transform='translate('+v.offsetX+'%, '+v.offsetY+'%)';
+ document.getElementById('gloves').style.transform='scale('+(v.scaleX/100)+', '+(v.scaleY/100)+')';
+}
+chestIds.forEach(id=>document.getElementById(id).addEventListener('input',updateChest));
+gloveIds.forEach(id=>document.getElementById(id).addEventListener('input',updateGloves));
 document.getElementById('showGloves').addEventListener('change',e=>gloveLayer.hidden=!e.target.checked);
 document.getElementById('showBoots').addEventListener('change',e=>document.getElementById('bootsLayer').hidden=!e.target.checked);
-document.getElementById('showChest').addEventListener('change',e=>document.getElementById('chest').hidden=!e.target.checked);
+document.getElementById('showChest').addEventListener('change',e=>chestLayer.hidden=!e.target.checked);
 document.getElementById('showLeggings').addEventListener('change',e=>document.getElementById('leggings').hidden=!e.target.checked);
 document.getElementById('chestOpacity').addEventListener('input',e=>{document.getElementById('chest').style.opacity=e.target.value/100;document.getElementById('chestOpacityValue').textContent=e.target.value+'%'});
 document.getElementById('gloveOpacity').addEventListener('input',e=>{gloveLayer.style.opacity=e.target.value/100;document.getElementById('gloveOpacityValue').textContent=e.target.value+'%'});
 document.getElementById('reset').addEventListener('click',()=>{
- ids.forEach(id=>document.getElementById(id).value=defaults[id]);\n Object.entries(chestDefaults).forEach(([id,value])=>document.getElementById(id).value=value);updateChest();
+ Object.entries(chestDefaults).forEach(([id,value])=>document.getElementById(id).value=value);
+ Object.entries(gloveDefaults).forEach(([id,value])=>document.getElementById(id).value=value);
  for(const id of ['showGloves','showBoots','showLeggings','showChest'])document.getElementById(id).checked=true;
  gloveLayer.hidden=false;gloveLayer.style.opacity=1;
  document.getElementById('bootsLayer').hidden=false;
  document.getElementById('leggings').hidden=false;
- document.getElementById('chest').hidden=false;document.getElementById('chest').style.opacity=1;
+ chestLayer.hidden=false;document.getElementById('chest').style.opacity=1;
  document.getElementById('chestOpacity').value=100;document.getElementById('chestOpacityValue').textContent='100%';
- document.getElementById('gloveOpacity').value=100;document.getElementById('gloveOpacityValue').textContent='100%';update();
+ document.getElementById('gloveOpacity').value=100;document.getElementById('gloveOpacityValue').textContent='100%';
+ updateChest();updateGloves();
 });
-update();
+updateChest();updateGloves();
 </script>
 </body></html>
