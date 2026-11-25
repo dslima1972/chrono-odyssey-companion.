@@ -4298,3 +4298,30 @@ footer{color:#7890a0}
  #build-view.build-planner-v2 .bp2-compare-stat-name{font-size:8px}
  #build-view.build-planner-v2 .bp2-compare-value{font-size:9px}
 }
+
+
+/* BUILD PLANNER — compact collapsible library and consistent controls */
+#build-view.build-planner-v2 .bp2-library-heading,
+#build-view.build-planner-v2 .bp2-comparator-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0}
+#build-view.build-planner-v2 .bp2-disclosure-button{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:100px;height:34px;padding:0 11px;border:1px solid rgba(120,144,160,.28);border-radius:3px;background:rgba(120,144,160,.08);color:#c4d0d7;font:600 9px Inter,sans-serif;cursor:pointer}
+#build-view.build-planner-v2 .bp2-disclosure-button:hover{border-color:rgba(193,166,109,.62);color:#f0dfb6}
+#build-view.build-planner-v2 .bp2-disclosure-icon{font-size:15px;line-height:1;transition:transform .18s ease}
+#build-view.build-planner-v2 .bp2-disclosure-button[aria-expanded="true"] .bp2-disclosure-icon{transform:rotate(180deg)}
+#build-view.build-planner-v2 .bp2-disclosure-content[hidden]{display:none!important}
+#build-view.build-planner-v2 .bp2-library-controls input,
+#build-view.build-planner-v2 .bp2-library-controls select,
+#build-view.build-planner-v2 .bp2-compare-controls select,
+#build-view.build-planner-v2 .bp2-library-button,
+#build-view.build-planner-v2 .bp2-disclosure-button{box-sizing:border-box;height:36px;min-height:36px}
+#build-view.build-planner-v2 .bp2-library-controls label,
+#build-view.build-planner-v2 .bp2-compare-controls label{align-content:start}
+#build-view.build-planner-v2 .bp2-compare-versus{padding-bottom:11px}
+@media(max-width:650px){
+ #build-view.build-planner-v2 .bp2-library-heading,
+ #build-view.build-planner-v2 .bp2-comparator-heading{align-items:flex-start}
+ #build-view.build-planner-v2 .bp2-disclosure-button{height:34px;min-height:34px;min-width:92px}
+ #build-view.build-planner-v2 .bp2-library-controls input,
+ #build-view.build-planner-v2 .bp2-library-controls select,
+ #build-view.build-planner-v2 .bp2-compare-controls select,
+ #build-view.build-planner-v2 .bp2-library-button{height:36px;min-height:36px}
+}
