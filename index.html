@@ -9,9 +9,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./assets/styles.css?v=20261125darkmane6">
+  <link rel="stylesheet" href="./assets/styles.css?v=20261125glovecontrols1">
   <script src="./assets/app.js?v=20261125buildlayout1" defer></script>
-  <script src="./assets/dressing-room.js?v=20261125darkmane1" defer></script>
+  <script src="./assets/dressing-room.js?v=20261125glovecontrols1" defer></script>
 </head>
 <body>
   <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
@@ -253,6 +253,31 @@
           <div id="layer-head" class="composition-layer-wrapper composition-helm-wrapper"><img src="./references/dark-mane-full-helm.png" alt="Dark Mane Full Helm"></div>
         </div>
       </div>
+      <section class="glove-adjustment-panel" aria-labelledby="glove-adjustment-title">
+        <div class="glove-adjustment-heading">
+          <div><span>AJUSTE EXPERIMENTAL</span><strong id="glove-adjustment-title">Encaixe das luvas</strong></div>
+          <span class="glove-experiment-tag">67,5% APROVADO PRESERVADO</span>
+        </div>
+        <label class="glove-adjustment-control" for="glove-scale">
+          <span>Tamanho <output id="glove-scale-value" for="glove-scale">66,0%</output></span>
+          <input id="glove-scale" type="range" min="0.60" max="0.72" step="0.005" value="0.66">
+        </label>
+        <div class="glove-adjustment-axis">
+          <label class="glove-adjustment-control" for="glove-x">
+            <span>Horizontal (X) <output id="glove-x-value" for="glove-x">0,0%</output></span>
+            <input id="glove-x" type="range" min="-8" max="8" step="0.5" value="0">
+          </label>
+          <label class="glove-adjustment-control" for="glove-y">
+            <span>Vertical (Y) <output id="glove-y-value" for="glove-y">-3,5%</output></span>
+            <input id="glove-y" type="range" min="-12" max="12" step="0.5" value="-3.5">
+          </label>
+        </div>
+        <div class="glove-adjustment-actions">
+          <button type="button" id="glove-reset" class="secondary-action">Restaurar ajuste aprovado (67,5%)</button>
+          <button type="button" id="glove-copy" class="secondary-action">Copiar configuração atual</button>
+        </div>
+        <p>Este teste não altera nem salva o ajuste aprovado. Use os controles para comparar e, se quiser, copie os valores para me enviar.</p>
+      </section>
       <p class="composition-note">As peças usam os encaixes aprovados nos previews. A capa permanece atrás do manequim; as demais camadas seguem a ordem de sobreposição validada.</p>
       <div class="dressing-actions">
         <button type="button" id="dressing-clear" class="secondary-action">Remover todas as peças</button>
