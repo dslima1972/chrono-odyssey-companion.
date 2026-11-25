@@ -4423,11 +4423,11 @@ footer{color:#7890a0}
 .composition-leggings{z-index:2;left:21%;top:36%;width:58%;height:58%;object-fit:contain;transform:scaleY(.92)}
 .composition-chest-wrapper{z-index:3;transform:translate(0,-12%)}
 .composition-chest-wrapper img{transform:scale(.6);object-fit:contain}
-.composition-boots-wrapper{z-index:4;transform:translate(0,20%)}
+.composition-boots-wrapper{z-index:4;transform:translate(0,25%)}
 .composition-boots-wrapper img{object-fit:fill;transform:scale(.5,.4)}
 .composition-gloves-wrapper{z-index:5;transform:translate(0,-3.5%)}
-.composition-gloves-wrapper img{object-fit:fill;transform:scale(.65,.65)}
-.composition-helm-wrapper{z-index:6;transform:translate(0,-25%)}
+.composition-gloves-wrapper img{object-fit:fill;transform:scale(.675,.675)}
+.composition-helm-wrapper{z-index:6;transform:translate(0,-32.5%)}
 .composition-helm-wrapper img{object-fit:contain;transform:scale(.37)}
 .composition-layer[hidden],.composition-layer-wrapper[hidden]{display:none!important}
 .dressing-room-approved .composition-note{font-size:11px;text-align:left;line-height:1.6}
