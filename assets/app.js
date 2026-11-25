@@ -336,7 +336,7 @@ function gearScoreValueAt(levels,score){
 }
 function optionStatEntries(option,score){
  const levels=option?.gearScore&&typeof option.gearScore==="object"?option.gearScore:null;
- const level=levels?(levels[String(score)]??null):null,entries=[];
+ const level=levels?(levels[String(score)]??Object.values(levels).find(entry=>entry&&typeof entry==="object")??null):null,entries=[];
  const types=[option?.statType1??level?.statType1,option?.statType2??level?.statType2];
  if(types.some(Boolean)){
   types.forEach((type,index)=>{
@@ -1211,7 +1211,7 @@ function renderBuildTotals(){
   const key=normalizeStatIdentity(stat.identity||stat.key||stat.label),label=normalizeStatIdentity(stat.label||"");
   const value=key+" "+label;
   if(/^(strength|dexterity|intelligence|vitality|wisdom|constitution|luck|agility|willpower)$/.test(key)||/(strength|dexterity|intelligence|vitality|wisdom|constitution|forca|destreza|inteligencia|vitalidade|sabedoria)/.test(value))return "attributes";
-  if(/(gather|harvest|mining|fishing|craft|process|lifeskill|life.?skill|coleta|minera|pesca|fabric|cozinh)/.test(value))return "lifeskill";
+  if(/(gather|harvest|mining|fishing|craft|process|lifeskill|life.?skill|skinning|woodcut|forag|herbal|cook|farm|logging|gatheringmastery|miningmastery|fishingpower|harvestingamount|coleta|minera|pesca|fabric|cozinh|cultiv|plantio)/.test(value))return "lifeskill";
   if(/(damage.*reduc|reduc.*damage|damage.?taken.?reduction|damage.?resistance|reduce.?damage|dano.*reduc|reduc.*dano|dano.?recebido|reduz.?dano|mitigation|defense|defence|armor|armour|resistance|block|parry|guard|defesa|resistencia|bloqueio|apar)/.test(value))return "defense";
   if(/(health|healing|heal|hitpoint|(^|[^a-z])hp|life|stamina|mana|regen|recovery|restoration|cura|vida|vigor|recuper)/.test(value))return "life";
   if(/(attack|damage|critical|crit|stagger|penetration|power|offense|offensive|ataque|dano|critico|ofens)/.test(value))return "attack";
@@ -1431,16 +1431,18 @@ function renderBuildComparison(){
  if(!left||!right||left.id===right.id){target.hidden=true;target.innerHTML="";setBuildLibraryStatus("Selecione duas builds diferentes para comparar.");return}
  const sa=left.summary||{average:0,averageDisplay:"0,0",stats:[]},sb=right.summary||{average:0,averageDisplay:"0,0",stats:[]};
  const cls=(x,y)=>x>y?"is-higher":x<y?"is-lower":"is-equal";
+ const arrow=(a,b)=>b>a?'<span class="bp2-compare-arrow is-higher" aria-hidden="true">↑</span>':b<a?'<span class="bp2-compare-arrow is-lower" aria-hidden="true">↓</span>':"";
  const mapA=new Map((sa.stats||[]).map(stat=>[stat.group+"::"+stat.label,stat])),mapB=new Map((sb.stats||[]).map(stat=>[stat.group+"::"+stat.label,stat])),keys=[...new Set([...mapA.keys(),...mapB.keys()])],groupNames=[...new Set(keys.map(key=>key.split("::")[0]))];
  const groups=groupNames.map(group=>{
   const rows=keys.filter(key=>key.startsWith(group+"::")).map(key=>{
    const x=mapA.get(key),y=mapB.get(key),vx=x?.value??0,vy=y?.value??0;
-   return '<div class="bp2-compare-row"><span class="bp2-compare-stat-name">'+escapeHtml(x?.label||y?.label||"Atributo")+'</span><strong class="bp2-compare-value '+(x&&y?cls(vx,vy):"")+'">'+(x?escapeHtml(x.display):"—")+'</strong><strong class="bp2-compare-value '+(x&&y?cls(vy,vx):"")+'">'+(y?escapeHtml(y.display):"—")+'</strong></div>';
+   return '<div class="bp2-compare-row"><span class="bp2-compare-stat-name">'+escapeHtml(x?.label||y?.label||"Atributo")+'</span><strong class="bp2-compare-value '+(x&&y?cls(vx,vy):"")+'">'+(x?escapeHtml(x.display):"—")+'</strong><strong class="bp2-compare-value '+(x&&y?cls(vy,vx):"")+'">'+(y?escapeHtml(y.display):"—")+(x&&y?arrow(vx,vy):"")+'</strong></div>';
   }).join("");
   return '<section class="bp2-compare-group"><h5>'+escapeHtml(group)+'</h5>'+rows+'</section>';
  }).join("");
- target.innerHTML='<div class="bp2-compare-result-heading"><div><span>COMPARAÇÃO DE RESUMOS</span><strong>'+escapeHtml(left.name)+' <small>vs.</small> '+escapeHtml(right.name)+'</strong></div><button type="button" class="bp2-compare-close" data-build-compare-close aria-label="Fechar comparação">×</button></div><div class="bp2-compare-average"><span>Gear Score médio</span><strong class="'+cls(Number(sa.average)||0,Number(sb.average)||0)+'">'+escapeHtml(sa.averageDisplay||"0,0")+'</strong><strong class="'+cls(Number(sb.average)||0,Number(sa.average)||0)+'">'+escapeHtml(sb.averageDisplay||"0,0")+'</strong></div><div class="bp2-compare-column-head"><span></span><strong>'+escapeHtml(left.name)+'</strong><strong>'+escapeHtml(right.name)+'</strong></div>'+groups;
- target.hidden=false;setBuildLibraryStatus("Comparação atualizada. Verde indica o valor numericamente maior; vermelho, o menor.");
+ const averageA=Number(sa.average)||0,averageB=Number(sb.average)||0;
+ target.innerHTML='<div class="bp2-compare-result-heading"><div><span>COMPARAÇÃO DE RESUMOS</span><strong>'+escapeHtml(left.name)+' <small>vs.</small> '+escapeHtml(right.name)+'</strong></div><button type="button" class="bp2-compare-close" data-build-compare-close aria-label="Fechar comparação">×</button></div><div class="bp2-compare-average"><span>Gear Score médio</span><strong class="'+cls(averageA,averageB)+'">'+escapeHtml(sa.averageDisplay||"0,0")+'</strong><strong class="'+cls(averageB,averageA)+'">'+escapeHtml(sb.averageDisplay||"0,0")+arrow(averageA,averageB)+'</strong></div><div class="bp2-compare-column-head"><span></span><strong>'+escapeHtml(left.name)+'</strong><strong>'+escapeHtml(right.name)+'</strong></div>'+groups;
+ target.hidden=false;setBuildLibraryStatus("Comparação atualizada. As setas destacam a diferença da build B em relação à build A.");
 }
 function initBuildLibrary(){
  if(!$("build-save-new"))return;renderBuildLibrary();
