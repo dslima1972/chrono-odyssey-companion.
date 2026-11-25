@@ -45,7 +45,7 @@ function renderItems(){
 }
 function renderEquipped(){
  const entries=Object.entries(equipped);
- $("dressing-equipped-list").innerHTML=entries.length?entries.map(([slot,item])=>'<div class="dressing-equipped-row '+rarityClass(item)+'" data-rarity="'+esc(rarityKey(item))+'"><img src="'+esc(item.imagePath)+'" alt=""><div><strong>'+esc(item.name)+'</strong><small>'+slots[slot]+' · '+rarity(item)+'</small></div><button type="button" data-remove-approved="'+slot+'" aria-label="Remover '+slots[slot]+'">×</button></div>').join(""):'<p class="dressing-empty">Nenhuma peça selecionada.</p>';
+ $("dressing-equipped-list").innerHTML=entries.length?entries.map(([slot,item])=>'<div class="dressing-equipped-row '+rarityClass(item)+'" data-rarity="'+esc(rarityKey(item))+'"><img src="'+esc(questlogImage(item))+'" alt=""><div><strong>'+esc(item.name)+'</strong><small>'+slots[slot]+' · '+rarity(item)+'</small></div><button type="button" data-remove-approved="'+slot+'" aria-label="Remover '+slots[slot]+'">×</button></div>').join(""):'<p class="dressing-empty">Nenhuma peça selecionada.</p>';
  $("dressing-equipped-list").querySelectorAll("[data-remove-approved]").forEach(button=>button.addEventListener("click",()=>{
   const slot=button.dataset.removeApproved,name=equipped[slot]?.name;delete equipped[slot];renderAll();$("dressing-status").textContent=(name||slots[slot])+" removido da composição.";
  }));
