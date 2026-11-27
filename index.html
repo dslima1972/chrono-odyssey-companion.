@@ -19,24 +19,23 @@
     <a class="brand" href="./" aria-label="Chrono Odyssey Companion - início">
       <span class="brand-mark">✦</span><span><strong>CHRONO ODYSSEY</strong><small>COMPANION · FIELD COMPENDIUM</small></span>
     </a>
+    <nav class="header-nav" aria-label="Navegação principal">
+      <button type="button" class="header-nav-item active" data-tab="overview" aria-current="page">Visão geral</button>
+      <button type="button" class="header-nav-item" data-tab="classes" aria-current="false">Classes</button>
+      <button type="button" class="header-nav-item" data-tab="equipment" aria-current="false">Equipamentos</button>
+      <button type="button" class="header-nav-item" data-tab="build" aria-current="false">Build Planner</button>
+      <button type="button" class="header-nav-item" data-tab="provador" aria-current="false">Provador</button>
+      <button type="button" class="header-nav-item" data-tab="about" aria-current="false">Sobre</button>
+    </nav>
     <span class="source-link">PROJETO INDEPENDENTE</span>
   </header>
   <main class="shell">
     
-    <nav class="tabs" aria-label="Seções do Companion">
-      <button type="button" class="tab active" data-tab="overview">Visão geral </button>
-      <button type="button" class="tab" data-tab="classes">Classes </button>
-      <button type="button" class="tab" data-tab="weapons">Armas </button>
-      <button type="button" class="tab" data-tab="armor">Armaduras </button>
-      <button type="button" class="tab" data-tab="accessories">Acessórios </button>
-      <button type="button" class="tab" data-tab="build">Build Planner </button>
-      <button type="button" class="tab" data-tab="provador">Provador </button>
-      <button type="button" class="tab" data-tab="about">Sobre o projeto </button>
-    </nav>
+
     <script>
       // Navegação independente do app.js: mantém os menus funcionais mesmo se o catálogo falhar.
       (function () {
-        const nav = document.querySelector('.tabs');
+        const nav = document.querySelector('.header-nav');
         if (!nav || nav.dataset.navigationReady) return;
         nav.dataset.navigationReady = 'true';
         nav.addEventListener('click', function (event) {
@@ -56,7 +55,40 @@
         });
       }());
     </script>
-    <section id="weapons-view" class="view">
+    <script>
+      (function () {
+        const switcher = document.querySelector('.equipment-switcher');
+        if (!switcher || switcher.dataset.ready) return;
+        switcher.dataset.ready = 'true';
+        switcher.addEventListener('click', function (event) {
+          const button = event.target.closest('[data-equipment-tab]');
+          if (!button) return;
+          const key = button.dataset.equipmentTab;
+          switcher.querySelectorAll('[data-equipment-tab]').forEach(function (item) {
+            const active = item === button;
+            item.classList.toggle('active', active);
+            item.setAttribute('aria-selected', String(active));
+          });
+          ['weapons', 'armor', 'accessories'].forEach(function (name) {
+            const panel = document.getElementById(name + '-view');
+            const active = name === key;
+            if (panel) {
+              panel.classList.toggle('active', active);
+              panel.hidden = !active;
+            }
+          });
+        });
+      }());
+    </script>
+    
+    
+    <section id="equipment-view" class="view">
+  <div class="equipment-switcher" role="tablist" aria-label="Categorias de equipamentos">
+    <button type="button" class="equipment-switch active" data-equipment-tab="weapons" role="tab" aria-selected="true">Armas</button>
+    <button type="button" class="equipment-switch" data-equipment-tab="armor" role="tab" aria-selected="false">Armaduras</button>
+    <button type="button" class="equipment-switch" data-equipment-tab="accessories" role="tab" aria-selected="false">Acessórios</button>
+  </div>
+  <section id="weapons-view" class="equipment-panel active">
       <div class="section-heading">
         <div><div class="eyebrow left">CATÁLOGO DE EQUIPAMENTOS</div><h2>Armas</h2></div>
         <div class="catalog-count" id="catalog-count">CARREGANDO…</div>
@@ -75,7 +107,7 @@
       </div>
       <div class="catalog-detail-host" id="weapon-detail-host" hidden></div>
     </section>
-    <section id="armor-view" class="view">
+  <section id="armor-view" class="equipment-panel" hidden>
       <div class="section-heading">
         <div><div class="eyebrow left">CATÁLOGO DE EQUIPAMENTOS</div><h2>Armaduras</h2></div>
         <div class="catalog-count" id="armor-catalog-count">AGUARDANDO CATÁLOGO</div>
@@ -99,6 +131,20 @@
       <div class="catalog-detail-host" id="armor-detail-host" hidden></div>
       <p class="armor-data-note" id="armor-data-status">O catálogo de armaduras será armazenado separadamente do catálogo de armas.</p>
     </section>
+  <section id="accessories-view" class="equipment-panel" hidden>
+      <div class="section-heading"><div><div class="eyebrow left">CATÁLOGO DE EQUIPAMENTOS</div><h2>Acessórios</h2></div><div class="catalog-count" id="accessory-catalog-count">CARREGANDO…</div></div>
+      <p class="intro-copy">Explore colares, anéis e cintos. Atributos, sufixos e efeitos são exibidos conforme os registros disponíveis no catálogo local do Companion.</p>
+      <div class="filters armor-filters catalog-filters">
+        <label class="search-wrap"><span>⌕</span><input id="accessory-search" type="search" placeholder="Buscar acessório pelo nome…" autocomplete="off"></label>
+        <select id="accessory-type-filter" aria-label="Filtrar por tipo"><option value="">Todos os tipos</option><option value="necklace">Colares</option><option value="ring">Anéis</option><option value="belt">Cintos</option></select>
+        <select id="accessory-rarity-filter" aria-label="Filtrar por raridade"><option value="">Todas as raridades</option><option>Comum</option><option>Incomum</option><option>Raro</option><option>Épico</option><option>Lendário</option></select>
+        <select id="accessory-stat-filter" aria-label="Filtrar por estatística"><option value="">Todas as estatísticas · abrir para carregar</option></select>
+      </div>
+      <div class="catalog-controls-row"><div class="catalog-viewbar" aria-label="Forma de exibição dos acessórios"><button type="button" class="catalog-view-button active" data-catalog-view="list" data-catalog-target="accessories">Lista</button><button type="button" class="catalog-view-button" data-catalog-view="grid" data-catalog-target="accessories">Blocos</button></div></div>
+      <div class="catalog-layout accessory-catalog-layout" id="accessory-catalog-layout"><div class="weapon-list accessory-list" id="accessory-list"><div class="loading"><span class="spinner"></span>Consultando catálogo…</div></div><aside class="accessory-detail empty-detail" id="accessory-detail"><div class="detail-ornament">✧</div><h3>Selecione um acessório</h3><p>Escolha um colar, anel ou cinto para consultar sua ficha.</p></aside></div>
+      <p class="armor-data-note" id="accessory-data-status">Aguardando os dados locais do catálogo de acessórios.</p>
+    </section>
+</section>
     <section id="overview-view" class="view active">
 <div class="section-heading"><div><div class="eyebrow left">O MUNDO DE SETERA</div><h2>Conheça Chrono Odyssey</h2></div><div class="catalog-count">VISÃO GERAL DO JOGO</div></div>
 <p class="intro-copy overview-lead">Um MMORPG de ação em mundo aberto no qual exploração, batalhas desafiadoras e manipulação do tempo se encontram. Em Setera, cada região guarda histórias, ameaças e atividades que vão muito além do combate.</p>
@@ -141,19 +187,7 @@
         }());
       </script>
     </section>
-    <section id="accessories-view" class="view">
-      <div class="section-heading"><div><div class="eyebrow left">CATÁLOGO DE EQUIPAMENTOS</div><h2>Acessórios</h2></div><div class="catalog-count" id="accessory-catalog-count">CARREGANDO…</div></div>
-      <p class="intro-copy">Explore colares, anéis e cintos. Atributos, sufixos e efeitos são exibidos conforme os registros disponíveis no catálogo local do Companion.</p>
-      <div class="filters armor-filters catalog-filters">
-        <label class="search-wrap"><span>⌕</span><input id="accessory-search" type="search" placeholder="Buscar acessório pelo nome…" autocomplete="off"></label>
-        <select id="accessory-type-filter" aria-label="Filtrar por tipo"><option value="">Todos os tipos</option><option value="necklace">Colares</option><option value="ring">Anéis</option><option value="belt">Cintos</option></select>
-        <select id="accessory-rarity-filter" aria-label="Filtrar por raridade"><option value="">Todas as raridades</option><option>Comum</option><option>Incomum</option><option>Raro</option><option>Épico</option><option>Lendário</option></select>
-        <select id="accessory-stat-filter" aria-label="Filtrar por estatística"><option value="">Todas as estatísticas · abrir para carregar</option></select>
-      </div>
-      <div class="catalog-controls-row"><div class="catalog-viewbar" aria-label="Forma de exibição dos acessórios"><button type="button" class="catalog-view-button active" data-catalog-view="list" data-catalog-target="accessories">Lista</button><button type="button" class="catalog-view-button" data-catalog-view="grid" data-catalog-target="accessories">Blocos</button></div></div>
-      <div class="catalog-layout accessory-catalog-layout" id="accessory-catalog-layout"><div class="weapon-list accessory-list" id="accessory-list"><div class="loading"><span class="spinner"></span>Consultando catálogo…</div></div><aside class="accessory-detail empty-detail" id="accessory-detail"><div class="detail-ornament">✧</div><h3>Selecione um acessório</h3><p>Escolha um colar, anel ou cinto para consultar sua ficha.</p></aside></div>
-      <p class="armor-data-note" id="accessory-data-status">Aguardando os dados locais do catálogo de acessórios.</p>
-    </section>
+    
     <section id="about-view" class="view">
       <div class="section-heading"><div><div class="eyebrow left">INDEPENDÊNCIA E TRANSPARÊNCIA</div><h2>Sobre o projeto</h2></div></div>
       <p class="intro-copy">O Chrono Odyssey Companion é um compêndio comunitário independente, mantido para reunir informações e ferramentas de consulta sobre o jogo em um só lugar.</p>
