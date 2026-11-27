@@ -4524,3 +4524,15 @@ footer{color:#7890a0}
 .equipment-switch:hover,.equipment-switch.active{color:var(--gold2);background:transparent}
 .equipment-switch.active{border-bottom-color:var(--gold)}
 @media(max-width:520px){.equipment-switcher{gap:0;padding-bottom:0}.equipment-switch{padding:12px 10px 10px;font-size:9px}}
+
+
+/* PROVADOR MOBILE: manter a composição e todas as camadas na proporção quadrada original */
+@media(max-width:700px){
+ .dressing-room-approved .dressing-composition{
+  width:min(100%,390px);
+  max-width:390px;
+  height:auto!important;
+  aspect-ratio:1 / 1;
+  flex:0 0 auto;
+ }
+}
