@@ -2,6 +2,9 @@
 
 Compêndio comunitário independente, em português, para consulta de informações e equipamentos de Chrono Odyssey. O site é publicado como conteúdo estático pelo GitHub Pages.
 
+## Documentação visual
+- [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md): manual de identidade visual, paleta, tipografia, componentes e regras responsivas. A página Classes é a referência estética principal.
+
 ## Estrutura
 - `index.html`: estrutura do site e conteúdo institucional.
 - `assets/`: identidade visual, imagens e comportamento da interface.
