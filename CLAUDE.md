@@ -77,10 +77,10 @@ Nomes do jogo: Ranger (o Metabattle chama de "Archer") e Swordsman ("Swordman").
 6. Ícones das armas hoje são carregados do servidor do Questlog (hotlink). Avaliar guardar cópias locais (ver riscos abaixo).
 
 ## Identidade visual
-
-- Tema escuro, `theme-color` `#0a1118`. Fontes: **Cinzel** (títulos) e **Inter** (texto), via Google Fonts. Detalhes decorativos em símbolos Unicode (✦ ✧ ⌘ ◈).
-- Paleta alternativa extraída das telas de classe do jogo (opcional): fundo `#0c0b0a`, painel `#16130f`, texto creme `#ece1c3`, dourado `#cdb06b`, bronze `#887352`, azul-aço `#7f9bab`, borda `#3a3226`.
-- Mobile-first: respeitar o ponto de quebra de 760 px, alvos de toque grandes e a área segura (notch/barra do sistema).
+- Consultar **`DESIGN_SYSTEM.md`** antes de criar ou revisar páginas. Ele registra a identidade visual aprovada e as regras de consistência.
+- A página **Classes** é a referência estética principal mais recente: tema escuro azul-carvão, superfícies discretas, Cinzel (títulos), Inter (textos), detalhes metálicos em dourado/bronze e acentos próprios por classe.
+- Não tratar a paleta legada do `assets/styles.css` como referência visual definitiva para novos módulos; consultar o manual e alinhar estilos gradualmente quando houver revisão aprovada.
+- Mobile-first: validar cada página em telas pequenas, preservar ordem lógica, alvos de toque adequados e não comprometer o desktop ao corrigir o mobile.
 
 ## Direitos autorais e termos de uso
 
