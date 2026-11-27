@@ -4547,3 +4547,199 @@ footer{color:#7890a0}
 
 /* Provador mobile — catálogo antes da composição */
 @media(max-width:700px){.dressing-room-approved>.dressing-catalog{grid-row:1}.dressing-room-approved>.dressing-preview{grid-row:2}}
+
+
+/* ==========================================================
+   EQUIPAMENTOS — alinhamento com o Design System (Classes)
+   Escopo restrito à página de catálogos; raridades preservadas.
+   ========================================================== */
+#equipment-view{
+  --bg:#080d13;
+  --panel:#101923;
+  --panel2:#131f2a;
+  --border:rgba(174,190,202,.16);
+  --gold:#c8a66b;
+  --gold2:#e6d2ad;
+  --text:#e8edf0;
+  --muted:#9aa9b4;
+  --faint:#84939d;
+}
+
+/* Subnavegação e controles */
+#equipment-view .equipment-switcher{
+  border-bottom-color:rgba(174,190,202,.16);
+}
+#equipment-view .equipment-switch{
+  color:#9aa9b4;
+}
+#equipment-view .equipment-switch:hover,
+#equipment-view .equipment-switch.active{
+  color:#e6d2ad;
+  background:transparent;
+}
+#equipment-view .equipment-switch.active{
+  border-bottom-color:#c8a66b;
+}
+#equipment-view .catalog-filters>.search-wrap,
+#equipment-view .catalog-filters>select{
+  border-bottom-color:rgba(174,190,202,.22)!important;
+  color:#9aa9b4;
+}
+#equipment-view .catalog-filters>.search-wrap:hover,
+#equipment-view .catalog-filters>select:hover{
+  border-bottom-color:rgba(174,190,202,.48)!important;
+  background:rgba(174,190,202,.035)!important;
+}
+#equipment-view .catalog-filters>.search-wrap:focus-within,
+#equipment-view .catalog-filters>select:focus{
+  border-bottom-color:#c8a66b!important;
+  background:rgba(200,166,107,.045)!important;
+}
+#equipment-view .catalog-filters>select option{
+  background:#101923;
+  color:#e8edf0;
+}
+#equipment-view .catalog-controls-row .catalog-view-button,
+#equipment-view .catalog-controls-row .armor-mode{
+  color:#9aa9b4;
+}
+#equipment-view .catalog-controls-row .catalog-view-button:hover,
+#equipment-view .catalog-controls-row .armor-mode:hover{
+  color:#e8edf0;
+  border-bottom-color:rgba(174,190,202,.48)!important;
+}
+#equipment-view .catalog-controls-row .catalog-view-button.active,
+#equipment-view .catalog-controls-row .armor-mode.active{
+  color:#e6d2ad;
+  border-bottom-color:#c8a66b!important;
+}
+
+/* Superfícies, listas e áreas de detalhe */
+#equipment-view .weapon-list{
+  background:rgba(16,25,35,.94);
+  border-color:rgba(174,190,202,.16);
+}
+#equipment-view .weapon-row{
+  color:#e8edf0;
+  border-bottom-color:rgba(174,190,202,.12);
+}
+#equipment-view .weapon-row[style*="--rarity"]{
+  background:linear-gradient(145deg,
+    color-mix(in srgb,var(--rarity) 30%,#101923),
+    color-mix(in srgb,var(--rarity) 20%,#0d151e) 58%,
+    color-mix(in srgb,var(--rarity) 12%,#080d13))!important;
+  border-color:color-mix(in srgb,var(--rarity) 50%,rgba(174,190,202,.16))!important;
+}
+#equipment-view .weapon-row[style*="--rarity"]:hover,
+#equipment-view .weapon-row[style*="--rarity"].selected{
+  background:linear-gradient(145deg,
+    color-mix(in srgb,var(--rarity) 38%,#101923),
+    color-mix(in srgb,var(--rarity) 26%,#0d151e) 58%,
+    color-mix(in srgb,var(--rarity) 16%,#080d13))!important;
+  border-color:color-mix(in srgb,var(--rarity) 78%,rgba(174,190,202,.16))!important;
+}
+#equipment-view .weapon-symbol{
+  background-color:#131f2a;
+}
+#equipment-view .weapon-name{
+  color:#e8edf0;
+}
+#equipment-view .weapon-meta{
+  color:#9aa9b4!important;
+  text-shadow:none!important;
+}
+#equipment-view .detail-panel{
+  background:linear-gradient(145deg,#131f2a,#101923);
+  border-color:rgba(174,190,202,.2);
+}
+#equipment-view .detail-field,
+#equipment-view .detail-disclosure,
+#equipment-view .stat-line,
+#equipment-view .progression-grid div{
+  background:#101923;
+  border-color:rgba(174,190,202,.14);
+}
+#equipment-view .detail-top,
+#equipment-view .detail-section,
+#equipment-view .suffix-row{
+  border-color:rgba(174,190,202,.16);
+}
+#equipment-view .detail-top h3,
+#equipment-view .detail-field strong,
+#equipment-view .stat-line strong{
+  color:#e8edf0;
+}
+#equipment-view .detail-top p,
+#equipment-view .detail-field small,
+#equipment-view .stat-line span,
+#equipment-view .detail-note,
+#equipment-view .detail-muted{
+  color:#9aa9b4;
+}
+#equipment-view .detail-section h4,
+#equipment-view .detail-disclosure summary,
+#equipment-view .detail-ornament{
+  color:#e6d2ad;
+}
+#equipment-view .detail-meta-chip{
+  background:#131f2a;
+  border-color:rgba(174,190,202,.16);
+}
+#equipment-view .detail-meta-chip small{
+  color:#9aa9b4;
+}
+
+/* Fichas e blocos: base neutra, com a raridade como acento */
+#equipment-view #weapons-view .equipment-inspect-card,
+#equipment-view #armor-view .equipment-inspect-card,
+#equipment-view #accessories-view .equipment-inspect-card,
+#equipment-view #accessories-view .accessory-inspect-card.equipment-inspect-card,
+#equipment-view .catalog-card{
+  background:linear-gradient(145deg,
+    color-mix(in srgb,var(--rarity) 30%,#101923),
+    color-mix(in srgb,var(--rarity) 20%,#0d151e) 58%,
+    color-mix(in srgb,var(--rarity) 12%,#080d13))!important;
+  border-color:color-mix(in srgb,var(--rarity) 50%,rgba(174,190,202,.16))!important;
+}
+#equipment-view .equipment-inspect-card .accessory-inspect-heading h3,
+#equipment-view .catalog-card-copy strong,
+#equipment-view .catalog-card-copy h3{
+  color:#e8edf0;
+}
+#equipment-view .equipment-inspect-card .accessory-inspect-meta-value{
+  color:#e8edf0;
+}
+#equipment-view .equipment-inspect-card .gear-score-value label{
+  color:rgba(232,237,240,.7);
+}
+#equipment-view .equipment-inspect-card .gear-score-value strong{
+  color:#e8edf0;
+}
+#equipment-view .equipment-inspect-card .accessory-inspect-stat strong{
+  color:#e8edf0!important;
+}
+#equipment-view .equipment-inspect-card .accessory-inspect-stat span{
+  color:rgba(232,237,240,.88)!important;
+}
+#equipment-view .equipment-inspect-card .accessory-inspect-stat small,
+#equipment-view .equipment-inspect-card .accessory-inspect-footer{
+  color:rgba(154,169,180,.78)!important;
+}
+#equipment-view .equipment-inspect-card .accessory-inspect-footer{
+  border-top-color:rgba(174,190,202,.16);
+}
+#equipment-view .equipment-inspect-card .accessory-inspect-source{
+  color:#e6d2ad;
+}
+#equipment-view .armor-set-group>header{
+  background:#131f2a;
+  border-bottom-color:rgba(174,190,202,.16);
+}
+#equipment-view .armor-set-group>header strong{
+  color:#e6d2ad;
+}
+#equipment-view .armor-data-note{
+  color:#84939d;
+}
+
+/* Mantém as cinco cores semânticas de raridade inalteradas. */
