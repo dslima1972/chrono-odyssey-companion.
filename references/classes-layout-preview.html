@@ -129,7 +129,9 @@ function skillModalMarkup(skill){
  const description=skillTranslations[String(skill.id)]||originalDescription;
  const cooldown=Number(skill.cooldown)>0?"Cooldown: "+Number(skill.cooldown)+"s":"";
  const meta=[skill.normalized&&skill.normalized.kind==="special_action"?"Special Action":"Active Skill",cooldown].filter(Boolean).join(" · ");
- const animation=String(skill.id)==="111101"?'<div class="skill-modal-animation"><span class="skill-modal-animation-label">Animação ilustrativa · teste</span><img src="./../assets/images/skills/animations/111101-upward-slash-i.gif" alt="Animação ilustrativa da habilidade Upward Slash I" loading="lazy"></div>':'<div class="skill-modal-no-animation">Animação demonstrativa ainda não disponível para esta habilidade.</div>';
+ const skillAnimationFiles={"111101":"111101-upward-slash-i.gif","211101":"211101-radiant-arrow-i.gif","311001":"311001-shield-strike-i.gif","411101":"411101-ice-spear-i.gif","511001":"511001-sweeping-slash-i.gif","611001":"611001-triple-slash-i.gif"};
+ const animationFile=skillAnimationFiles[String(skill.id)];
+ const animation=animationFile?'<div class="skill-modal-animation"><span class="skill-modal-animation-label">Animação ilustrativa</span><img src="./../assets/images/skills/animations/'+animationFile+'" alt="Animação ilustrativa da habilidade '+esc(skill.name)+'" loading="lazy"></div>':'<div class="skill-modal-no-animation">Animação demonstrativa ainda não disponível para esta habilidade.</div>';
  return '<button type="button" class="skill-modal-close" id="skillModalClose" aria-label="Fechar">×</button><div class="skill-modal-kicker">HABILIDADE · '+esc(current().name)+'</div><div class="skill-modal-head"><img class="skill-modal-icon" src="'+esc(skillIconUrl(skill))+'" alt="" onerror="this.style.opacity=\'.25\'"><div><h2 class="skill-modal-title" id="skillModalTitle">'+esc(skill.name)+'</h2><div class="skill-modal-meta">'+esc(meta)+'</div></div></div><p class="skill-modal-description">'+esc(description)+'</p>'+animation;
 }
 function openSkillModal(skill){
