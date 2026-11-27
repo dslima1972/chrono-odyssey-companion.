@@ -127,8 +127,19 @@
 </section>
 <section id="classes-view" class="view">
       <div class="section-heading"><div><div class="eyebrow left">CAMINHOS DE COMBATE</div><h2>Classes</h2></div></div>
-      <p class="intro-copy">As classes abaixo organizam as famílias de armas associadas a cada estilo. Descrições aprofundadas e habilidades serão adicionadas somente após validação nas fontes.</p>
-      <div class="class-grid" id="class-grid"></div><div class="class-detail" id="class-detail" hidden></div>
+      <iframe id="classes-compendium-frame" title="Página interativa de classes de Chrono Odyssey" src="./references/classes-layout-preview.html?embed=1" loading="lazy" style="display:block;width:100%;height:900px;border:0;background:transparent"></iframe>
+      <div id="class-grid" hidden></div><div id="class-detail" hidden></div>
+      <script>
+        (function(){
+          const frame=document.getElementById("classes-compendium-frame");
+          if(!frame)return;
+          window.addEventListener("message",function(event){
+            if(event.source!==frame.contentWindow||event.origin!==location.origin||!event.data||event.data.type!=="classes-compendium-height")return;
+            const height=Number(event.data.height);
+            if(Number.isFinite(height))frame.style.height=Math.max(760,Math.min(1800,height))+"px";
+          });
+        }());
+      </script>
     </section>
     <section id="accessories-view" class="view">
       <div class="section-heading"><div><div class="eyebrow left">CATÁLOGO DE EQUIPAMENTOS</div><h2>Acessórios</h2></div><div class="catalog-count" id="accessory-catalog-count">CARREGANDO…</div></div>
