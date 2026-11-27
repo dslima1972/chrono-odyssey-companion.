@@ -1,12 +1,30 @@
+// Navegação interna da página Equipamentos.
+document.addEventListener("click",function(event){
+ const button=event.target.closest(".equipment-switcher [data-equipment-tab]");
+ if(!button)return;
+ const key=button.dataset.equipmentTab;
+ const switcher=button.closest(".equipment-switcher");
+ switcher.querySelectorAll("[data-equipment-tab]").forEach(item=>{
+  const active=item===button;
+  item.classList.toggle("active",active);
+  item.setAttribute("aria-selected",String(active));
+ });
+ ["weapons","armor","accessories"].forEach(name=>{
+  const panel=document.getElementById(name+"-view");
+  const active=name===key;
+  if(panel){panel.classList.toggle("active",active);panel.hidden=!active}
+ });
+},true);
+
 // Navegação principal resiliente: delegação em capture, independente da inicialização dos catálogos.
 document.addEventListener("click",function(event){
- const tab=event.target.closest(".tabs [data-tab]");
+ const tab=event.target.closest(".header-nav [data-tab]");
  if(!tab)return;
  const key=tab.dataset.tab;
- const target=document.getElementById(key+"-view");
+ const target=document.getElementById((key==="equipment"?"equipment":key)+"-view");
  if(!target)return;
  event.preventDefault();
- document.querySelectorAll(".tabs [data-tab]").forEach(button=>{
+ document.querySelectorAll(".header-nav [data-tab]").forEach(button=>{
   const selected=button===tab;
   button.classList.toggle("active",selected);
   button.setAttribute("aria-current",selected?"page":"false");
