@@ -28,6 +28,14 @@ html.embedded .topbar,html.embedded .page-head{display:none!important}
 html.embedded,html.embedded body{background:#080d13!important}
 html.embedded .shell{width:100%;max-width:none;margin:0;padding:0}
 html.embedded .class-layout{height:min(760px,calc(100vh - 24px))}
+
+/* MOBILE EMBED: O LAYOUT E O PAINEL CRESCEM COM O CONTEUDO, MANTENDO AS REFERENCIAS NO FLUXO */
+@media(max-width:850px){
+ html.embedded .class-layout{height:auto!important;min-height:0!important}
+ html.embedded .detail-panel{height:auto!important;min-height:560px;overflow:visible}
+ html.embedded .panel-content{flex:initial;min-height:0;overflow:visible;overscroll-behavior:auto}
+ html.embedded .references-footer{position:static;display:block;clear:both;margin:18px 2px 12px;padding-bottom:14px}
+}
 </style>
 <script>if(new URLSearchParams(location.search).has("embed"))document.documentElement.classList.add("embedded");</script>
 </head>
