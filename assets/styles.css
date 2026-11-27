@@ -4482,3 +4482,37 @@ footer{color:#7890a0}
 .dressing-room-approved .rarity-4{--rarity-color:#e5ae55;--rarity-bg:rgba(196,133,42,.17);--rarity-border:rgba(229,174,85,.48)}
 .dressing-room-approved .rarity-special{--rarity-color:#aeb8c2;--rarity-bg:rgba(120,144,160,.1);--rarity-border:rgba(160,175,188,.3)}
 @media(max-width:700px){.dressing-selection-filters{grid-template-columns:1fr 1fr;gap:6px}.dressing-selection-filters select{font-size:9px;padding:0 5px}}
+
+
+/* NAVEGACAO GLOBAL NO CABECALHO */
+.topbar{height:auto;min-height:76px;gap:8px 22px;flex-wrap:nowrap}
+.header-nav{display:flex;align-items:center;justify-content:flex-end;gap:2px;min-width:0;flex:1}
+.header-nav-item{appearance:none;border:0;border-bottom:2px solid transparent;background:transparent;color:var(--muted);cursor:pointer;padding:13px 10px 11px;font:600 10px Inter,system-ui,sans-serif;letter-spacing:.45px;white-space:nowrap}
+.header-nav-item:hover,.header-nav-item.active{color:var(--gold2)}
+.header-nav-item.active{border-bottom-color:var(--gold)}
+@media(max-width:1120px){
+ .topbar{flex-wrap:wrap;justify-content:space-between;padding-top:10px;padding-bottom:0;gap:0 16px}
+ .header-nav{order:3;flex:0 0 100%;justify-content:flex-start;margin-top:8px;border-top:1px solid rgba(120,144,160,.18);overflow-x:auto;scrollbar-width:none}
+ .header-nav::-webkit-scrollbar{display:none}
+ .header-nav-item{padding:12px 12px 10px}
+ .source-link{margin-left:auto}
+}
+@media(max-width:760px){
+ .topbar{min-height:0;padding:10px 16px 0;gap:0 10px}
+ .brand{gap:8px}
+ .brand-mark{font-size:25px}
+ .brand strong{font-size:10px}
+ .brand small{font-size:7px;letter-spacing:1.4px}
+ .source-link{font-size:7px;letter-spacing:.7px}
+ .header-nav{margin-top:8px;margin-left:-16px;margin-right:-16px;padding:0 8px;flex-wrap:nowrap}
+ .header-nav-item{flex:0 0 auto;padding:12px 11px 10px;font-size:9px}
+}
+
+/* SUBNAVEGACAO DA PAGINA EQUIPAMENTOS */
+.equipment-switcher{display:flex;align-items:center;gap:5px;margin:0 0 24px;padding:0 0 10px;border-bottom:1px solid var(--border)}
+.equipment-switch{appearance:none;border:1px solid transparent;border-radius:2px;background:transparent;color:var(--muted);cursor:pointer;padding:9px 16px;font:600 10px Inter,system-ui,sans-serif;letter-spacing:1px;text-transform:uppercase}
+.equipment-switch:hover,.equipment-switch.active{color:var(--gold2);background:rgba(195,163,106,.08)}
+.equipment-switch.active{border-color:rgba(195,163,106,.35)}
+.equipment-panel{display:none}
+.equipment-panel.active{display:block}
+@media(max-width:520px){.equipment-switcher{gap:3px;margin-bottom:18px}.equipment-switch{flex:1;padding:9px 6px;font-size:9px}}
