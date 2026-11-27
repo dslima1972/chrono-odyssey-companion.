@@ -4536,3 +4536,11 @@ footer{color:#7890a0}
   flex:0 0 auto;
  }
 }
+
+
+/* PROVADOR MOBILE: refinamento vertical individual das camadas aprovadas */
+@media(max-width:700px){
+ .dressing-room-approved .composition-helm-wrapper{transform:translate(0,-38.5%)}
+ .dressing-room-approved .composition-chest-wrapper{transform:translate(0,-16%)}
+ .dressing-room-approved .composition-boots-wrapper{transform:translate(0,29%)}
+}
