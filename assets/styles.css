@@ -4516,3 +4516,11 @@ footer{color:#7890a0}
 .equipment-panel{display:none}
 .equipment-panel.active{display:block}
 @media(max-width:520px){.equipment-switcher{gap:3px;margin-bottom:18px}.equipment-switch{flex:1;padding:9px 6px;font-size:9px}}
+
+
+/* EQUIPAMENTOS: SUBNAVEGACAO NO MESMO PADRAO DO MENU PRINCIPAL */
+.equipment-switcher{gap:2px;padding:0 0 0;border-bottom:1px solid var(--border)}
+.equipment-switch{border:0;border-bottom:2px solid transparent;border-radius:0;background:transparent;padding:13px 16px 11px;color:var(--muted);font:600 10px Inter,system-ui,sans-serif;letter-spacing:.45px}
+.equipment-switch:hover,.equipment-switch.active{color:var(--gold2);background:transparent}
+.equipment-switch.active{border-bottom-color:var(--gold)}
+@media(max-width:520px){.equipment-switcher{gap:0;padding-bottom:0}.equipment-switch{padding:12px 10px 10px;font-size:9px}}
