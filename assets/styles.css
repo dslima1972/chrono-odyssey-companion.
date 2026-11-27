@@ -4540,7 +4540,7 @@ footer{color:#7890a0}
 
 /* PROVADOR MOBILE: refinamento vertical individual das camadas aprovadas */
 @media(max-width:700px){
- .dressing-room-approved .composition-helm-wrapper{transform:translate(0,-38.5%)}
- .dressing-room-approved .composition-chest-wrapper{transform:translate(0,-16%)}
- .dressing-room-approved .composition-boots-wrapper{transform:translate(0,29%)}
+ .dressing-room-approved .composition-helm-wrapper{transform:translate(0,-41.5%)}
+ .dressing-room-approved .composition-chest-wrapper{transform:translate(0,-14.5%)}
+ .dressing-room-approved .composition-boots-wrapper{transform:translate(0,32%)}
 }
