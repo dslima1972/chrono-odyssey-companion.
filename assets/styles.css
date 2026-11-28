@@ -4753,3 +4753,18 @@ footer{color:#7890a0}
 #build-view.build-planner-v2 #build-character img.build-character-idle{
  object-fit:contain!important;object-position:center bottom!important;
 }
+
+
+/* Build Planner: evita cortar o topo da arte Idle do personagem */
+#build-view.build-planner-v2 #build-character img.build-character-idle{
+ object-fit:contain!important;
+ object-position:center top!important;
+ transform:scale(.90)!important;
+ transform-origin:center top!important;
+}
+@media(max-width:650px){
+ #build-view.build-planner-v2 #build-character img.build-character-idle{
+  transform:scale(.92)!important;
+  transform-origin:center top!important;
+ }
+}
