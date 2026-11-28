@@ -1100,19 +1100,9 @@ function buildStatsOptions(kind,index){
  target.innerHTML='<option value="">'+(index?"Sem segunda estatística":"Selecione uma estatística")+'</option>'+options.map(s=>'<option value="'+escapeHtml(s)+'">'+escapeHtml(s)+'</option>').join("");target.value=selected[index]||"";
 }
 function buildEquipmentSlotIconMarkup(slot){
- const paths={
-  weapon:'<path d="m9 8 8 2 21 21-6 6L11 16zM31 8l-7 2-5 5M8 31l7-7M30 12l6-4 4 4-4 6"/>',
-  head:'<path d="M10 23a14 14 0 0 1 28 0v4H10z"/><path d="M8 27h32l-3 6H11zM17 15l7 5 7-5M24 20v7"/>',
-  chest:'<path d="M16 8 9 13l-4 12 7 4 3-7v18h18V22l3 7 7-4-4-12-7-5-8 5z"/><path d="m16 8 8 5 8-5M24 13v27"/>',
-  hands:'<path d="M15 39 9 29l-2-8a2 2 0 0 1 4-1l3 5-2-14a2 2 0 0 1 4-.5l3 12-1-15a2 2 0 0 1 4-.2l2 14 1-11a2 2 0 0 1 4 0l-1 13 3-7a2 2 0 0 1 4 1l-4 17-6 7z"/>',
-  legs:'<path d="M13 7h22l-2 17-2 17H21l-1-15-3 15H7l4-18z"/><path d="M24 8v17"/>',
-  feet:'<path d="M15 7h16v20l5 6 5 3v5H8v-5l5-5 2-9z"/><path d="M15 27h16M12 35h24"/>',
-  back:'<path d="M15 8 24 13l9-5 7 8-5 7 2 18H11l2-18-5-7z"/><path d="m15 8 9 5 9-5M24 13v28"/>',
-  necklace:'<path d="M11 8c2 12 7 17 13 20 6-3 11-8 13-20"/><path d="m24 27 5 6-5 8-5-8z"/>',
-  ring:'<ellipse cx="24" cy="27" rx="12" ry="14"/><path d="m18 13 6-6 6 6-6 4z"/>',
-  belt:'<path d="M5 16h38v16H5z"/><rect x="19" y="18" width="10" height="12" rx="2"/><path d="M24 21v6"/>'
- };
- return '<svg class="build-equipment-slot-glyph" viewBox="0 0 48 48" aria-hidden="true" focusable="false">'+(paths[slot]||paths.chest)+'</svg>';
+ const allowed=["weapon","head","chest","hands","legs","feet","back","necklace","ring","belt"];
+ const key=allowed.includes(slot)?slot:"chest";
+ return '<img class="build-equipment-slot-image" src="./assets/images/ui/equipment-slots/'+key+'.png" alt="" aria-hidden="true" loading="lazy">';
 }
 function buildSlotMarkup(slot,label){
  const item=armors.find(x=>String(x.id||x.compoundId)===String(buildState.armor[slot]));
@@ -1131,7 +1121,7 @@ function renderBuildScreen(){
  $("build-class").value=buildState.className;
  buildTypeOptions();buildStatsOptions("weapon",0);buildStatsOptions("weapon",1);buildStatsOptions("armor",0);buildStatsOptions("armor",1);buildStatsOptions("accessory",0);buildStatsOptions("accessory",1);
  const cls=CLASS_DATA.find(x=>x.name===buildState.className);
- $("build-character").innerHTML=cls?'<img src="./assets/images/classes/selection/'+cls.name.toLowerCase()+'.jpg" data-fallback="./assets/images/classes/characters/'+cls.name.toLowerCase()+'.jpg" alt="Arte da classe '+escapeHtml(cls.name)+'" onerror="if(this.dataset.fallback){this.onerror=null;this.src=this.dataset.fallback}else{this.style.display=\'none\'}" onerror="this.style.display=\'none\'"><div class="build-character-caption"><span>PERSONAGEM</span><strong>'+escapeHtml(cls.name)+'</strong><small>THE WORLD OF SETERA</small></div>':'<div class="build-character-placeholder"><span>✧</span><strong>Seu personagem</strong><small>Selecione uma classe para começar</small></div>';
+ $("build-character").innerHTML=cls?'<img class="build-character-idle" src="./assets/images/classes/characters/poses/'+cls.name.toLowerCase()+'/idle.png" alt="Personagem '+escapeHtml(cls.name)+'" onerror="this.onerror=null;this.style.display=\\'none\\'"><div class="build-character-caption"><span>PERSONAGEM</span><strong>'+escapeHtml(cls.name)+'</strong><small>THE WORLD OF SETERA</small></div>':'<div class="build-character-placeholder"><span>✧</span><strong>Seu personagem</strong><small>Selecione uma classe para começar</small></div>';
  $("build-class-summary").textContent=cls?cls.role:"Escolha uma classe para liberar as opções de equipamento.";
  renderBuildWeaponChoices();
  $("build-weapon-type").disabled=!cls;$("build-weapon-type2").disabled=!cls;
