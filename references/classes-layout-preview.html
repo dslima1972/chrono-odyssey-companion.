@@ -111,14 +111,16 @@ function radarMarkup(c){const labels=["Ofensiva","Defesa","Mobilidade","Controle
 function rankingMarkup(w){const rows=w.rankings||[];return '<div class="detail-section-title"><h4>Tópicos e notas</h4><small>RANKING · 1 A 5</small></div><div class="ranking-list">'+rows.map(([label,score])=>'<div class="ranking-row"><span class="ranking-label">'+esc(label)+'</span><span class="ranking-track">'+[1,2,3,4,5].map(n=>'<i style="'+(n<=score?'background:var(--accent)':'')+'"></i>').join("")+'</span><span class="ranking-score">'+score+'/5</span></div>').join("")+'</div><div class="subtle-note">Avaliação editorial comparativa, baseada nas características e habilidades conhecidas da arma; as notas não são métricas oficiais.</div>';}
 const SKILLS_DATA_URL="./../data/questlog/skills/chrono-odyssey-all-skills-normalized.json";
 const SKILL_TRANSLATIONS_URL="./../data/questlog/skills/chrono-odyssey-skills-pt-BR.json";
-let skillTranslations={};
+const SKILL_ANIMATIONS_INDEX_URL="./../data/skill-animations-index.json";
+let skillTranslations={},skillAnimationsIndex={};
 const QUESTLOG_ASSET_BASE="https://cdn.questlog.gg/chrono-odyssey";
 const skillClassIds={Swordsman:"swordman",Ranger:"archer",Paladin:"paladin",Sorcerer:"sorcerer",Berserker:"berserker",Assassin:"assassin"};
 const skillWeaponIds={"Greatsword":"greatsword","Sword and Shield":"longsword","Dual Blades":"dualswords","Bow":"longbow","Crossbow":"crossbows","Rapier":"rapier","Lance":"lance","Halberd":"halberd","Mace":"mace","Staff":"staff","Manasphere":"magicorb","Grimoire":"spellbook","Chain Blades":"chainswords","Twin Axes":"hatchets","Battle Axe":"battleaxe","Sabre":"sabre","Wrist Blades":"wristblades","Musket":"musket"};
 let skillsDataset=[],skillsLoadError=false,selectedSkillId=null;
 async function loadSkillsDataset(){
  try{const response=await fetch(SKILLS_DATA_URL);if(!response.ok)throw new Error("HTTP "+response.status);const data=await response.json();skillsDataset=Array.isArray(data.skills)?data.skills:[];if(!skillsDataset.length)throw new Error("Dataset vazio");skillsLoadError=false;
-  try{const translationsResponse=await fetch(SKILL_TRANSLATIONS_URL);if(translationsResponse.ok){const translationsData=await translationsResponse.json();skillTranslations=translationsData.translations||{};}}catch(translationError){console.warn("Não foi possível carregar as traduções; usando descrições originais.",translationError);}}
+  try{const translationsResponse=await fetch(SKILL_TRANSLATIONS_URL);if(translationsResponse.ok){const translationsData=await translationsResponse.json();skillTranslations=translationsData.translations||{};}}catch(translationError){console.warn("Não foi possível carregar as traduções; usando descrições originais.",translationError);}
+  try{const animationResponse=await fetch(SKILL_ANIMATIONS_INDEX_URL,{cache:"no-store"});if(animationResponse.ok){const animationData=await animationResponse.json();skillAnimationsIndex=animationData&&animationData.animations&&typeof animationData.animations==="object"?animationData.animations:{ };}}catch(animationError){console.warn("Não foi possível carregar o índice de animações; usando fichas sem GIF.",animationError);}}
  catch(error){skillsLoadError=true;console.error("Não foi possível carregar as habilidades do Questlog:",error);}
  renderPanel();
 }
@@ -142,9 +144,8 @@ function skillModalMarkup(skill){
  const description=skillTranslations[String(skill.id)]||originalDescription;
  const cooldown=Number(skill.cooldown)>0?"Cooldown: "+Number(skill.cooldown)+"s":"";
  const meta=[skill.normalized&&skill.normalized.kind==="special_action"?"Special Action":"Active Skill",cooldown].filter(Boolean).join(" · ");
- const skillAnimationFiles={"111101":"111101-upward-slash-i.gif","211101":"211101-radiant-arrow-i.gif","311001":"311001-shield-strike-i.gif","411101":"411101-ice-spear-i.gif","511001":"511001-sweeping-slash-i.gif","611001":"611001-triple-slash-i.gif"};
- const animationFile=skillAnimationFiles[String(skill.id)];
- const animation=animationFile?'<div class="skill-modal-animation"><span class="skill-modal-animation-label">Animação ilustrativa</span><img src="./../assets/images/skills/animations/'+animationFile+'" alt="Animação ilustrativa da habilidade '+esc(skill.name)+'" loading="lazy"></div>':'<div class="skill-modal-no-animation">Animação demonstrativa ainda não disponível para esta habilidade.</div>';
+ const animationFile=skillAnimationsIndex[String(skill.id)];
+ const animation=animationFile?'<div class="skill-modal-animation"><span class="skill-modal-animation-label">Animação ilustrativa</span><img src="./../assets/images/skills/animations/'+encodeURIComponent(animationFile)+'" alt="Animação ilustrativa da habilidade '+esc(skill.name)+'" loading="lazy"></div>':'<div class="skill-modal-no-animation">Animação demonstrativa ainda não disponível para esta habilidade.</div>';
  return '<button type="button" class="skill-modal-close" id="skillModalClose" aria-label="Fechar">×</button><div class="skill-modal-kicker">HABILIDADE · '+esc(current().name)+'</div><div class="skill-modal-head"><img class="skill-modal-icon" src="'+esc(skillIconUrl(skill))+'" alt="" onerror="this.style.opacity=\'.25\'"><div><h2 class="skill-modal-title" id="skillModalTitle">'+esc(skill.name)+'</h2><div class="skill-modal-meta">'+esc(meta)+'</div></div></div><p class="skill-modal-description">'+esc(description)+'</p>'+animation;
 }
 function openSkillModal(skill){
