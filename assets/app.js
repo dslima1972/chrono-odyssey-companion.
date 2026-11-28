@@ -1121,7 +1121,7 @@ function renderBuildScreen(){
  $("build-class").value=buildState.className;
  buildTypeOptions();buildStatsOptions("weapon",0);buildStatsOptions("weapon",1);buildStatsOptions("armor",0);buildStatsOptions("armor",1);buildStatsOptions("accessory",0);buildStatsOptions("accessory",1);
  const cls=CLASS_DATA.find(x=>x.name===buildState.className);
- $("build-character").innerHTML=cls?'<img class="build-character-idle" src="./assets/images/classes/characters/poses/'+cls.name.toLowerCase()+'/idle.png" alt="Personagem '+escapeHtml(cls.name)+'" onerror="this.onerror=null;this.style.display=\\'none\\'"><div class="build-character-caption"><span>PERSONAGEM</span><strong>'+escapeHtml(cls.name)+'</strong><small>THE WORLD OF SETERA</small></div>':'<div class="build-character-placeholder"><span>✧</span><strong>Seu personagem</strong><small>Selecione uma classe para começar</small></div>';
+ $("build-character").innerHTML=cls?'<img class="build-character-idle" src="./assets/images/classes/characters/poses/'+cls.name.toLowerCase()+'/idle.png" alt="Personagem '+escapeHtml(cls.name)+'" onerror="this.onerror=null;this.style.display=\'none\'"><div class="build-character-caption"><span>PERSONAGEM</span><strong>'+escapeHtml(cls.name)+'</strong><small>THE WORLD OF SETERA</small></div>':'<div class="build-character-placeholder"><span>✧</span><strong>Seu personagem</strong><small>Selecione uma classe para começar</small></div>';
  $("build-class-summary").textContent=cls?cls.role:"Escolha uma classe para liberar as opções de equipamento.";
  renderBuildWeaponChoices();
  $("build-weapon-type").disabled=!cls;$("build-weapon-type2").disabled=!cls;
