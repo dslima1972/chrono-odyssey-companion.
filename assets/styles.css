@@ -4743,3 +4743,13 @@ footer{color:#7890a0}
 }
 
 /* Mantém as cinco cores semânticas de raridade inalteradas. */
+
+
+/* Build Planner: PNGs compartilhados dos slots e arte Idle da classe selecionada */
+#build-view.build-planner-v2 .build-slot-icon .build-equipment-slot-image{
+ display:block;width:86%!important;height:86%!important;max-width:86%;max-height:86%;
+ object-fit:contain;object-position:center;padding:0!important;
+}
+#build-view.build-planner-v2 #build-character img.build-character-idle{
+ object-fit:contain!important;object-position:center bottom!important;
+}
